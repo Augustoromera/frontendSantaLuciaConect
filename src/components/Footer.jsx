@@ -6,20 +6,20 @@ export const Footer = () => {
     return (
         <>            <footer className="pie-pagina">
         <div className="grupo-1">
-            <div className="box">
+            {/* <div className="box">
                 <figure>
                     <a href="#">
                         <img src={logofooter} alt="Logo Transporte Rápido" />
                     </a>
                 </figure>
-            </div>
+            </div> */}
             <div className="box">
                 <h2>SOBRE NOSOTROS</h2>
                 <p>
                     Con más de 30 años conectando destinos, ofrecemos viajes seguros y confortables. Nuestra flota moderna y conductores profesionales garantizan tu tranquilidad en cada recorrido. Tu viaje, nuestro compromiso.
                 </p>
             </div>
-            <div className="box">
+            <div className="box2">
                 <h2>SÍGUENOS</h2>
                 <div className="red-social">
                     <a href="https://www.facebook.com/" className="fa fa-facebook" target='_blank'></a>
