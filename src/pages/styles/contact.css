@@ -5,3 +5,17 @@
     padding-top: 10px !important;
     padding-bottom: 10px !important;
 }
+
+.formulario {
+    display: flex;
+    justify-content: center; /* centra horizontalmente */
+    align-items: center;     /* centra verticalmente */
+    flex-direction: column;
+}
+
+.centrarTexto {
+	display: flex;
+  	justify-content: center;
+  	align-items: center;
+  	height: 200px;
+}

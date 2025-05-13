@@ -1,7 +1,10 @@
 .contenedorTodo {
   
   padding-top: 106px !important;
-  background-image: url('/src/assets/images/fondos/burguer.jpg');
+  background-image: url('/src/assets/images/fondos/');
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center center;
 }
 
 

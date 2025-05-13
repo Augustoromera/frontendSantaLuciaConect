@@ -195,8 +195,8 @@ export const ContactScreen = () => {
         </p>
 
         <br />
-        <div className="row ">
-          <div className="col-12 col-lg-6 mb-4">
+        <div className='formulario'>
+          {/* <div className="col-12 col-lg-6 mb-4">
             <div>
               <img
                 src="https://viajes.nationalgeographic.com.es/medio/2022/05/26/de-hamburgo-para-el-mundo_b927e79b_2000x1333.jpg"
@@ -204,10 +204,10 @@ export const ContactScreen = () => {
                 alt="hamburguesas"
               />
             </div>
-          </div>
-          <div className="col-12 col-lg-6 px-lg-5 d-flex align-items-center ">
+          </div> */}
+          <div className="col-12 col-lg-6 px-lg-5 d-flex">
             <div>
-              <h2 className="mb-5">Completa el formulario con tus datos</h2>
+              <h2 className="mb-5 text-center">Completa el formulario con tus datos</h2>
 
               <Form className="container-fluid micontenedor" onSubmit={handleSubmit}>
                 <div className="row">
@@ -312,14 +312,14 @@ export const ContactScreen = () => {
         <div className="text-center mb-4">
           <h2 className="fw-bold display-5 mb-3">Dónde estamos?</h2>
           <div className="container-fluid micontenedor">
-            <div className="row">
-              <div className="col-12 col-md-6">
+            <div className="centrarTexto">
+              {/* <div className="col-12 col-md-6">
                 <img
                   src="https://media.traveler.es/photos/6221e27bd380db76a3a865f7/master/w_1600%2Cc_limit/275105567_3784919721633284_4999341144694882386_n.jpg"
                   alt="hamburgueseria"
                   className="img-fluid mb-3 rounded shadow-lg "
                 />
-              </div>
+              </div> */}
               <div className="col-12 col-md-6 d-flex align-items-center">
                 <div className="mb-3">
                   <h3>Nos encontramos en Gral Paz 576 - San Miguel de Tucumán - Argentina</h3>
