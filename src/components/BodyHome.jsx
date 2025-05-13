@@ -18,6 +18,7 @@ import bannerMobile1 from '../assets/banner/bannerMobile1.jpg';
 import bannerMobile2 from '../assets/banner/bannerMobile2.jpg';
 import bannerMobile3 from '../assets/banner/bannerMobile3.jpeg';
 import hamburguesaNosotros from '../assets/images/nosotros/hamburguesa-nosotros-2.jpg';
+import colectivo from '../assets/images/fondos/colectivo.png';
 
 export const BodyHome = () => {
   const navigate = useNavigate();
@@ -236,9 +237,9 @@ export const BodyHome = () => {
       <div className="container-fluid">
         <div className="row">
           <div className="col-12 col-lg-6 espacio-mBlanco">
-            <img src={hamburguesaNosotros} className='img-fluid rounded shadow-sm my-img' alt="imagen de colectivo" />
+            <img src={colectivo} className='img-fluid rounded shadow-sm my-img' alt="imagen de colectivo" />
           </div>
-          <div className="col-12 col-lg-6 d-flex flex-column justify-content-center align-items-start">
+          <div className="col-12 col-lg-6 d-flex flex-column justify-content-center align-items-start transporteRapido">
             <div className='d-flex flex-column align-items-start' >
               <h1 className='display-2 fw-bold d-flex flex-column align-items-center m-2'>Transporte Rápido</h1>
               <h1 className='text-center display-5 m-2'>Conectando ciudades desde 1985</h1>
@@ -259,11 +260,11 @@ export const BodyHome = () => {
       <div className='text-center mb-4'>
         <h2 className='fw-bold display-5 mb-3'>Dónde estamos?</h2>
         <div className="container-fluid">
-          <div className="row">
+          <div className='centrarTexto'>
 
-            <div className="col-12 col-md-6 ">
+            {/* <div className="col-12 col-md-6 ">
               <img src="https://media.traveler.es/photos/6221e27bd380db76a3a865f7/master/w_1600%2Cc_limit/275105567_3784919721633284_4999341144694882386_n.jpg" alt="hamburgueseria" className='img-fluid mb-3 rounded shadow-lg ' />
-            </div>
+            </div> */}
             <div className="col-12 col-md-6 d-flex align-items-center">
               <div className='mb-3'>
                 <h3>Nos encontramos en Gral Paz 576 - San Miguel de Tucumán - Argentina</h3>

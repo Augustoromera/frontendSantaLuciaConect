@@ -305,7 +305,11 @@ hr {
 	.banner-container-text {
 		display: block;
 	}
+	.transporteRapido {
+    margin-left: 9rem;
+  }
 }
+
 
 @media (max-width: 480px) {
 	.button-container-banner {
@@ -398,4 +402,11 @@ hr {
 }
 .button-banner {
 	font-family: "Kanit", sans-serif;
+}
+
+.centrarTexto {
+	display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
 }
