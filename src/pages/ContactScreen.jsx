@@ -199,7 +199,7 @@ export const ContactScreen = () => {
           <div className="col-12 col-lg-6 mb-4">
             <div>
               <img
-                src="https://viajes.nationalgeographic.com.es/medio/2022/05/26/de-hamburgo-para-el-mundo_b927e79b_2000x1333.jpg"
+                src="https://www.lanacion.com.ar/resizer/v2/tres-lineas-de-colectivos-suspenden-su-servicio-5EMY37GMKJCLNOOCYNVOVPWEAM.jpg?auth=edf2867420928ebf2f352f4965dcde89f91a2ef02222c66d4ed7cfb931aebe87&width=880&height=586&quality=70&smart=true"
                 className="img-fluid rounded-3 shadow-lg w-lg-75 "
                 alt="hamburguesas"
               />

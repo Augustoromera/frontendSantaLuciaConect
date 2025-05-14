@@ -162,7 +162,7 @@ export const BodyHome = () => {
       </div>
       <hr />
       {/* ----------------menús---------------- */}
-      <div className="container-fluid">
+      {/* <div className="container-fluid">
         <h3 className="text-center text-uppercase poppins-regular font-weight-bold display-5">
           Nuestros recorridos
         </h3>
@@ -201,8 +201,8 @@ export const BodyHome = () => {
 
         </div>
 
-      </div>
-      <hr />
+      </div> */}
+      {/* <hr /> */}
       {/* ----------------servicios---------------- */}
       <div className="container-fluid">
         <h3 className="text-center text-uppercase poppins-regular font-weight-bold display-5">Nuestros servicios</h3>
