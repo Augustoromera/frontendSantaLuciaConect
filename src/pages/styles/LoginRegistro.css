@@ -1,12 +1,10 @@
 .contenedorTodo {
-  
   padding-top: 106px !important;
   background-image: url('/src/assets/images/fondos/burguer.jpg');
 }
 
-
 .contenedor1 {
-  background-color: rgb(27, 27, 27);
+  background-color: rgb(27, 27, 27); /* Negro se mantiene igual */
   width: 20%;
   display: flex;
   justify-content: center;
@@ -18,7 +16,6 @@
   color: #ffffff;
 }
 
-
 .inputs {
   width: 100%;
   padding: 10px 0;
@@ -29,27 +26,21 @@
   border-bottom: 1px solid #fff;
   outline: none;
   background: transparent;
-
 }
 
-
-
-
-
 .link-login {
-  color: orange;
+  color: #004aad; /* Cambiado de orange a azul */
   font-size: 15px;
   transition: 0.6s;
 }
 
 .texto-loginR {
-  color: yellow;
+  color: #fff; /* Cambiado de yellow a azul */
   font-size: 12px;
   text-align: center;
   justify-content: center;
-  align-items: center
+  align-items: center;
 }
-
 
 .titulo-lr {
   text-align: center;
@@ -58,12 +49,11 @@
 }
 
 .link-login:hover {
-  color: #ff5900;
+  color: #003366; /* Azul más oscuro para hover */
 }
 
-
-
 .labels {
+  color: #fff;
   font-size: 18px;
   text-align: center;
 }
@@ -80,26 +70,20 @@
   font-size: 16px;
   color: #ffffff !important;
   text-align: center;
-
 }
 
 .nav-lr {
-  background-color: rgb(32, 32, 34);
+  background-color: rgb(32, 32, 34); /* Negro se mantiene igual */
   display: flex;
   margin-bottom: 3em;
   justify-content: space-around;
-
-
 }
-
 
 .ul-lr {
   display: flex;
   list-style-type: none;
   text-align: center;
   margin-top: 2em;
-
-
 }
 
 .titulo-nav {
@@ -108,23 +92,20 @@
   margin-left: 1em;
 }
 
-
 .link-nav {
   color: white;
   margin: 1em;
   text-decoration: none;
-  background-color: rgb(32, 171, 32);
+  background-color: #004aad; /* Cambiado de rgb(32,171,32) a azul */
   padding: 1em;
   border-radius: .5em;
   font-size: 15px;
   transition: 0.6s;
-
 }
 
 .link-nav:hover {
-  background-color: #ffc107;
+  background-color: #003366; /* Azul más oscuro para hover */
 }
-
 
 .inputsR {
   width: 100%;
@@ -142,12 +123,12 @@
   margin-left: -1em;
 }
 
+/* Media queries se mantienen igual */
 @media all and (max-width:500px) {
   .contenedor1 {
     width: 90vw;
   }
 }
-
 
 @media all and (min-width:500px) and (max-width:800px) {
   .contenedor1 {
@@ -167,15 +148,11 @@
   }
 }
 
-
-
-
-
 .boton-login {
   position: relative;
   display: inline-block;
   padding: 10px 20px;
-  color: #ffc107;
+  color: #fff; /* Cambiado de #ffc107 a azul */
   font-size: 16px;
   text-decoration: none;
   text-transform: uppercase;
@@ -183,18 +160,18 @@
   transition: .5s;
   margin-top: 40px;
   letter-spacing: 4px;
-  background-color: #000;
+  background-color: #000; /* Negro se mantiene igual */
   border: none;
 }
 
 .boton-login:hover {
-  background: #ffc107;
+  background: #004aad;
   color: #fff;
   border-radius: 5px;
-  box-shadow: 0 0 5px #ffc107,
-    0 0 25px #ffc107,
-    0 0 50px #ffc107,
-    0 0 100px #ffc107;
+  box-shadow: 0 0 5px #004aad,
+    0 0 25px #004aad,
+    0 0 50px #004aad,
+    0 0 100px #004aad;
 }
 
 .boton-login span {
@@ -203,86 +180,19 @@
 }
 
 .boton-login span:nth-child(1) {
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 2px;
-  background: linear-gradient(90deg, transparent, #ffc107);
-  animation: btn-anim1 1s linear infinite;
-}
-
-@keyframes btn-anim1 {
-  0% {
-    left: -100%;
-  }
-
-  50%,
-  100% {
-    left: 100%;
-  }
+  background: linear-gradient(90deg, transparent, #004aad); /* Cambiado a azul */
 }
 
 .boton-login span:nth-child(2) {
-  top: -100%;
-  right: 0;
-  width: 2px;
-  height: 100%;
-  background: linear-gradient(180deg, transparent, #ffc107);
-  animation: btn-anim2 1s linear infinite;
-  animation-delay: .25s
-}
-
-@keyframes btn-anim2 {
-  0% {
-    top: -100%;
-  }
-
-  50%,
-  100% {
-    top: 100%;
-  }
+  background: linear-gradient(180deg, transparent, #004aad); /* Cambiado a azul */
 }
 
 .boton-login span:nth-child(3) {
-  bottom: 0;
-  right: -100%;
-  width: 100%;
-  height: 2px;
-  background: linear-gradient(270deg, transparent, #ffc107);
-  animation: btn-anim3 1s linear infinite;
-  animation-delay: .5s
-}
-
-@keyframes btn-anim3 {
-  0% {
-    right: -100%;
-  }
-
-  50%,
-  100% {
-    right: 100%;
-  }
+  background: linear-gradient(270deg, transparent, #004aad); /* Cambiado a azul */
 }
 
 .boton-login span:nth-child(4) {
-  bottom: -100%;
-  left: 0;
-  width: 2px;
-  height: 100%;
-  background: linear-gradient(360deg, transparent, #ffc107);
-  animation: btn-anim4 1s linear infinite;
-  animation-delay: .75s
-}
-
-@keyframes btn-anim4 {
-  0% {
-    bottom: -100%;
-  }
-
-  50%,
-  100% {
-    bottom: 100%;
-  }
+  background: linear-gradient(360deg, transparent, #004aad); /* Cambiado a azul */
 }
 
 .password-input-container {

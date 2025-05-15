@@ -1,10 +1,10 @@
-@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&display=swap");
 
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Open Sans', sans-serif;
+    font-family: "Open Sans", sans-serif;
 }
 
 .pie-pagina {
@@ -52,9 +52,9 @@
     width: 45px;
     height: 45px;
     line-height: 45px;
-    color:#ffc107;
+    color: #004aad; /* Cambiado de #ffc107 a #004aad */
     margin-right: 10px;
-    background-color:  #000;
+    background-color: #000;
     text-align: center;
     border-radius: 50%;
     transition: all 300ms ease;
@@ -65,8 +65,8 @@
 }
 
 .pie-pagina .grupo-1 .red-social a:hover {
-    background-color: #ffc107; 
-    color:  #000; 
+    background-color: #004aad; /* Cambiado de #ffc107 a #004aad */
+    color: #000;
     transition: all 300ms ease;
 }
 
@@ -75,7 +75,7 @@
     padding: 15px 10px;
     text-align: center;
     color: #ffffff;
-    border-top: 3px solid #ffc107;
+    border-top: 3px solid #004aad; /* Cambiado de #ffc107 a #004aad */
 }
 
 .pie-pagina .grupo-2 small {

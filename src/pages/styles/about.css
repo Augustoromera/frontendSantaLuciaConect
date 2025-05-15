@@ -24,7 +24,6 @@
         #bfbcbc00 60%,
         #bfbcbc00 80%
     );
-
     background-size: 300% 300%;
     animation: movimiento 5s linear infinite alternate;
 }
@@ -52,10 +51,9 @@
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    position: relative;
+    margin-top: 100px;
+    padding-bottom: 100px;
 }
 
 .cardA {
@@ -126,48 +124,6 @@
 .footer-card h3 {
     font-size: 15px;
     font-weight: 500;
-}
-
-.container-cuadrado {
-    max-width: 1200px;
-    height: 600px;
-    margin: auto;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-}
-
-.cuadrado {
-    width: 300px;
-    height: 300px;
-    background-color: royalblue;
-    position: absolute;
-}
-
-.cuadrado1 {
-    width: 250px;
-    height: 250px;
-    background: linear-gradient(to left, #ffffff, #77797f);
-    right: 250px;
-    top: 200px;
-    animation: c1 5s ease infinite;
-}
-
-.cuadrado2 {
-    width: 200px;
-    height: 200px;
-    background: linear-gradient(to left, #77797f, #ffffff);
-    top: 350px;
-    animation: c2 7s ease infinite;
-}
-
-.cuadrado3 {
-    width: 300px;
-    height: 300px;
-    background: linear-gradient(to left, #ffffff, #77797f);
-    left: 300px;
-    animation: c3 6s ease infinite;
 }
 
 .iconos li {
@@ -252,60 +208,4 @@
 
 .p-espacio5 {
     margin-bottom: 52px;
-}
-
-@keyframes c1 {
-    0% {
-        transform: rotate(45deg) translateY(0px);
-    }
-    50% {
-        transform: rotate(45deg) translateY(80px);
-    }
-    100% {
-        transform: rotate(45deg) translateY(0px);
-    }
-}
-
-@keyframes c2 {
-    0% {
-        transform: rotate(65deg) translateY(0px);
-    }
-    50% {
-        transform: rotate(65deg) translateY(80px);
-    }
-    100% {
-        transform: rotate(65deg) translateY(0px);
-    }
-}
-
-@keyframes c3 {
-    0% {
-        transform: rotate(65deg) translateY(0px);
-    }
-    50% {
-        transform: rotate(65deg) translateY(70px);
-    }
-    100% {
-        transform: rotate(65deg) translateY(0px);
-    }
-}
-@media screen and (max-width: 739px) {
-    .cuadrado2,.cuadrado3 {
-        display: none;
-    }
-}
-@media screen and (min-width: 740px) and (max-width: 1245px) {
-    .cuadrado3 {
-        display: none;
-    }
-}
-@media screen and (max-width: 2000px) {
-    .container-cardsA {
-        position: relative;
-        top: 0;
-        left: 0;
-        transform: none;
-        margin-top: 100px;
-        padding-bottom: 100px;
-    }
 }

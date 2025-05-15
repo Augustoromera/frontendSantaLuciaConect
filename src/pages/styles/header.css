@@ -26,7 +26,7 @@
         color 0.3s ease !important;
 }
 .nav-link:hover {
-    color: #ffc107 !important;
+    color: #004aad !important; /* Cambiado de #ffc107 a #004aad */
 }
 
 .navbarmain {
@@ -61,10 +61,10 @@
 }
 .dropdown-item:hover {
     background-color: transparent !important;
-    color: #ffc107 !important;
+    color: #004aad !important; /* Cambiado de #ffc107 a #004aad */
 }
 .brand-text:hover {
-    color: #ffc107;
+    color: #004aad; /* Cambiado de #ffc107 a #004aad */
     transition: color 0.3s;
 }
 
@@ -115,7 +115,7 @@
 }
 
 .nav-welcome {
-    color: #ffc107 !important;
+    color: #004aad !important; /* Cambiado de #ffc107 a #004aad */
 }
 .none-class {
     display: none !important;
@@ -131,7 +131,7 @@
     transition: all 0.5s ease;
 }
 .active-link {
-    background-color: #ffc107 !important;
+    background-color: #004aad !important; /* Cambiado de #ffc107 a #004aad */
     color: #000 !important;
 }
 

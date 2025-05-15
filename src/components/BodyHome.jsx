@@ -429,7 +429,7 @@ export const BodyHome = () => {
           </div>
         </div>
         <div className='button-container-banner'>
-          <button className="btn btn-warning btn-lg my-button-buy button-banner" onClick={user ? handleSolicitarPedido : iniciarSesionRedirect}>
+          <button className="btn btn-azul btn-lg my-button-buy button-banner" onClick={user ? handleSolicitarPedido : iniciarSesionRedirect}>
             {`${textButtonBanner}`}
           </button>
         </div>
@@ -642,7 +642,7 @@ export const BodyHome = () => {
               <h1 className='text-center display-5 m-2'>Conectando ciudades desde 1985</h1>
               <h5 className='text-xl m-2'>Somos líderes en transporte interurbano con más de 35 años de experiencia. Nuestro compromiso es ofrecer viajes seguros, puntuales y confortables con la mejor relación calidad-precio del mercado.</h5>
               <br />
-              <Link to="/aboutus" className="btn btn-warning btn-lg rounded-pill m-2">Ver mas</Link>
+              <Link to="/aboutus" className="btn btn-azul btn-lg rounded-pill m-2">Ver mas</Link>
             </div>
           </div>
         </div>

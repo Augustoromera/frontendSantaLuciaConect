@@ -22,11 +22,6 @@ export const AboutUs = () => {
             <Header />
             <div className="container-aboutus">
                 <h1 className='title-nosotros'>Nuestro equipo</h1>
-                <div className="container-cuadrado">
-                    <div className="cuadrado cuadrado1"></div>
-                    <div className="cuadrado cuadrado2"></div>
-                    <div className="cuadrado cuadrado3"></div>
-                </div>
                 <div className="container-cardsA">
                     <div className="cardA">
                         <div className="cover-card">
