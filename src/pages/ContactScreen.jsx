@@ -7,6 +7,7 @@ import './styles/contact.css';
 import { faFacebook, faInstagram, faWhatsapp } from '@fortawesome/free-brands-svg-icons';
 import { Footer } from '../components/Footer';
 import Swal from 'sweetalert2';
+import imgMonteros from '../assets/images/nosotros/monterosHD.png'
 
 export const ContactScreen = () => {
   const [formData, setFormData] = useState({
@@ -315,7 +316,7 @@ export const ContactScreen = () => {
             <div className="row">
               <div className="col-12 col-md-6">
                 <img
-                  src="https://media.traveler.es/photos/6221e27bd380db76a3a865f7/master/w_1600%2Cc_limit/275105567_3784919721633284_4999341144694882386_n.jpg"
+                  src={imgMonteros}
                   alt="hamburgueseria"
                   className="img-fluid mb-3 rounded shadow-lg "
                 />

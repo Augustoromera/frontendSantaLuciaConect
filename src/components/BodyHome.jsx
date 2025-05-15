@@ -17,7 +17,9 @@ import bannerMobile from '../assets/banner/bannerMobile.jpg';
 import bannerMobile1 from '../assets/banner/bannerMobile1.jpg';
 import bannerMobile2 from '../assets/banner/bannerMobile2.jpg';
 import bannerMobile3 from '../assets/banner/bannerMobile3.jpeg';
-import hamburguesaNosotros from '../assets/images/nosotros/hamburguesa-nosotros-2.jpg';
+import transporteRapido from '../assets/images/nosotros/transporteRapido.png';
+import imgMonteros from '../assets/images/nosotros/monterosHD.png'
+import { height } from '@fortawesome/free-brands-svg-icons/fa42Group';
 
 export const BodyHome = () => {
   const navigate = useNavigate();
@@ -25,8 +27,8 @@ export const BodyHome = () => {
   const [cargarProducto, setCargarProducto] = useState([]);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 720);
-  const textTextBanner = window.innerWidth <= 720 ? "Tu viaje ideal a un clic de distancia!" 
-  : "Tu comodidad es nuestra prioridad. Viaja con confianza";
+  const textTextBanner = window.innerWidth <= 720 ? "Tu viaje ideal a un clic de distancia!"
+    : "Tu comodidad es nuestra prioridad. Viaja con confianza";
   const textButtonBanner = window.innerWidth <= 720 ? "COMPRAR" : "RESERVAR AHORA";
   const bannerImages = [
     Bannerrapiburguerjpeg,
@@ -137,34 +139,216 @@ export const BodyHome = () => {
   useEffect(() => {
     cargarProductoDB()
   }, [])
-
   const [formData, setFormData] = useState({
     origen: '',
     destino: '',
     horario: '',
-    idaVuelta: false
+    idaVuelta: false,
+    desdeMonteros: false // Nuevo campo para el checkbox
   });
 
-  const [showOptions, setShowOptions] = useState(false);
-  const [ciudades, setCiudades] = useState([
-    'Santa Lucía', 'San Juan', 'Mendoza', 'Buenos Aires', 'Córdoba'
-  ]);
-
-  const horarios = [
-    '08:00 AM', '10:00 AM', '12:00 PM' , '02:00 PM', '04:00 PM', '06:00 PM', '08:00 PM'
+  // Definición de todas las paradas disponibles en orden de ruta
+  const paradas = [
+    'MONTEROS',
+    'CITROMAX',
+    'STO DOMINGO',
+    'CERVECERIA',
+    'ACHERAL',
+    'ALTO VERDE',
+    'KM 3',
+    'LA CIENAGA',
+    'LA CORTADA',
+    'ZAVALIA',
+    'SANTA LUCIA'
   ];
+
+  // Cuadro tarifario completo
+  const cuadroTarifario = [
+    { origen: 'MONTEROS', destino: 'CITROMAX', precio: 790.00 },
+    { origen: 'MONTEROS', destino: 'CERVECERIA', precio: 790.00 },
+    { origen: 'MONTEROS', destino: 'ACHERAL', precio: 920.00 },
+    { origen: 'MONTEROS', destino: 'KM 3', precio: 1510.00 },
+    { origen: 'MONTEROS', destino: 'LA CIENAGA', precio: 1510.00 },
+    { origen: 'MONTEROS', destino: 'FAGALDE', precio: 1510.00 },
+    { origen: 'MONTEROS', destino: 'SANTA LUCIA', precio: 1510.00 },
+    { origen: 'SANTA LUCIA', destino: 'FAGALDE', precio: 790.00 },
+    { origen: 'SANTA LUCIA', destino: 'LA CIENAGA', precio: 790.00 },
+    { origen: 'SANTA LUCIA', destino: 'KM 3', precio: 790.00 },
+    { origen: 'SANTA LUCIA', destino: 'ACHERAL', precio: 920.00 },
+    { origen: 'SANTA LUCIA', destino: 'CERVECERIA', precio: 1510.00 },
+    { origen: 'SANTA LUCIA', destino: 'CITROMAX', precio: 1510.00 },
+    { origen: 'SANTA LUCIA', destino: 'MONTEROS', precio: 1510.00 }
+  ];
+
+  // Horarios completos de la mañana
+  const horariosMananaCompleto = [
+    {
+      santaLuciaIda: "7:00", zavalia: "7:07", laCortada: "7:09", laCienaga: "7:11", km3: "7:13",
+      altoVerde: "7:14", acheral: "7:15", cerveceria: "7:18", stoDomingo: "7:20", citromax: "7:22",
+      monteros: "6:30", stoDomingoVuelta: "6:34", cerveceriaVuelta: "6:38", acheralVuelta: "6:45",
+      altoVerdeVuelta: "6:50", km3Vuelta: "6:53", laCienagaVuelta: "6:55", laCortadaVuelta: "6:57",
+      zavaliaVuelta: "6:58", santaLuciaVuelta: "7:00"
+    },
+    {
+      santaLuciaIda: "7:30", zavalia: "7:37", laCortada: "7:39", laCienaga: "7:41", km3: "7:43",
+      altoVerde: "7:44", acheral: "7:45", cerveceria: "7:48", stoDomingo: "7:50", citromax: "7:52",
+      monteros: "7:00", stoDomingoVuelta: "7:04", cerveceriaVuelta: "7:08", acheralVuelta: "7:15",
+      altoVerdeVuelta: "7:20", km3Vuelta: "7:23", laCienagaVuelta: "7:25", laCortadaVuelta: "7:27",
+      zavaliaVuelta: "7:28", santaLuciaVuelta: "7:30"
+    },
+    {
+      santaLuciaIda: "8:00", zavalia: "8:07", laCortada: "8:09", laCienaga: "8:11", km3: "8:13",
+      altoVerde: "8:14", acheral: "8:15", cerveceria: "8:18", stoDomingo: "8:20", citromax: "8:22",
+      monteros: "7:30", stoDomingoVuelta: "7:34", cerveceriaVuelta: "7:38", acheralVuelta: "7:45",
+      altoVerdeVuelta: "7:50", km3Vuelta: "7:53", laCienagaVuelta: "7:55", laCortadaVuelta: "7:57",
+      zavaliaVuelta: "7:58", santaLuciaVuelta: "8:00"
+    },
+    {
+      santaLuciaIda: "8:30", zavalia: "8:37", laCortada: "8:39", laCienaga: "8:41", km3: "8:43",
+      altoVerde: "8:44", acheral: "8:45", cerveceria: "8:48", stoDomingo: "8:50", citromax: "8:52",
+      monteros: "8:00", stoDomingoVuelta: "8:04", cerveceriaVuelta: "8:08", acheralVuelta: "8:15",
+      altoVerdeVuelta: "8:20", km3Vuelta: "8:23", laCienagaVuelta: "8:25", laCortadaVuelta: "8:27",
+      zavaliaVuelta: "8:28", santaLuciaVuelta: "8:30"
+    },
+    {
+      santaLuciaIda: "9:00", zavalia: "9:07", laCortada: "9:09", laCienaga: "9:11", km3: "9:13",
+      altoVerde: "9:14", acheral: "9:15", cerveceria: "9:18", stoDomingo: "9:20", citromax: "9:22",
+      monteros: "8:30", stoDomingoVuelta: "8:34", cerveceriaVuelta: "8:38", acheralVuelta: "8:45",
+      altoVerdeVuelta: "8:50", km3Vuelta: "8:53", laCienagaVuelta: "8:55", laCortadaVuelta: "8:57",
+      zavaliaVuelta: "8:58", santaLuciaVuelta: "9:00"
+    },
+    {
+      santaLuciaIda: "10:00", zavalia: "10:07", laCortada: "10:09", laCienaga: "10:11", km3: "10:13",
+      altoVerde: "10:14", acheral: "10:15", cerveceria: "10:48", stoDomingo: "10:50", citromax: "10:52",
+      monteros: "10:00", stoDomingoVuelta: "10:04", cerveceriaVuelta: "10:08", acheralVuelta: "10:15",
+      altoVerdeVuelta: "10:20", km3Vuelta: "10:23", laCienagaVuelta: "10:25", laCortadaVuelta: "10:27",
+      zavaliaVuelta: "10:28", santaLuciaVuelta: "10:30"
+    },
+    {
+      santaLuciaIda: "11:30", zavalia: "11:37", laCortada: "11:39", laCienaga: "11:41", km3: "11:43",
+      altoVerde: "11:44", acheral: "11:45", cerveceria: "11:48", stoDomingo: "11:50", citromax: "11:52",
+      monteros: "11:00", stoDomingoVuelta: "11:04", cerveceriaVuelta: "11:08", acheralVuelta: "11:15",
+      altoVerdeVuelta: "11:20", km3Vuelta: "11:23", laCienagaVuelta: "11:25", laCortadaVuelta: "11:27",
+      zavaliaVuelta: "11:28", santaLuciaVuelta: "11:30"
+    },
+    {
+      santaLuciaIda: "12:30", zavalia: "12:37", laCortada: "12:39", laCienaga: "12:41", km3: "12:43",
+      altoVerde: "12:44", acheral: "12:45", cerveceria: "12:48", stoDomingo: "12:50", citromax: "12:52",
+      monteros: "12:00", stoDomingoVuelta: "12:04", cerveceriaVuelta: "12:08", acheralVuelta: "12:15",
+      altoVerdeVuelta: "12:20", km3Vuelta: "12:23", laCienagaVuelta: "12:25", laCortadaVuelta: "12:27",
+      zavaliaVuelta: "12:28", santaLuciaVuelta: "12:30"
+    },
+    {
+      santaLuciaIda: "12:45", zavalia: "12:52", laCortada: "12:54", laCienaga: "12:56", km3: "12:58",
+      altoVerde: "12:59", acheral: "13:00", cerveceria: "13:03", stoDomingo: "13:05", citromax: "13:06",
+      monteros: "13:00", stoDomingoVuelta: "13:04", cerveceriaVuelta: "13:06", acheralVuelta: "13:15",
+      altoVerdeVuelta: "13:20", km3Vuelta: "13:23", laCienagaVuelta: "13:25", laCortadaVuelta: "13:27",
+      zavaliaVuelta: "13:28", santaLuciaVuelta: "13:30"
+    },
+    {
+      santaLuciaIda: "13:30", zavalia: "13:37", laCortada: "13:39", laCienaga: "13:41", km3: "13:43",
+      altoVerde: "13:44", acheral: "13:45", cerveceria: "13:48", stoDomingo: "13:50", citromax: "13:52",
+      monteros: "13:30", stoDomingoVuelta: "13:34", cerveceriaVuelta: "13:36", acheralVuelta: "13:45",
+      altoVerdeVuelta: "13:50", km3Vuelta: "13:53", laCienagaVuelta: "13:55", laCortadaVuelta: "13:57",
+      zavaliaVuelta: "13:58", santaLuciaVuelta: "14:00"
+    },
+    {
+      santaLuciaIda: "14:30", zavalia: "14:37", laCortada: "14:39", laCienaga: "14:41", km3: "14:43",
+      altoVerde: "14:44", acheral: "14:45", cerveceria: "14:48", stoDomingo: "14:50", citromax: "14:52",
+      monteros: "14:30", stoDomingoVuelta: "14:34", cerveceriaVuelta: "14:36", acheralVuelta: "14:45",
+      altoVerdeVuelta: "14:50", km3Vuelta: "14:53", laCienagaVuelta: "14:55", laCortadaVuelta: "14:57",
+      zavaliaVuelta: "14:58", santaLuciaVuelta: "15:00"
+    },
+    {
+      santaLuciaIda: "15:30", zavalia: "15:37", laCortada: "15:39", laCienaga: "15:41", km3: "15:43",
+      altoVerde: "15:44", acheral: "15:45", cerveceria: "15:48", stoDomingo: "15:50", citromax: "15:52",
+      monteros: "15:00", stoDomingoVuelta: "15:04", cerveceriaVuelta: "15:06", acheralVuelta: "15:15",
+      altoVerdeVuelta: "15:20", km3Vuelta: "15:23", laCienagaVuelta: "15:25", laCortadaVuelta: "15:27",
+      zavaliaVuelta: "15:28", santaLuciaVuelta: "15:30"
+    }
+  ];
+
+  // Mapeo de nombres de paradas a claves en el objeto de horarios
+  const mapeoParadasHorarios = {
+    'MONTEROS': 'monteros',
+    'CITROMAX': 'citromax',
+    'STO DOMINGO': 'stoDomingo',
+    'CERVECERIA': 'cerveceria',
+    'ACHERAL': 'acheral',
+    'ALTO VERDE': 'altoVerde',
+    'KM 3': 'km3',
+    'LA CIENAGA': 'laCienaga',
+    'LA CORTADA': 'laCortada',
+    'ZAVALIA': 'zavalia',
+    'SANTA LUCIA': 'santaLuciaIda',
+    'FAGALDE': 'fagalde' // Asegúrate de que esta parada existe en tus datos
+  };
+
+  const [destinosDisponibles, setDestinosDisponibles] = useState([]);
+  const [horariosDisponibles, setHorariosDisponibles] = useState([]);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setFormData(prev => ({
-      ...prev,
+    const newFormData = {
+      ...formData,
       [name]: type === 'checkbox' ? checked : value
-    }));
+    };
+
+    setFormData(newFormData);
+
+    // Actualizar destinos disponibles cuando cambia el origen
+    if (name === 'origen') {
+      const destinos = paradas.filter(parada => parada !== value);
+      setDestinosDisponibles(destinos);
+      setFormData(prev => ({ ...prev, destino: '', horario: '' }));
+      setHorariosDisponibles([]);
+    }
+
+    // Actualizar horarios disponibles cuando cambia origen o destino
+    if ((name === 'origen' || name === 'destino') && newFormData.origen && newFormData.destino) {
+      const horariosFiltrados = [];
+
+      // Buscar todos los horarios disponibles para la ruta seleccionada
+      horariosMananaCompleto.forEach(horario => {
+        const claveOrigen = mapeoParadasHorarios[newFormData.origen];
+        const claveDestino = mapeoParadasHorarios[newFormData.destino];
+
+        if (claveOrigen && claveDestino && horario[claveOrigen] && horario[claveDestino]) {
+          horariosFiltrados.push({
+            salida: horario[claveOrigen],
+            llegada: horario[claveDestino],
+            origen: newFormData.origen,
+            destino: newFormData.destino
+          });
+        }
+      });
+
+      setHorariosDisponibles(horariosFiltrados);
+    }
   };
 
+  const calcularPrecio = (origen, destino, desdeMonteros) => {
+    // Si el checkbox está marcado, forzamos el origen a MONTEROS
+    if (desdeMonteros) {
+      origen = 'MONTEROS';
+    } else {
+      // Si no está marcado, forzamos el origen a SANTA LUCIA
+      origen = 'SANTA LUCIA';
+    }
+
+    // Buscamos la tarifa correspondiente
+    const tarifa = cuadroTarifario.find(t =>
+      t.origen === origen && t.destino === destino
+    );
+
+    return tarifa ? tarifa.precio : 0;
+  };
   const handleSubmit = (e) => {
     e.preventDefault();
-    
+    const precioBase = calcularPrecio(formData.origen, formData.destino, formData.desdeMonteros);
+    const precio = formData.idaVuelta ? precioBase * 1.8 : precioBase;
+
+    // Validaciones básicas
     if (!formData.origen || !formData.destino || !formData.horario) {
       Swal.fire({
         title: 'Error',
@@ -187,16 +371,23 @@ export const BodyHome = () => {
       return;
     }
 
-    // Mostrar modal con información del viaje
+    // Calcular duración del viaje
+    const horarioSeleccionado = horariosDisponibles.find(h => h.salida === formData.horario);
+    const duracion = horarioSeleccionado
+      ? calcularDuracion(horarioSeleccionado.salida, horarioSeleccionado.llegada)
+      : 'No disponible';
+
+    // Mostrar resumen del viaje
     Swal.fire({
       title: 'Información del Viaje',
       html: `
         <div class="viaje-info">
           <p><strong>Ruta:</strong> ${formData.origen} ➔ ${formData.destino}</p>
-          <p><strong>Horario:</strong> ${formData.horario}</p>
-          <p><strong>Duración:</strong> ${calcularDuracion(formData.origen, formData.destino)}</p>
-          <p><strong>Precio:</strong> $${calcularPrecio(formData.origen, formData.destino)}</p>
-          ${formData.idaVuelta ? '<p><strong>Tipo:</strong> Ida y vuelta</p>' : ''}
+          <p><strong>Horario de salida:</strong> ${formData.horario}</p>
+          <p><strong>Llegada estimada:</strong> ${horarioSeleccionado?.llegada || 'No disponible'}</p>
+          <p><strong>Duración:</strong> ${duracion}</p>
+          <p><strong>Precio:</strong> $${precio.toFixed(2)}</p>
+          ${formData.idaVuelta ? '<p><strong>Tipo:</strong> Ida y vuelta (1.8x precio base)</p>' : ''}
         </div>
       `,
       confirmButtonColor: '#3085d6',
@@ -204,31 +395,28 @@ export const BodyHome = () => {
     });
   };
 
-  const calcularDuracion = (origen, destino) => {
-    // Lógica simulada de duración
-    const distancias = {
-      'Santa Lucía-San Juan': '2 horas',
-      'Santa Lucía-Mendoza': '4 horas',
-      'Santa Lucía-Buenos Aires': '12 horas',
-      'Santa Lucía-Córdoba': '8 horas'
-    };
-    return distancias[`${origen}-${destino}`] || '3 horas';
+  // Función para calcular la duración del viaje
+  const calcularDuracion = (salida, llegada) => {
+    const [hSalida, mSalida] = salida.split(':').map(Number);
+    const [hLlegada, mLlegada] = llegada.split(':').map(Number);
+
+    const minutosSalida = hSalida * 60 + mSalida;
+    const minutosLlegada = hLlegada * 60 + mLlegada;
+
+    let diferencia = minutosLlegada - minutosSalida;
+
+    // Manejar casos donde la llegada es al día siguiente
+    if (diferencia < 0) {
+      diferencia += 24 * 60;
+    }
+
+    const horas = Math.floor(diferencia / 60);
+    const minutos = diferencia % 60;
+
+    return `${horas}h ${minutos}m`;
   };
 
-  const calcularPrecio = (origen, destino) => {
-    // Lógica simulada de precios
-    const precios = {
-      'Santa Lucía-San Juan': 1200,
-      'Santa Lucía-Mendoza': 2500,
-      'Santa Lucía-Buenos Aires': 6000,
-      'Santa Lucía-Córdoba': 4500
-    };
-    return formData.idaVuelta 
-      ? (precios[`${origen}-${destino}`] * 1.8 || 3000) 
-      : (precios[`${origen}-${destino}`] || 2000);
-  };
 
-  
   return (
     <>
 
@@ -254,91 +442,118 @@ export const BodyHome = () => {
       </div>
       <hr />
 
-
       <div className="quienes-somos-container">
-      <h1>¿Quienes somos?</h1>
-      <p>
-        En Transporte Santa Lucía contamos con una sólida trayectoria que comenzó en 1952, 
-        cuando Don Vicente Tripoloni tuvo la visión de conectar personas, caminos y pueblos. 
-        Desde entonces, con esfuerzo y compromiso familiar, fuimos creciendo para ofrecer 
-        un servicio de transporte urbano confiable, seguro y cercano.
-      </p>
-      <p>
-        Hoy, con 12 unidades activas y el mismo espíritu de entrega de nuestros inicios, 
-        seguimos acompañando a generaciones de pasajeros en su día a día, fortaleciendo 
-        los lazos de nuestra comunidad y manteniendo vivo el legado de nuestros fundadores.
-      </p>
+        <h2>¿A DONDE VAS?</h2>
 
-      <div className="separador"></div>
+        <form onSubmit={handleSubmit} className="viaje-form">
+          {/* Sección de selección de ruta */}
+          <div className="route-selection">
 
-      <h2>¿A DONDE VAS?</h2>
-      
-      <form onSubmit={handleSubmit} className="viaje-form">
-        <div className="form-row">
-          <div className="form-group">
-            <label>Origen</label>
-            <input
-              type="text"
-              name="origen"
-              value={formData.origen}
-              onChange={handleChange}
-              onClick={() => setShowOptions(!showOptions)}
-              placeholder="Seleccione origen"
-              required
-            />
-          </div>
-          
-          <div className="form-group">
-            <label>Destino</label>
-            <input
-              type="text"
-              name="destino"
-              value={formData.destino}
-              onChange={handleChange}
-              onClick={() => setShowOptions(!showOptions)}
-              placeholder="Seleccione destino"
-              required
-            />
-          </div>
-        </div>
 
-        {showOptions && (
-          <div className="opciones-desplegable">
-            <div className="horario-group p-1">
-              <label name="etiquetahorario">Horario de Salida</label>
-              <select
-                name="horario"
-                value={formData.horario}
-                onChange={handleChange}
-                required
-              >
-                <option value="">Seleccione horario</option>
-                {horarios.map((hora, index) => (
-                  <option key={index} value={hora}>{hora}</option>
-                ))}
-              </select>
-            </div>
-
-            <div className="checkbox-group">
-              <label>
-                <input
-                  type="checkbox"
-                  name="idaVuelta"
-                  checked={formData.idaVuelta}
+            <div className="location-selectors">
+              <div className="form-group origin-selector">
+                <label className="form-label">Origen</label>
+                <select
+                  name="origen"
+                  value={formData.origen}
                   onChange={handleChange}
-                />
-                Ida y vuelta
-              </label>
+                  required
+                  className="form-select"
+                >
+                  <option value="">Seleccione origen</option>
+                  {formData.desdeMonteros ? (
+                    <option value="MONTEROS">MONTEROS</option>
+                  ) : (
+                    paradas.map((parada, index) => (
+                      <option key={index} value={parada}>{parada}</option>
+                    ))
+                  )}
+                </select>
+              </div>
+
+              <div className="form-group destination-selector">
+                <label className="form-label">Destino</label>
+                <select
+                  name="destino"
+                  value={formData.destino}
+                  onChange={handleChange}
+                  required
+                  disabled={!formData.origen && !formData.desdeMonteros}
+                  className="form-select"
+                >
+                  <option value="">Seleccione destino</option>
+                  {destinosDisponibles.map((parada, index) => (
+                    <option key={index} value={parada}>{parada}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+            <div className="route-options">
+              <div className="route-type-toggle">
+                <label className="toggle-label">
+                  <input
+                    type="checkbox"
+                    name="desdeMonteros"
+                    checked={formData.desdeMonteros}
+                    onChange={handleChange}
+                    className="toggle-input"
+                  />
+                  <span className="toggle-slider"></span>
+                  <span className="toggle-text">Recorrido a partir de Monteros</span>
+                </label>
+              </div>
             </div>
           </div>
-        )}
 
-        <button type="submit" className="ingresar-btn">
-          INGRESAR
-        </button>
-      </form>
-    </div>
-  
+          {/* Sección de horarios y opciones */}
+          {formData.origen && formData.destino && (
+            <div className="schedule-options">
+              <div className="time-selection">
+                <label className="time-label">Horarios disponibles</label>
+                <select
+                  name="horario"
+                  value={formData.horario}
+                  onChange={handleChange}
+                  required
+                  className="time-select"
+                >
+                  <option value="">Seleccione un horario</option>
+                  {horariosDisponibles.map((horario, index) => (
+                    <option key={index} value={horario.salida}>
+                      Salida: {horario.salida} - Llegada: {horario.llegada}
+                    </option>
+                  ))}
+                </select>
+                <div className="schedule-count">
+                  {horariosDisponibles.length} horarios disponibles
+                </div>
+              </div>
+
+              <div className="trip-options">
+                <label className="option-label">
+                  <input
+                    type="checkbox"
+                    name="idaVuelta"
+                    checked={formData.idaVuelta}
+                    onChange={handleChange}
+                    className="option-checkbox"
+                  />
+                  <span className="option-text">Ida y vuelta (1.8x precio)</span>
+                </label>
+              </div>
+            </div>
+          )}
+
+          {/* Botón de envío */}
+          <div className="submit-section">
+            <button type="submit" className="submit-btn">
+              CONSULTAR VIAJE
+            </button>
+          </div>
+        </form>
+      </div>
+
+
 
 
 
@@ -419,10 +634,10 @@ export const BodyHome = () => {
       <div className="container-fluid">
         <div className="row">
           <div className="col-12 col-lg-6 espacio-mBlanco">
-            <img src={hamburguesaNosotros} className='img-fluid rounded shadow-sm my-img' alt="imagen de colectivo" />
+            <img src={transporteRapido} className='img-fluid rounded shadow-sm my-img' alt="imagen de colectivo" />
           </div>
           <div className="col-12 col-lg-6 d-flex flex-column justify-content-center align-items-start">
-            <div className='d-flex flex-column align-items-start' >
+            <div className='d-flex flex-column align-items-start centrarTexto'>
               <h1 className='display-2 fw-bold d-flex flex-column align-items-center m-2'>Transporte Rápido</h1>
               <h1 className='text-center display-5 m-2'>Conectando ciudades desde 1985</h1>
               <h5 className='text-xl m-2'>Somos líderes en transporte interurbano con más de 35 años de experiencia. Nuestro compromiso es ofrecer viajes seguros, puntuales y confortables con la mejor relación calidad-precio del mercado.</h5>
@@ -445,7 +660,7 @@ export const BodyHome = () => {
           <div className="row">
 
             <div className="col-12 col-md-6 ">
-              <img src="https://media.traveler.es/photos/6221e27bd380db76a3a865f7/master/w_1600%2Cc_limit/275105567_3784919721633284_4999341144694882386_n.jpg" alt="hamburgueseria" className='img-fluid mb-3 rounded shadow-lg ' />
+              <img src={imgMonteros} alt="hamburgueseria" className='img-fluid mb-3 rounded shadow-lg' />
             </div>
             <div className="col-12 col-md-6 d-flex align-items-center">
               <div className='mb-3'>
