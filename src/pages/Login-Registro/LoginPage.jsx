@@ -61,6 +61,7 @@ function LoginPage() {
     return (
         <div className='contenedorTodo'>
             <Header />
+            
             <div className='contenedor1'>
                 <div>
                     {Array.isArray(signInErrors) ? (

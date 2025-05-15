@@ -1,6 +1,5 @@
 body {
   
-  padding-top: 106px !important;
   background-image: url('/src/assets/images/fondos/burguer.jpg') !important;
 }
 
@@ -14,7 +13,10 @@ body::before {
 	background-color: #004aad; /* Negro al 50% de opacidad = reduce brillo */
 	z-index: -1;
 }
+
+
 .contenedor1 {
+  margin-top: 10vw !important;
   background-color: rgb(27, 27, 27); /* Negro se mantiene igual */
   width: 20%;
   display: flex;
