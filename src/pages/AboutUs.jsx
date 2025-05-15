@@ -21,82 +21,58 @@ export const AboutUs = () => {
         <>
             <Header />
             <div className="container-aboutus">
-                <h1 className='title-nosotros'>Nuestro equipo</h1>
+                <h1 className='title-nosotros'>Nuestro servicios</h1>
                 <div className="container-cardsA">
                     <div className="cardA">
                         <div className="cover-card">
-                            <img src={imgPaulo} alt="Paulo, integrante del grupo" className='imgAbout' />
+                            <img src={imgPaulo} alt="" className='imgAbout' />
                         </div>
-                        <h2>Paulo Srur</h2>
-                        <p className="p-espacio1">Tengo 19 años, soy estudiante de licenciatura en informática en la UNT, un apasionado de la tecnología y la programación desde chico, nunca dejaré de aprender y uno de mis objetivos es convertir esta pasión en una carrera sólida. Full stack MERN en progreso. Se inglés y un poco de portugués. Mi hobbie es el fútbol y aguante Messi. </p>
-                        <div className="wrapper">
-                            <ul className="iconos">
-                                <li className="github"><a href="https://www.github.com" target="_blank"><i className="fa fa-github fa-2x" aria-hidden="true"></i></a></li>
-                                <li className="instagram"><a href="https://www.instagram.com" target="_blank"><i className="fa fa-instagram fa-2x" aria-hidden="true"></i></a> </li>
-                                <li className="linkedin"><a href="https://www.linkedin.com" target="_blank"><i className="fa fa-linkedin fa-2x" aria-hidden="true"></i></a> </li>
-                            </ul>
-                        </div>
+                        <h2>Viajes Interurbanos</h2>
+                        <p className="p-espacio1">Conectamos ciudades con flotas modernas y seguras. Ofrecemos salidas programadas durante todo el día, permitiendo elegir la opción más conveniente según tu agenda. Nuestra red de rutas cubre localidades estratégicas como Acheral, Santa Lucía, Maldonado y más. Ideal para quienes necesitan traslados confiables entre poblaciones. </p>
+                     
                         <hr />
                         <div className="footer-card">
-                            <h3 className="user-name"> Rolling Code</h3>
-                            <i>45i</i>
+                        <h3 className="user-name"> TRSL SRL</h3>
+                            <i>2025</i>
                         </div>
                     </div>
                     <div className="cardA">
                         <div className="cover-card">
                             <img src={imgAugusto} alt="Augusto, integrante del grupo"  className='imgAbout'/>
                         </div>
-                        <h2>Augusto Romera</h2>
-                        <p className="p-espacio2">Tengo 24 años. Soy estudiante de ingeniería en sistemas de información con un año completo de carrera. Anteriormente, adquirí valiosa experiencia con 500 horas de prácticas reales en desarrollo backend utilizando Java y Spring Boot. Mi experiencia en Rolling Code ha enriquecido mi conjunto de habilidades tecnológicas. </p>
-                        <div className="wrapper">
-                            <ul className="iconos">
-                                <li className="github"><a href="https://www.github.com" target="_blank"><i className="fa fa-github fa-2x" aria-hidden="true"></i></a></li>
-                                <li className="instagram"><a href="https://www.instagram.com/augusto.romera/" target="_blank"><i className="fa fa-instagram fa-2x" aria-hidden="true"></i></a> </li>
-                                <li className="linkedin"><a href="https://www.linkedin.com" target="_blank"><i className="fa fa-linkedin fa-2x" aria-hidden="true"></i></a> </li>
-                            </ul>
-                        </div>
+                        <h2>Pasajes Corporativos</h2>
+                        <p className="p-espacio2">Sistema digital pensado especialmente para empresas, instituciones educativas y organizaciones que requieren movilidad regular y segura. Ofrecemos planes personalizados con descuentos por volumen, gestión de reservas online, cancelación flexible y seguimiento en tiempo real del estado del viaje. Facilita el traslado de empleados, estudiantes o grupos bajo un mismo plan. </p>
+                       
                         <hr />
                         <div className="footer-card">
-                            <h3 className="user-name"> Rolling Code</h3>
-                            <i>45i</i>
+                        <h3 className="user-name"> TRSL SRL</h3>
+                            <i>2025</i>
                         </div>
                     </div>
                     <div className="cardA">
                         <div className="cover-card">
                             <img src={imgNico} alt="Nicolas, integrante del grupo"  className='imgAbout'/>
                         </div>
-                        <h2>Nicolas Chia</h2>
-                        <p className="p-espacio3">Tengo 28 años, soy Técnico Mecatrónico y estudio Ing Civil en la UTN. También estoy desarrollando habilidades para ser un Full Stack Developer en Rolling Code. Soy apasionado por el fútbol y compartir con amigos.</p>
-                        <div className="wrapper">
-                            <ul className="iconos">
-                                <li className="github"><a href="https://www.github.com" target="_blank"><i className="fa fa-github fa-2x" aria-hidden="true"></i></a></li>
-                                <li className="instagram"><a href="https://www.instagram.com" target="_blank"><i className="fa fa-instagram fa-2x" aria-hidden="true"></i></a> </li>
-                                <li className="linkedin"><a href="https://www.linkedin.com" target="_blank"><i className="fa fa-linkedin fa-2x" aria-hidden="true"></i></a> </li>
-                            </ul>
-                        </div>
+                        <h2>Viajes Especiales a Pedido</h2>
+                        <p className="p-espacio3">Diseñamos trayectos exclusivos según tus necesidades: eventos privados, excursiones grupales, transporte hacia zonas no convencionales o itinerarios personalizados. Ideal para empresas, escuelas, iglesias o cualquier grupo que necesite movilidad fuera de las rutas tradicionales. Consulta disponibilidad y cotiza tu recorrido único.</p>
+                      
                         <hr />
                         <div className="footer-card">
-                            <h3 className="user-name"> Rolling Code</h3>
-                            <i>45i</i>
+                        <h3 className="user-name"> TRSL SRL</h3>
+                            <i>2025</i>
                         </div>
                     </div>
                     <div className="cardA">
                         <div className="cover-card">
                             <img src={imgSantiago} alt="Santiago, integrante del grupo." className='imgAbout' />
                         </div>
-                        <h2>Santiago Gonzalez</h2>
-                        <p className="p-espacio5">Tengo 19 años, soy estudiante del Colegio Lorenzo Massa, programador Full stack, con un nivel medio-avanzado de ingles. En mi tiempo libre me gusta ver series y ir al gimnasio. y Espero poder seguir desarrollando mis habilidades como programador constantemente. </p>
-                        <div className="wrapper">
-                            <ul className="iconos">
-                                <li className="github"><a href="https://www.github.com" target="_blank"><i className="fa fa-github fa-2x" aria-hidden="true"></i></a></li>
-                                <li className="instagram"><a href="https://www.instagram.com" target="_blank"><i className="fa fa-instagram fa-2x" aria-hidden="true"></i></a> </li>
-                                <li className="linkedin"><a href="https://www.linkedin.com" target="_blank"><i className="fa fa-linkedin fa-2x" aria-hidden="true"></i></a> </li>
-                            </ul>
-                        </div>
+                        <h2>Boleto Estudiantil y Beneficios Sociales</h2>
+                        <p className="p-espacio5">Programa especial diseñado para estudiantes, jubilados y personas pertenecientes a sectores vulnerables. A través del registro en nuestra plataforma, estos grupos acceden a descuentos significativos en pasajes urbanos e interurbanos. Este servicio refuerza nuestro compromiso social, facilitando el acceso al transporte público sin afectar el bolsillo de quienes más lo necesitan. </p>
+                        
                         <hr />
                         <div className="footer-card">
-                            <h3 className="user-name"> Rolling Code</h3>
-                            <i>45i</i>
+                            <h3 className="user-name"> TRSL SRL</h3>
+                            <i>2025</i>
                         </div>
                     </div>
                 </div>

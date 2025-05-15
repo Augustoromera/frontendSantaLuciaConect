@@ -339,14 +339,14 @@ export const ContactScreen = () => {
             </div>
           </div>
           <iframe
-            className="w-75 "
-            src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d14240.408879082126!2d-65.2072018!3d-26.8367009!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94225d3ad7f30f1d%3A0xf8606cd659b8e3e4!2sRollingCode%20School!5e0!3m2!1ses-419!2sar!4v1690391123408!5m2!1ses-419!2sar"
-            width="1000"
-            height="450"
-            allowFullScreen=""
-            loading="lazy"
-            referrerPolicy="no-referrer-when-downgrade"
-          ></iframe>
+  className="w-75"
+  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d401.5182812300712!2d-65.49917265342305!3d-27.170849417938307!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x9423cb0036e45713%3A0xe2024072b0caf79d!2sEmpresa%20Santa%20Luc%C3%ADa!5e1!3m2!1ses-419!2sar!4v1747335748994!5m2!1ses-419!2sar"
+  width="1000"
+  height="450"
+  allowFullScreen=""
+  loading="lazy"
+  referrerPolicy="no-referrer-when-downgrade"
+></iframe>
         </div>
       </div>
       <Footer />
