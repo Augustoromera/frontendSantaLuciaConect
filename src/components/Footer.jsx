@@ -1,6 +1,6 @@
 import React from 'react'
 import "../pages/styles/footer.css"
-import logofooter from "../assets/images/logo/logotipo.png"
+import logofooter from "../assets/images/logo/logofooter.png"
 export const Footer = () => {
     const currentYear = new Date().getFullYear();
     return (
@@ -9,7 +9,7 @@ export const Footer = () => {
             <div className="box">
                 <figure>
                     <a href="#">
-                        <img src={logofooter} alt="Logo Transporte Rápido" />
+                        <img src={logofooter} alt="Logo Transporte Rápido" style={{ height: "100px", width: "100px" }}/>
                     </a>
                 </figure>
             </div>
@@ -21,7 +21,7 @@ export const Footer = () => {
             </div>
             <div className="box">
                 <h2>SÍGUENOS</h2>
-                <div className="red-social">
+                <div className="red-social logosRedSocial">
                     <a href="https://www.facebook.com/" className="fa fa-facebook" target='_blank'></a>
                     <a href="https://www.instagram.com/" className="fa fa-instagram" target='_blank'></a>
                     <a href="https://twitter.com/?lang=es" className="fa fa-twitter" target='_blank'></a>

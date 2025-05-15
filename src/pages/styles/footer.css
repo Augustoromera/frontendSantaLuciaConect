@@ -60,6 +60,10 @@
     transition: all 300ms ease;
 }
 
+.logosRedSocial {
+    margin-left: 5rem;
+}
+
 .pie-pagina .grupo-1 .red-social a:hover {
     background-color: #ffc107; 
     color:  #000; 
