@@ -40,7 +40,7 @@ export const AboutUs = () => {
                         <div className="cover-card">
                             <img src={imgAugusto} alt="Augusto, integrante del grupo"  className='imgAbout'/>
                         </div>
-                        <h2>Pasajes Corporativos</h2>
+                        <h2>Abonos Mensuales</h2>
                         <p className="p-espacio2">Sistema digital pensado especialmente para empresas, instituciones educativas y organizaciones que requieren movilidad regular y segura. Ofrecemos planes personalizados con descuentos por volumen, gestión de reservas online, cancelación flexible y seguimiento en tiempo real del estado del viaje. Facilita el traslado de empleados, estudiantes o grupos bajo un mismo plan. </p>
                        
                         <hr />
