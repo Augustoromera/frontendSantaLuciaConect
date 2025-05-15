@@ -30,9 +30,9 @@ export const BodyHome = () => {
   const textButtonBanner = window.innerWidth <= 720 ? "COMPRAR" : "RESERVAR AHORA";
   const bannerImages = [
     Bannerrapiburguerjpeg,
-    // bannerPsh1,
-    // bannerPsh2,
-    // bannerPsh3,
+    bannerPsh1,
+    bannerPsh2,
+    bannerPsh3,
   ];
   const bannerImagesMini = [
     bannerMobile,
@@ -137,6 +137,98 @@ export const BodyHome = () => {
   useEffect(() => {
     cargarProductoDB()
   }, [])
+
+  const [formData, setFormData] = useState({
+    origen: '',
+    destino: '',
+    horario: '',
+    idaVuelta: false
+  });
+
+  const [showOptions, setShowOptions] = useState(false);
+  const [ciudades, setCiudades] = useState([
+    'Santa Lucía', 'San Juan', 'Mendoza', 'Buenos Aires', 'Córdoba'
+  ]);
+
+  const horarios = [
+    '08:00 AM', '10:00 AM', '12:00 PM', '02:00 PM', '04:00 PM', '06:00 PM', '08:00 PM'
+  ];
+
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: type === 'checkbox' ? checked : value
+    }));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    
+    if (!formData.origen || !formData.destino || !formData.horario) {
+      Swal.fire({
+        title: 'Error',
+        text: 'Por favor complete todos los campos obligatorios',
+        icon: 'error',
+        confirmButtonColor: '#3085d6',
+        confirmButtonText: 'Entendido'
+      });
+      return;
+    }
+
+    if (formData.origen === formData.destino) {
+      Swal.fire({
+        title: 'Error',
+        text: 'El origen y destino no pueden ser iguales',
+        icon: 'error',
+        confirmButtonColor: '#3085d6',
+        confirmButtonText: 'Entendido'
+      });
+      return;
+    }
+
+    // Mostrar modal con información del viaje
+    Swal.fire({
+      title: 'Información del Viaje',
+      html: `
+        <div class="viaje-info">
+          <p><strong>Ruta:</strong> ${formData.origen} ➔ ${formData.destino}</p>
+          <p><strong>Horario:</strong> ${formData.horario}</p>
+          <p><strong>Duración:</strong> ${calcularDuracion(formData.origen, formData.destino)}</p>
+          <p><strong>Precio:</strong> $${calcularPrecio(formData.origen, formData.destino)}</p>
+          ${formData.idaVuelta ? '<p><strong>Tipo:</strong> Ida y vuelta</p>' : ''}
+        </div>
+      `,
+      confirmButtonColor: '#3085d6',
+      confirmButtonText: 'Confirmar'
+    });
+  };
+
+  const calcularDuracion = (origen, destino) => {
+    // Lógica simulada de duración
+    const distancias = {
+      'Santa Lucía-San Juan': '2 horas',
+      'Santa Lucía-Mendoza': '4 horas',
+      'Santa Lucía-Buenos Aires': '12 horas',
+      'Santa Lucía-Córdoba': '8 horas'
+    };
+    return distancias[`${origen}-${destino}`] || '3 horas';
+  };
+
+  const calcularPrecio = (origen, destino) => {
+    // Lógica simulada de precios
+    const precios = {
+      'Santa Lucía-San Juan': 1200,
+      'Santa Lucía-Mendoza': 2500,
+      'Santa Lucía-Buenos Aires': 6000,
+      'Santa Lucía-Córdoba': 4500
+    };
+    return formData.idaVuelta 
+      ? (precios[`${origen}-${destino}`] * 1.8 || 3000) 
+      : (precios[`${origen}-${destino}`] || 2000);
+  };
+
+  
   return (
     <>
 
@@ -161,6 +253,97 @@ export const BodyHome = () => {
         </button>
       </div>
       <hr />
+
+
+      <div className="quienes-somos-container">
+      <h1>¿Quienes somos?</h1>
+      <p>
+        En Transporte Santa Lucía contamos con una sólida trayectoria que comenzó en 1952, 
+        cuando Don Vicente Tripoloni tuvo la visión de conectar personas, caminos y pueblos. 
+        Desde entonces, con esfuerzo y compromiso familiar, fuimos creciendo para ofrecer 
+        un servicio de transporte urbano confiable, seguro y cercano.
+      </p>
+      <p>
+        Hoy, con 12 unidades activas y el mismo espíritu de entrega de nuestros inicios, 
+        seguimos acompañando a generaciones de pasajeros en su día a día, fortaleciendo 
+        los lazos de nuestra comunidad y manteniendo vivo el legado de nuestros fundadores.
+      </p>
+
+      <div className="separador"></div>
+
+      <h2>¿A DONDE VAS?</h2>
+      
+      <form onSubmit={handleSubmit} className="viaje-form">
+        <div className="form-row">
+          <div className="form-group">
+            <label>Origen</label>
+            <input
+              type="text"
+              name="origen"
+              value={formData.origen}
+              onChange={handleChange}
+              onClick={() => setShowOptions(!showOptions)}
+              placeholder="Seleccione origen"
+              required
+            />
+          </div>
+          
+          <div className="form-group">
+            <label>Destino</label>
+            <input
+              type="text"
+              name="destino"
+              value={formData.destino}
+              onChange={handleChange}
+              onClick={() => setShowOptions(!showOptions)}
+              placeholder="Seleccione destino"
+              required
+            />
+          </div>
+        </div>
+
+        {showOptions && (
+          <div className="opciones-desplegable">
+            <div className="horario-group p-1">
+              <label name="etiquetahorario">Horario de Salida</label>
+              <select
+                name="horario"
+                value={formData.horario}
+                onChange={handleChange}
+                required
+              >
+                <option value="">Seleccione horario</option>
+                {horarios.map((hora, index) => (
+                  <option key={index} value={hora}>{hora}</option>
+                ))}
+              </select>
+            </div>
+
+            <div className="checkbox-group">
+              <label>
+                <input
+                  type="checkbox"
+                  name="idaVuelta"
+                  checked={formData.idaVuelta}
+                  onChange={handleChange}
+                />
+                Ida y vuelta
+              </label>
+            </div>
+          </div>
+        )}
+
+        <button type="submit" className="ingresar-btn">
+          INGRESAR
+        </button>
+      </form>
+    </div>
+  
+
+
+
+
+
       {/* ----------------menús---------------- */}
       {/* <div className="container-fluid">
         <h3 className="text-center text-uppercase poppins-regular font-weight-bold display-5">

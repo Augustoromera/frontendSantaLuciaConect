@@ -10,6 +10,7 @@ import { AdminScreen } from '../pages/admin/AdminScreen'
 import { ContactScreen } from '../pages/ContactScreen'
 import { AboutUs } from '../pages/AboutUs'
 import AppPedidos from "../AppPedidos"
+import { PanelDeHorarios } from "../pages/PanelDeHorarios";
 
 function AppRouter() {
   return (
@@ -30,6 +31,7 @@ function AppLR() {
         <Route path="/" element={<HomeScreen />} />
         <Route path="/contact" element={<ContactScreen />} />
         <Route path='/aboutus' element={<AboutUs />} />
+        <Route path='/paneldehorarios' element={<PanelDeHorarios />} />
         <Route path="/pedidos" element={<AppPedidos />} />
 
         <Route element={<ProtectedRoute />}>
