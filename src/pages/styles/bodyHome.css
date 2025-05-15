@@ -571,3 +571,13 @@ label[name="etiquetahorario"] {
 		font-size: 1.5rem;
 	}
 }
+
+.centrarTexto {
+    padding-left: 0rem;
+  }
+
+@media (min-width: 992px) { /* Breakpoint 'lg' de Bootstrap */
+  .centrarTexto {
+    padding-left: 12rem;
+  }
+}

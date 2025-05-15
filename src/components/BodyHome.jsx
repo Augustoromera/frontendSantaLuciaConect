@@ -17,7 +17,9 @@ import bannerMobile from '../assets/banner/bannerMobile.jpg';
 import bannerMobile1 from '../assets/banner/bannerMobile1.jpg';
 import bannerMobile2 from '../assets/banner/bannerMobile2.jpg';
 import bannerMobile3 from '../assets/banner/bannerMobile3.jpeg';
-import hamburguesaNosotros from '../assets/images/nosotros/hamburguesa-nosotros-2.jpg';
+import transporteRapido from '../assets/images/nosotros/transporteRapido.png';
+import imgMonteros from '../assets/images/nosotros/monterosHD.png'
+import { height } from '@fortawesome/free-brands-svg-icons/fa42Group';
 
 export const BodyHome = () => {
   const navigate = useNavigate();
@@ -419,10 +421,10 @@ export const BodyHome = () => {
       <div className="container-fluid">
         <div className="row">
           <div className="col-12 col-lg-6 espacio-mBlanco">
-            <img src={hamburguesaNosotros} className='img-fluid rounded shadow-sm my-img' alt="imagen de colectivo" />
+            <img src={transporteRapido} className='img-fluid rounded shadow-sm my-img' alt="imagen de colectivo" />
           </div>
           <div className="col-12 col-lg-6 d-flex flex-column justify-content-center align-items-start">
-            <div className='d-flex flex-column align-items-start' >
+            <div className='d-flex flex-column align-items-start centrarTexto'>
               <h1 className='display-2 fw-bold d-flex flex-column align-items-center m-2'>Transporte Rápido</h1>
               <h1 className='text-center display-5 m-2'>Conectando ciudades desde 1985</h1>
               <h5 className='text-xl m-2'>Somos líderes en transporte interurbano con más de 35 años de experiencia. Nuestro compromiso es ofrecer viajes seguros, puntuales y confortables con la mejor relación calidad-precio del mercado.</h5>
@@ -445,7 +447,7 @@ export const BodyHome = () => {
           <div className="row">
 
             <div className="col-12 col-md-6 ">
-              <img src="https://media.traveler.es/photos/6221e27bd380db76a3a865f7/master/w_1600%2Cc_limit/275105567_3784919721633284_4999341144694882386_n.jpg" alt="hamburgueseria" className='img-fluid mb-3 rounded shadow-lg ' />
+              <img src={imgMonteros} alt="hamburgueseria" className='img-fluid mb-3 rounded shadow-lg' />
             </div>
             <div className="col-12 col-md-6 d-flex align-items-center">
               <div className='mb-3'>
