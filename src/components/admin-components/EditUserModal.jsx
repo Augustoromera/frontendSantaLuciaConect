@@ -15,10 +15,12 @@ const EditUserModal = ({ isOpen, setIsOpen, handleChangeFormUserEditar, handleSu
     return (
         <Modal isOpen={isOpen} ariaHideApp={false} style={customStyles} className="custom-modal" onRequestClose={() => setIsOpen(false)}>
             <div className="modal-content">
+           
                 <div className="modal-header">
                     <h2 className="modal-title">Editar Usuario</h2>
-                    <button type="button" className="btn-close m-3 bg-warning p-1" onClick={() => setIsOpen(false)}></button>
-                </div>
+                    <button type="button" className="btn-close m-3 bg-info p-1" onClick={() => setIsOpen(false)}></button>
+               
+                    </div>
                 <div className="modal-body">
                     <Form onSubmit={handleSubmitFormUserEditar}>
                         <Form.Group className="mb-3 ctm-form-group" controlId="formBasicName">

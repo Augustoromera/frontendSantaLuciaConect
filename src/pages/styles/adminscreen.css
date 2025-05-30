@@ -1,51 +1,58 @@
+/* Estilos generales del formulario */
 form {
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-bottom: 20px;
+    margin-bottom: 1rem;
 }
 
 .form input {
-    padding: 10px;
-    margin-bottom: 10px;
-    width: 300px;
+    padding: 0.5rem 0.75rem;
+    margin-bottom: 0.75rem;
+    width: 280px;
+    font-size: 0.9rem;
 }
 
+/* Botones personalizados */
 form .custom-button {
     background-color: black;
-    border: 1px #ffc107 solid !important;
-    margin: 2px;
+    border: 1px solid #004aad;
+    margin: 0.125rem;
+    padding: 0.5rem 1rem;
     color: white;
-    border: none;
-    transition:
-        background-color 0.2s,
-        color 0.2s;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
 }
 
 form .custom-button:active,
 form .custom-button:hover {
-    margin: 1px !important;
-    background-color: #ffc107 !important;
-    color: #fff !important;
-    text-shadow: 0 0 5px #000;
-    border: 2px solid black !important;
+    margin: 0.0625rem;
+    background-color: #004aad;
+    color: #fff;
+    text-shadow: 0 0 2px #000;
+    border: 1px solid black;
 }
+
+/* Imágenes */
 .custom-imagen {
     display: block;
-    width: 60px;
-    height: 60px;
+    width: 50px;
+    height: 50px;
     object-fit: cover;
-    border-radius: 8px;
+    border-radius: 6px;
     margin: 0 auto;
 }
+
+/* Tablas */
 .table-container {
-    margin: 50px;
+    margin: 1.5rem;
     margin-top: 0;
     margin-bottom: 0;
 }
 
 .custom-table {
     width: 100%;
+    font-size: 0.9rem;
 }
 
 .table-responsive {
@@ -54,48 +61,130 @@ form .custom-button:hover {
 
 .custom-table th,
 .custom-table td {
-    padding: 10px;
+    padding: 0.75rem;
     text-align: center;
 }
 
 .custom-table th {
     background-color: #343a40;
     color: white;
+    font-size: 0.95rem;
 }
 
 .custom-table tbody tr:nth-child(even) {
-    background-color: #f2f2f2;
+    background-color: #f8f9fa;
 }
-.ctm-form-group {
-    width: 85%;
-}
-.privacy-message {
-    padding: 10px;
 
+/* Grupos de formulario */
+.ctm-form-group {
+    width: 90%;
+    margin-bottom: 1rem;
+}
+
+/* Mensaje de privacidad */
+.privacy-message {
+    padding: 0.75rem;
     background-color: #f7f7f7;
-    border-radius: 8px;
+    border-radius: 6px;
     text-align: center;
     color: #777;
+    font-size: 0.85rem;
+    margin: 0.5rem 0;
 }
 
+/* Modal personalizado */
 .custom-modal {
-    margin-top: 10%;
+    margin-top: 5%;
     display: flex;
     align-items: center;
     justify-content: center;
+    position: relative;
 }
+
 .modal-content {
     display: flex;
-    width: 70%;
-    max-width: 600px;
-    border: 2px solid yellow;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
-    padding: 20px;
+    flex-direction: column;
+    width: 85%;
+    max-width: 500px;
+    border: 1px solid #004aad;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    padding: 1.25rem;
     border-radius: 8px;
     background: black;
+    position: relative;
 }
+
+/* Botón de cerrar (X) */
+.close-modal {
+    position: absolute;
+    top: 0.75rem;
+    right: 1rem;
+    color: #aaa;
+    font-size: 1.5rem;
+    font-weight: bold;
+    line-height: 1;
+    cursor: pointer;
+    transition: color 0.2s ease;
+    background: none;
+    border: none;
+    padding: 0.25rem;
+}
+
+.close-modal:hover {
+    color: #004aad;
+}
+
+/* Ajustes específicos para el modal */
+.modal-content {
+    margin-top: 3rem;
+    padding-top: 0;
+}
+
+.modal-header {
+    justify-content: space-between !important;
+}
+.modal-header h2 {
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+}
+
+.modal-body {
+    padding: 0.5rem 0;
+}
+
+/* Responsive */
+
 @media (max-width: 1080px) {
     .custom-modal {
-        margin-top: 20%;
+        margin-top: 10%;
+    }
+    
+    .modal-content {
+        width: 90%;
+        padding: 1rem;
+    }
+    
+    .form input {
+        width: 100%;
+    }
+    
+    .custom-table th,
+    .custom-table td {
+        padding: 0.5rem;
+        font-size: 0.85rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .custom-modal {
+        margin-top: 15%;
+    }
+    
+    .modal-content {
+        width: 95%;
+    }
+    
+    .ctm-form-group {
+        width: 100%;
     }
 }
