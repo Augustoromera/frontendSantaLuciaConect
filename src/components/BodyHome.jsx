@@ -29,7 +29,7 @@ export const BodyHome = () => {
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 720);
   const textTextBanner = window.innerWidth <= 720 ? "Tu viaje ideal a un clic de distancia!"
     : "Tu comodidad es nuestra prioridad. Viaja con confianza";
-  const textButtonBanner = window.innerWidth <= 720 ? "COMPRAR" : "RESERVAR AHORA";
+  const textButtonBanner = window.innerWidth <= 720 ? "VER MAS" : "SABER MAS";
   const bannerImages = [
     Bannerrapiburguerjpeg,
     bannerPsh1,
@@ -80,7 +80,7 @@ export const BodyHome = () => {
   };
 
   const handleSolicitarPedido = () => {
-    navigate("/pedidos");
+    navigate("/aboutus");
   };
   function iniciarSesionRedirect() {
     const alert = Swal.fire({

@@ -101,7 +101,7 @@ function Header({ navBarClass }) {
                 <Nav.Link as={Link} to="/admin" >
                   Administración
                 </Nav.Link>
-                <Nav.Link as={Link} to="/pedidos" >Pedidos</Nav.Link>
+                <Nav.Link as={Link} to="/paneldehorarios" >Panel de Horarios</Nav.Link>
                 <Nav.Link as={Link} to="/aboutus" >Sobre Nosotros</Nav.Link>
                 <Nav.Link as={Link} to="/contact" >Contacto</Nav.Link>
                 <Nav.Link as={Link} to="/" onClick={handleLogout}>Cerrar sesión</Nav.Link>
@@ -111,7 +111,7 @@ function Header({ navBarClass }) {
             {(isAuthenticated && !(user.role === 'admin')) ? (
               <>
                 <Nav.Link as={Link} to="/"  >Inicio</Nav.Link>
-                <Nav.Link as={Link} to="/pedidos" >Pedidos</Nav.Link>
+                <Nav.Link as={Link} to="/paneldehorarios" >Panel de Horarios</Nav.Link>
                 <Nav.Link as={Link} to="/aboutus" >Sobre Nosotros</Nav.Link>
                 <Nav.Link as={Link} to="/contact" >Contacto</Nav.Link>
                 <Nav.Link as={Link} to="/" onClick={handleLogout}>Cerrar sesión</Nav.Link>
