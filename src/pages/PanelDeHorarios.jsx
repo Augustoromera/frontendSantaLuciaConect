@@ -40,36 +40,51 @@ import { useEffect } from 'react';
 
 
 export const PanelDeHorarios = () => {
+    const rutas = [
+        { id: "6841ae01c11032698b6ade09", nombre: "Santa Lucía → Monteros" },
+        { id: "6841af28447dea60cc03a67d", nombre: "Monteros → Santa Lucía" }
+    ];
 
-    const [cargarParadas, setCargarParadas] = useState([]);
-    const [cargarHorarios, setCargarHorarios] = useState([]);
-    const idRuta = "683a815809b499af3e024e56"; //DEFINIR EL ID DE LA RUTA
+    const [paradasPorRuta, setParadasPorRuta] = useState({});
+    const [horariosPorRuta, setHorariosPorRuta] = useState({});
 
     useEffect(() => {
-        axios.get(`/paradas?id_ruta=${idRuta}`)
-            .then(res => setCargarParadas(res.data))
-            .catch(err => console.error(err));
+        const fetchParadasYHorarios = async () => {
+            try {
+                const nuevasParadas = {};
+                const nuevosHorarios = {};
+
+                for (const ruta of rutas) {
+                    // Obtener paradas
+                    const resParadas = await axios.get(`/paradas?id_ruta=${ruta.id}`);
+                    const paradas = resParadas.data;
+                    nuevasParadas[ruta.id] = paradas;
+
+                    // Obtener horarios de cada parada
+                    const horarios = await Promise.all(paradas.map(async parada => {
+                        const resHorario = await axios.get(`/obtenerHorarios?id_ruta=${ruta.id}&id_parada=${parada._id}`);
+                        return {
+                            paradaId: parada._id,
+                            horarios: resHorario.data
+                        };
+                    }));
+
+                    nuevosHorarios[ruta.id] = horarios;
+                }
+
+                setParadasPorRuta(nuevasParadas);
+                setHorariosPorRuta(nuevosHorarios);
+            } catch (error) {
+                console.error(error);
+            }
+        };
+
+        fetchParadasYHorarios();
     }, []);
 
-    useEffect(() => {
-        if (cargarParadas.length > 0) {
-            const requests = cargarParadas.map(parada =>
-                axios.get(`/obtenerHorarios?id_ruta=${idRuta}&id_parada=${parada._id}`)
-                    .then(res => ({
-                        paradaId: parada._id,
-                        horarios: res.data
-                    }))
-            );
-
-            Promise.all(requests)
-                .then(results => setCargarHorarios(results))
-                .catch(err => console.error(err));
-        }
-    }, [cargarParadas]);
-
-    const getMaxFilas = () =>
-        Math.max(...cargarHorarios.map(p => p.horarios.length || 0));
-
+    const getMaxFilas = (horarios) => {
+        return Math.max(...horarios.map(p => p.horarios.length || 0));
+    };
 
     return (
         <>
@@ -77,66 +92,39 @@ export const PanelDeHorarios = () => {
             <div className="horarios-container">
                 <h1 className="title">Horarios Santa Lucía - Monteros</h1>
 
-                <h2 className="subtitle">Santa Lucía → Monteros</h2>
-                <div className="table-responsive">
-                    {/* <table className="schedule-table">
-                        <thead>
-                            <tr>
-                                <th>Santa Lucía</th><th>Zavala</th><th>Cortada</th><th>Ciénaga</th><th>KM3</th><th>Alto Verde</th><th>Acheral</th><th>Cervecería</th><th>Sto. Domingo</th><th>Citromax</th><th>Monteros</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {horariosIda.map((fila, idx) => (
-                                <tr key={idx}>
-                                    {fila.map((hora, i) => <td key={i}>{hora}</td>)}
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table> */}
-                    <table className="schedule-table">
-                        <thead>
-                            <tr>
-                                {cargarParadas.map(parada => (
-                                    <th key={parada._id}>{parada.nombre}</th>
-                                ))}
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {Array.from({ length: getMaxFilas() }).map((_, filaIndex) => (
-                                <tr key={filaIndex}>
-                                    {cargarParadas.map(parada => {
-                                        const horariosParada = cargarHorarios.find(h => h.paradaId === parada._id)?.horarios || [];
-                                        return (
-                                            <td key={parada._id}>
-                                                {horariosParada[filaIndex]?.horario || "-"}
-                                            </td>
-                                        );
-                                    })}
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
-
-                <h2 className="subtitle">Monteros → Santa Lucía</h2>
-                <div className="table-responsive">
-                    <table className="schedule-table">
-                        <thead>
-                            <tr>
-                                <th>Monteros</th><th>Sto. Domingo</th><th>Cervecería</th><th>Acheral</th><th>Alto Verde</th><th>KM3</th><th>Ciénaga</th><th>Cortada</th><th>Zavala</th><th>Santa Lucía</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {/* {horariosVuelta.map((fila, idx) => (
-                                <tr key={idx}>
-                                    {fila.map((hora, i) => <td key={i}>{hora}</td>)}
-                                </tr>
-                            ))} */}
-                        </tbody>
-                    </table>
-                </div>
+                {rutas.map(ruta => (
+                    <div key={ruta.id}>
+                        <h2 className="subtitle">{ruta.nombre}</h2>
+                        <div className="table-responsive">
+                            <table className="schedule-table">
+                                <thead>
+                                    <tr>
+                                        {(paradasPorRuta[ruta.id] || []).map(parada => (
+                                            <th key={parada._id}>{parada.nombre}</th>
+                                        ))}
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {Array.from({ length: getMaxFilas(horariosPorRuta[ruta.id] || []) }).map((_, filaIndex) => (
+                                        <tr key={filaIndex}>
+                                            {(paradasPorRuta[ruta.id] || []).map(parada => {
+                                                const horariosParada = (horariosPorRuta[ruta.id] || []).find(h => h.paradaId === parada._id)?.horarios || [];
+                                                return (
+                                                    <td key={parada._id}>
+                                                        {horariosParada[filaIndex]?.horario || "-"}
+                                                    </td>
+                                                );
+                                            })}
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                ))}
             </div>
             <Footer />
         </>
     );
 };
+
