@@ -1,130 +1,263 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from '../api/axios';
 import './styles/panel-horarios.css';
-import 'font-awesome/css/font-awesome.min.css';
-import pruebaApi from '../api/pruebaApi';
-import Header from '../components/Header';
-import { Footer } from '../components/Footer';
-import { useEffect } from 'react';
-
-// const horariosIda = [
-//     ["07:00", "07:07", "07:09", "07:11", "07:13", "07:14", "07:16", "07:18", "07:20", "07:22", "07:30"],
-//     ["07:30", "07:37", "07:39", "07:41", "07:43", "07:44", "07:46", "07:48", "07:50", "07:52", "08:00"],
-//     ["08:00", "08:07", "08:09", "08:11", "08:13", "08:14", "08:16", "08:18", "08:20", "08:22", "08:30"],
-//     ["08:30", "08:37", "08:39", "08:41", "08:43", "08:44", "08:46", "08:48", "08:50", "08:52", "09:00"],
-//     ["09:00", "09:07", "09:09", "09:11", "09:13", "09:14", "09:16", "09:18", "09:20", "09:22", "09:30"],
-//     ["09:30", "09:37", "09:39", "09:41", "09:43", "09:44", "09:46", "09:48", "09:50", "09:52", "10:00"],
-//     ["10:00", "10:07", "10:09", "10:11", "10:13", "10:14", "10:16", "10:18", "10:20", "10:22", "10:30"],
-//     ["10:30", "10:37", "10:39", "10:41", "10:43", "10:44", "10:46", "10:48", "10:50", "10:52", "11:00"],
-//     ["11:00", "11:07", "11:09", "11:11", "11:13", "11:14", "11:16", "11:18", "11:20", "11:22", "11:30"],
-//     ["11:30", "11:37", "11:39", "11:41", "11:43", "11:44", "11:46", "11:48", "11:50", "11:52", "12:00"],
-//     ["12:00", "12:07", "12:09", "12:11", "12:13", "12:14", "12:16", "12:18", "12:20", "12:22", "12:30"],
-//     ["12:30", "12:37", "12:39", "12:41", "12:43", "12:44", "12:46", "12:48", "12:50", "12:52", "13:00"],
-//     ["13:00", "13:07", "13:09", "13:11", "13:13", "13:14", "13:16", "13:18", "13:20", "13:22", "13:30"],
-//     ["13:30", "13:37", "13:39", "13:41", "13:43", "13:44", "13:46", "13:48", "13:50", "13:52", "14:00"],
-//     ["14:00", "14:07", "14:09", "14:11", "14:13", "14:14", "14:16", "14:18", "14:20", "14:22", "14:30"]
-// ];
-
-// const horariosVuelta = [
-//     ["06:30", "06:34", "06:36", "06:45", "06:50", "06:55", "06:57", "06:59", "07:00", "07:07"],
-//     ["07:00", "07:04", "07:06", "07:15", "07:20", "07:25", "07:27", "07:29", "07:30", "07:37"],
-//     ["08:00", "08:04", "08:06", "08:15", "08:20", "08:25", "08:27", "08:29", "08:30", "08:37"],
-//     ["09:00", "09:04", "09:06", "09:15", "09:20", "09:25", "09:27", "09:29", "09:30", "09:37"],
-//     ["10:00", "10:04", "10:06", "10:15", "10:20", "10:25", "10:27", "10:29", "10:30", "10:37"],
-//     ["11:00", "11:04", "11:06", "11:15", "11:20", "11:25", "11:27", "11:29", "11:30", "11:37"],
-//     ["12:00", "12:04", "12:06", "12:15", "12:20", "12:25", "12:27", "12:29", "12:30", "12:37"],
-//     ["13:00", "13:04", "13:06", "13:15", "13:20", "13:25", "13:27", "13:29", "13:30", "13:37"],
-//     ["14:00", "14:04", "14:06", "14:15", "14:20", "14:25", "14:27", "14:29", "14:30", "14:37"],
-//     ["15:00", "15:04", "15:06", "15:15", "15:20", "15:25", "15:27", "15:29", "15:30", "15:37"]
-// ];
-
+import { Container, Row, Col, Form, Button, Table } from 'react-bootstrap';
 
 export const PanelDeHorarios = () => {
-    const rutas = [
-        { id: "6841ae01c11032698b6ade09", nombre: "Santa Lucía → Monteros" },
-        { id: "6841af28447dea60cc03a67d", nombre: "Monteros → Santa Lucía" }
-    ];
+  const rutas = [
+    { id: "6841ae01c11032698b6ade09", nombre: "Santa Lucía → Monteros" },
+    { id: "6841af28447dea60cc03a67d", nombre: "Monteros → Santa Lucía" }
+  ];
 
-    const [paradasPorRuta, setParadasPorRuta] = useState({});
-    const [horariosPorRuta, setHorariosPorRuta] = useState({});
+  // Estados originales
+  const [paradasPorRuta, setParadasPorRuta] = useState({});
+  const [horariosPorRuta, setHorariosPorRuta] = useState({});
+  
+  // Estados para el filtrado
+  const [origen, setOrigen] = useState('');
+  const [destino, setDestino] = useState('');
+  const [dia, setDia] = useState('habil');
+  const [mostrarFiltrado, setMostrarFiltrado] = useState(false);
+  const [horariosFiltrados, setHorariosFiltrados] = useState([]);
+  const [destinosDisponibles, setDestinosDisponibles] = useState([]);
 
-    useEffect(() => {
-        const fetchParadasYHorarios = async () => {
-            try {
-                const nuevasParadas = {};
-                const nuevosHorarios = {};
+  // Cargar datos originales
+  useEffect(() => {
+    const fetchParadasYHorarios = async () => {
+      try {
+        const nuevasParadas = {};
+        const nuevosHorarios = {};
 
-                for (const ruta of rutas) {
-                    // Obtener paradas
-                    const resParadas = await axios.get(`/paradas?id_ruta=${ruta.id}`);
-                    const paradas = resParadas.data;
-                    nuevasParadas[ruta.id] = paradas;
+        for (const ruta of rutas) {
+          // Obtener paradas
+          const resParadas = await axios.get(`/paradas?id_ruta=${ruta.id}`);
+          const paradas = resParadas.data;
+          nuevasParadas[ruta.id] = paradas;
 
-                    // Obtener horarios de cada parada
-                    const horarios = await Promise.all(paradas.map(async parada => {
-                        const resHorario = await axios.get(`/obtenerHorarios?id_ruta=${ruta.id}&id_parada=${parada._id}`);
-                        return {
-                            paradaId: parada._id,
-                            horarios: resHorario.data
-                        };
-                    }));
+          // Obtener horarios de cada parada
+          const horarios = await Promise.all(paradas.map(async parada => {
+            const resHorario = await axios.get(`/obtenerHorarios?id_ruta=${ruta.id}&id_parada=${parada._id}`);
+            return {
+              paradaId: parada._id,
+              nombre: parada.nombre,
+              horarios: resHorario.data
+            };
+          }));
 
-                    nuevosHorarios[ruta.id] = horarios;
-                }
+          nuevosHorarios[ruta.id] = horarios;
+        }
 
-                setParadasPorRuta(nuevasParadas);
-                setHorariosPorRuta(nuevosHorarios);
-            } catch (error) {
-                console.error(error);
-            }
-        };
-
-        fetchParadasYHorarios();
-    }, []);
-
-    const getMaxFilas = (horarios) => {
-        return Math.max(...horarios.map(p => p.horarios.length || 0));
+        setParadasPorRuta(nuevasParadas);
+        setHorariosPorRuta(nuevosHorarios);
+      } catch (error) {
+        console.error(error);
+      }
     };
 
-    return (
-        <>
-            <Header />
-            <div className="horarios-container">
-                <h1 className="title">Horarios Santa Lucía - Monteros</h1>
+    fetchParadasYHorarios();
+  }, []);
 
-                {rutas.map(ruta => (
-                    <div key={ruta.id}>
-                        <h2 className="subtitle">{ruta.nombre}</h2>
-                        <div className="table-responsive">
-                            <table className="schedule-table">
-                                <thead>
-                                    <tr>
-                                        {(paradasPorRuta[ruta.id] || []).map(parada => (
-                                            <th key={parada._id}>{parada.nombre}</th>
-                                        ))}
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {Array.from({ length: getMaxFilas(horariosPorRuta[ruta.id] || []) }).map((_, filaIndex) => (
-                                        <tr key={filaIndex}>
-                                            {(paradasPorRuta[ruta.id] || []).map(parada => {
-                                                const horariosParada = (horariosPorRuta[ruta.id] || []).find(h => h.paradaId === parada._id)?.horarios || [];
-                                                return (
-                                                    <td key={parada._id}>
-                                                        {horariosParada[filaIndex]?.horario || "-"}
-                                                    </td>
-                                                );
-                                            })}
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
+  // Actualizar destinos disponibles cuando cambia el origen
+  useEffect(() => {
+    if (origen) {
+      const esIda = origen.includes("Santa Lucía");
+      const rutaId = esIda ? rutas[0].id : rutas[1].id;
+      const paradasRuta = paradasPorRuta[rutaId] || [];
+      
+      const indexOrigen = paradasRuta.findIndex(p => p.nombre === origen);
+      if (indexOrigen >= 0) {
+        setDestinosDisponibles(paradasRuta.slice(indexOrigen + 1));
+      }
+      setDestino('');
+    }
+  }, [origen, paradasPorRuta]);
+
+  // Función para filtrar horarios
+  const filtrarHorarios = () => {
+    if (!origen || !destino) {
+      alert("Por favor seleccione origen y destino");
+      return;
+    }
+
+    const esIda = origen.includes("Santa Lucía");
+    const rutaId = esIda ? rutas[0].id : rutas[1].id;
+    const horariosRuta = horariosPorRuta[rutaId] || [];
+    const paradasRuta = paradasPorRuta[rutaId] || [];
+    
+    const indexOrigen = paradasRuta.findIndex(p => p.nombre === origen);
+    const indexDestino = paradasRuta.findIndex(p => p.nombre === destino);
+
+    if (indexOrigen === -1 || indexDestino === -1) {
+      alert("Error: No se encontraron las paradas seleccionadas");
+      return;
+    }
+
+    const horariosOrigenObj = horariosRuta.find(p => p.paradaId === paradasRuta[indexOrigen]._id);
+    const horariosDestinoObj = horariosRuta.find(p => p.paradaId === paradasRuta[indexDestino]._id);
+
+    const horariosOrigen = horariosOrigenObj?.horarios?.map(h => h.horario) || [];
+    const horariosDestino = horariosDestinoObj?.horarios?.map(h => h.horario) || [];
+
+    const resultados = horariosOrigen.map(horaOrigen => {
+      const horaDestino = horariosDestino.find(horaDest => horaDest > horaOrigen);
+      return horaDestino ? { salida: horaOrigen, llegada: horaDestino } : null;
+    }).filter(Boolean);
+
+    setHorariosFiltrados(resultados);
+    setMostrarFiltrado(true);
+  };
+
+  // Función original para determinar máximo de filas
+  const getMaxFilas = (horarios) => {
+    return Math.max(...horarios.map(p => p.horarios?.length || 0));
+  };
+
+  // Obtener nombres de paradas para los filtros
+  const getNombresParadas = () => {
+    const nombres = [];
+    rutas.forEach(ruta => {
+      (paradasPorRuta[ruta.id] || []).forEach(parada => {
+        if (!nombres.includes(parada.nombre)) {
+          nombres.push(parada.nombre);
+        }
+      });
+    });
+    return nombres;
+  };
+
+  return (
+    <div className="horarios-container">
+      <h1 className="title">Horarios Santa Lucía - Monteros</h1>
+
+      {/* Sección de filtrado */}
+      <div className="filtro-container">
+        <Row>
+          <Col md={4}>
+            <Form.Group>
+              <Form.Label>Origen</Form.Label>
+              <Form.Select value={origen} onChange={(e) => setOrigen(e.target.value)}>
+                <option value="">Seleccionar origen</option>
+                {getNombresParadas().map((nombre, index) => (
+                  <option key={`origen-${index}`} value={nombre}>{nombre}</option>
                 ))}
-            </div>
-            <Footer />
-        </>
-    );
-};
+              </Form.Select>
+            </Form.Group>
+          </Col>
+          
+          <Col md={4}>
+            <Form.Group>
+              <Form.Label>Destino</Form.Label>
+              <Form.Select 
+                value={destino} 
+                onChange={(e) => setDestino(e.target.value)}
+                disabled={!origen}
+              >
+                <option value="">Seleccionar destino</option>
+                {destinosDisponibles.map((parada, index) => (
+                  <option key={`destino-${index}`} value={parada.nombre}>{parada.nombre}</option>
+                ))}
+              </Form.Select>
+            </Form.Group>
+          </Col>
+          
+          <Col md={3}>
+            <Form.Group>
+              <Form.Label>Día</Form.Label>
+              <Form.Select value={dia} onChange={(e) => setDia(e.target.value)}>
+                <option value="habil">Día hábil</option>
+                <option value="sabado">Sábado</option>
+                <option value="domingo">Domingo</option>
+              </Form.Select>
+            </Form.Group>
+          </Col>
+          
+          <Col md={1} className="d-flex align-items-end">
+            <Button 
+              variant="primary" 
+              onClick={filtrarHorarios}
+              disabled={!origen || !destino}
+              className="w-100"
+            >
+              Filtrar
+            </Button>
+          </Col>
+        </Row>
+      </div>
 
+      {/* Resultados filtrados */}
+      {mostrarFiltrado && (
+        <div className="resultado-filtrado">
+          <div className="d-flex justify-content-between align-items-center mb-3">
+            <h3 className="subtitle">
+              Horarios {origen} → {destino} ({dia === 'habil' ? 'Día hábil' : dia === 'sabado' ? 'Sábado' : 'Domingo'})
+            </h3>
+            <Button 
+              variant="outline-secondary" 
+              onClick={() => setMostrarFiltrado(false)}
+            >
+              Ver todos
+            </Button>
+          </div>
+          
+          <div className="table-responsive">
+            <table className="schedule-table">
+              <thead>
+                <tr>
+                  <th>Salida</th>
+                  <th>Llegada</th>
+                </tr>
+              </thead>
+              <tbody>
+                {horariosFiltrados.length > 0 ? (
+                  horariosFiltrados.map((horario, index) => (
+                    <tr key={index}>
+                      <td>{horario.salida}</td>
+                      <td>{horario.llegada}</td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="2" className="text-center">No hay horarios disponibles</td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {/* Tablas completas originales */}
+      {!mostrarFiltrado && rutas.map(ruta => (
+        <div key={ruta.id}>
+          <h2 className="subtitle">{ruta.nombre}</h2>
+          <div className="table-responsive">
+            <table className="schedule-table">
+              <thead>
+                <tr>
+                  {(paradasPorRuta[ruta.id] || []).map(parada => (
+                    <th key={parada._id}>{parada.nombre}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {Array.from({ length: getMaxFilas(horariosPorRuta[ruta.id] || []) }).map((_, filaIndex) => (
+                  <tr key={filaIndex}>
+                    {(paradasPorRuta[ruta.id] || []).map(parada => {
+                      const horariosParada = (horariosPorRuta[ruta.id] || [])
+                        .find(h => h.paradaId === parada._id)?.horarios || [];
+                      return (
+                        <td key={parada._id}>
+                          {horariosParada[filaIndex]?.horario || "-"}
+                        </td>
+                      );
+                    })}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+};
