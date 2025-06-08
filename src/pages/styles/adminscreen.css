@@ -33,21 +33,10 @@ form .custom-button:hover {
     border: 1px solid black;
 }
 
-/* Imágenes */
-.custom-imagen {
-    display: block;
-    width: 50px;
-    height: 50px;
-    object-fit: cover;
-    border-radius: 6px;
-    margin: 0 auto;
-}
-
 /* Tablas */
 .table-container {
     margin: 1.5rem;
-    margin-top: 0;
-    margin-bottom: 0;
+    margin-top: 1rem;
 }
 
 .custom-table {
@@ -75,21 +64,49 @@ form .custom-button:hover {
     background-color: #f8f9fa;
 }
 
-/* Grupos de formulario */
-.ctm-form-group {
-    width: 90%;
-    margin-bottom: 1rem;
+/* Secciones de administración */
+.admin-sections {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    padding: 1rem;
+    background-color: #343a40;
+    margin: 0 1.5rem;
+    border-radius: 8px;
 }
 
-/* Mensaje de privacidad */
-.privacy-message {
-    padding: 0.75rem;
-    background-color: #f7f7f7;
+.section-button {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    background-color: #212529;
+    color: white;
+    border: none;
     border-radius: 6px;
-    text-align: center;
-    color: #777;
-    font-size: 0.85rem;
-    margin: 0.5rem 0;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 1rem;
+}
+
+.section-button:hover {
+    background-color: #004aad;
+    transform: translateY(-2px);
+}
+
+.section-button.active {
+    background-color: #004aad;
+    box-shadow: 0 0 10px rgba(0, 74, 173, 0.7);
+}
+
+.section-icon {
+    font-size: 1.2rem;
+}
+
+.section-content {
+    margin: 1.5rem;
+    min-height: 50vh;
 }
 
 /* Modal personalizado */
@@ -134,27 +151,18 @@ form .custom-button:hover {
     color: #004aad;
 }
 
-/* Ajustes específicos para el modal */
-.modal-content {
-    margin-top: 3rem;
-    padding-top: 0;
-}
-
-.modal-header {
-    justify-content: space-between !important;
-}
-.modal-header h2 {
-    font-size: 1.25rem;
-    margin-bottom: 1rem;
-}
-
-.modal-body {
-    padding: 0.5rem 0;
-}
-
 /* Responsive */
-
 @media (max-width: 1080px) {
+    .admin-sections {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .section-button {
+        width: 80%;
+        justify-content: center;
+    }
+    
     .custom-modal {
         margin-top: 10%;
     }
@@ -182,9 +190,7 @@ form .custom-button:hover {
     
     .modal-content {
         width: 95%;
+        
     }
     
-    .ctm-form-group {
-        width: 100%;
-    }
 }
