@@ -11,6 +11,10 @@ import { useAuth } from '../../context/AuthContext';
 import { getAuthToken } from '../../api/auth';
 import { Footer } from '../../components/Footer';
 import axios from 'axios';
+import AddParadaModal from '../../components/admin-components/AddParadaModel';
+import 'bootstrap/dist/css/bootstrap.min.css';
+
+
 
 export const AdminScreen = () => {
     const { user } = useAuth();
@@ -20,6 +24,8 @@ export const AdminScreen = () => {
     const [paradasPorRuta, setParadasPorRuta] = useState({});
     const [horariosPorRuta, setHorariosPorRuta] = useState({});
 
+    const [mostrarModal, setMostrarModal] = useState(false);
+    const [rutaSeleccionada, setRutaSeleccionada] = useState(null);
 
     // Estados para los modales
     const [isModalOpenUser, setIsModalOpenUser] = useState(false);
@@ -47,30 +53,29 @@ export const AdminScreen = () => {
         role: ''
     });
 
-    // const agregarParada = async (idRuta) => {
-    //     const nombre = nuevasParadasInput[idRuta]?.trim();
-    //     if (!nombre) return;
+    const handleAgregarParada = async ({ nombre, orden }) => {
+        if (!rutaSeleccionada) return;
 
-    //     try {
-    //         // Enviar nueva parada al backend
-    //         const res = await axios.post("/admin/nuevaParada", {
-    //             nombre,
-    //             id_ruta: idRuta,
-    //         });
+        try {
+            const nuevaParada = {
+                nombre,
+                orden,
+                id_ruta: rutaSeleccionada.id
+            };
 
-    //         // Actualizar localmente la lista de paradas
-    //         const paradaNueva = res.data;
-    //         setParadasPorRuta((prev) => ({
-    //             ...prev,
-    //             [idRuta]: [...(prev[idRuta] || []), paradaNueva],
-    //         }));
+            const response = await axios.post('http://localhost:8080/admin/nuevaParada', nuevaParada);
+            const paradaCreada = response.data;
 
-    //         // Limpiar input
-    //         setNuevasParadasInput((prev) => ({ ...prev, [idRuta]: "" }));
-    //     } catch (error) {
-    //         console.error("Error al agregar parada:", error);
-    //     }
-    // };
+            setParadasPorRuta(prev => ({
+                ...prev,
+                [rutaSeleccionada.id]: [...(prev[rutaSeleccionada.id] || []), paradaCreada]
+            }));
+
+            setMostrarModal(false);
+        } catch (error) {
+            console.error('Error al agregar parada:', error);
+        }
+    };
 
     // Funciones de manejo de cambios
     const handleChangeFormUser = (e) => {
@@ -152,41 +157,40 @@ export const AdminScreen = () => {
         recargarPagina();
     };
 
-    useEffect(() => {
-        const fetchParadasYHorarios = async () => {
-            try {
-                const nuevasParadas = {};
-                const nuevosHorarios = {};
+    const fetchParadasYHorarios = async () => {
+        try {
+            const nuevasParadas = {};
+            const nuevosHorarios = {};
 
-                for (const ruta of rutas) {
-                    // Obtener paradas
-                    const resParadas = await axios.get(`http://localhost:8080/api/paradas?id_ruta=${ruta.id}`); // o el puerto correcto de tu backend
+            for (const ruta of rutas) {
+                // Obtener paradas
+                const resParadas = await axios.get(`http://localhost:8080/api/paradas?id_ruta=${ruta.id}`); // REVISAR POR QUÉ NO CARGA LAS PARADAS 
+                                                                                                            // SIN USAR HTTP://LOCALHOST
 
-                    const paradas = resParadas.data;
-                    nuevasParadas[ruta.id] = paradas;
+                const paradas = resParadas.data;
+                nuevasParadas[ruta.id] = paradas;
 
-                    // Obtener horarios de cada parada
-                    // const horarios = await Promise.all(paradas.map(async parada => {
-                    //     const resHorario = await axios.get(`/obtenerHorarios?id_ruta=${ruta.id}&id_parada=${parada._id}`);
-                    //     return {
-                    //         paradaId: parada._id,
-                    //         nombre: parada.nombre,
-                    //         horarios: resHorario.data
-                    //     };
-                    // }));
+                // Obtener horarios de cada parada
+                // const horarios = await Promise.all(paradas.map(async parada => {
+                //     const resHorario = await axios.get(`/obtenerHorarios?id_ruta=${ruta.id}&id_parada=${parada._id}`);
+                //     return {
+                //         paradaId: parada._id,
+                //         nombre: parada.nombre,
+                //         horarios: resHorario.data
+                //     };
+                // }));
 
-                    // nuevosHorarios[ruta.id] = horarios;
-                }
-
-                setParadasPorRuta(nuevasParadas);
-                setHorariosPorRuta(nuevosHorarios);
-            } catch (error) {
-                console.error(error);
+                // nuevosHorarios[ruta.id] = horarios;
             }
-        };
 
-        fetchParadasYHorarios();
-    }, []);
+            setParadasPorRuta(nuevasParadas);
+            //setHorariosPorRuta(nuevosHorarios);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+
 
 
     // Funciones de API
@@ -372,6 +376,10 @@ export const AdminScreen = () => {
         cargarUserDB();
     }, []);
 
+    useEffect(() => {
+        fetchParadasYHorarios();
+    }, [handleAgregarParada])
+
     // Renderizado
     return (
         <>
@@ -427,9 +435,9 @@ export const AdminScreen = () => {
                                             <th>Acciones</th>
                                         </tr>
                                     </thead>
-                                    {cargarUsuarios.map((usuario) => (
-                                        <tbody key={usuario._id}>
-                                            <tr>
+                                    <tbody >
+                                        {cargarUsuarios.map((usuario) => (
+                                            <tr key={usuario._id}>
                                                 <td>{usuario._id}</td>
                                                 <td>{usuario.username}</td>
                                                 <td>{usuario.email}</td>
@@ -447,8 +455,9 @@ export const AdminScreen = () => {
                                                     </button>
                                                 </td>
                                             </tr>
-                                        </tbody>
-                                    ))}
+                                        ))}
+                                    </tbody>
+
                                 </Table>
                             </div>
                             <div className="d-flex justify-content-end me-5">
@@ -467,32 +476,50 @@ export const AdminScreen = () => {
                         <div className="table-container">
                             <h3>Gestión de Horarios</h3>
                             <p>Aquí podrás gestionar los horarios de la empresa.</p>
-                            {/* Contenido de horarios */}
+
                             <section>
                                 <h2>Paradas cargadas</h2>
 
                                 {rutas.map((ruta) => (
-                                    <div key={ruta.id} style={{ marginBottom: '20px', border: '1px solid #ddd', padding: '10px', borderRadius: '8px' }}>
+                                    <div
+                                        key={ruta.nombre}
+                                        style={{
+                                            marginBottom: '20px',
+                                            border: '1px solid #ddd',
+                                            padding: '10px',
+                                            borderRadius: '8px'
+                                        }}
+                                    >
                                         <h3>Ruta: {ruta.nombre}</h3>
 
                                         {(paradasPorRuta[ruta.id] && paradasPorRuta[ruta.id].length > 0) ? (
                                             <ul>
-                                                {paradasPorRuta[ruta.id].map(parada => (
-                                                    <li key={parada._id}>{parada.nombre}</li>
+                                                {paradasPorRuta[ruta.id].map((parada, index) => (
+                                                    <li key={parada._id || `temp-${index}`}> {/* SE UTILIZA EL INDEX PARA EVITAR EL WARNING DE KEY*/}
+                                                        {parada.nombre} (Orden: {parada.orden})
+                                                    </li>
                                                 ))}
                                             </ul>
                                         ) : (
                                             <p>No hay paradas cargadas para esta ruta.</p>
                                         )}
 
-                                        <button onClick={() => { /* Más adelante abriremos el modal aquí */ }}>
+                                        <button onClick={() => {
+                                            setRutaSeleccionada(ruta);
+                                            setMostrarModal(true);
+                                        }}>
                                             Agregar nueva parada
                                         </button>
                                     </div>
                                 ))}
                             </section>
 
-
+                            {/* Modal para agregar parada */}
+                            <AddParadaModal
+                                isOpen={mostrarModal}
+                                onClose={() => setMostrarModal(false)}
+                                onSubmit={handleAgregarParada}
+                            />
                         </div>
                     )}
 
