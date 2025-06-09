@@ -10,15 +10,25 @@ import AddUserModal from '../../components/admin-components/AddUserModal';
 import { useAuth } from '../../context/AuthContext';
 import { getAuthToken } from '../../api/auth';
 import { Footer } from '../../components/Footer';
+import axios from 'axios';
 
 export const AdminScreen = () => {
     const { user } = useAuth();
     const [activeSection, setActiveSection] = useState('usuarios');
     const [cargarUsuarios, setCargarUsuarios] = useState([]);
-    
+
+    const [paradasPorRuta, setParadasPorRuta] = useState({});
+    const [horariosPorRuta, setHorariosPorRuta] = useState({});
+
+
     // Estados para los modales
     const [isModalOpenUser, setIsModalOpenUser] = useState(false);
     const [isModalOpenUserEditar, setIsModalOpenUserEditar] = useState(false);
+
+    const rutas = [
+        { id: "6846de00f0234bbe5766f9be", nombre: "Santa Lucía → Monteros" },
+        { id: "6841af28447dea60cc03a67d", nombre: "Monteros → Santa Lucía" }
+    ];
 
     // Estados para formularios
     const [formDateUser, setFormDateUser] = useState({
@@ -36,6 +46,31 @@ export const AdminScreen = () => {
         password: '',
         role: ''
     });
+
+    // const agregarParada = async (idRuta) => {
+    //     const nombre = nuevasParadasInput[idRuta]?.trim();
+    //     if (!nombre) return;
+
+    //     try {
+    //         // Enviar nueva parada al backend
+    //         const res = await axios.post("/admin/nuevaParada", {
+    //             nombre,
+    //             id_ruta: idRuta,
+    //         });
+
+    //         // Actualizar localmente la lista de paradas
+    //         const paradaNueva = res.data;
+    //         setParadasPorRuta((prev) => ({
+    //             ...prev,
+    //             [idRuta]: [...(prev[idRuta] || []), paradaNueva],
+    //         }));
+
+    //         // Limpiar input
+    //         setNuevasParadasInput((prev) => ({ ...prev, [idRuta]: "" }));
+    //     } catch (error) {
+    //         console.error("Error al agregar parada:", error);
+    //     }
+    // };
 
     // Funciones de manejo de cambios
     const handleChangeFormUser = (e) => {
@@ -68,17 +103,17 @@ export const AdminScreen = () => {
         const regexPass = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/;
         role = role ? role.toLowerCase() : "user";
         status = status ? status.toLowerCase() : "inactive";
-        
+
         if (!username.trim() || !email.trim() || !password.trim()) {
             showErrorAlert('Campos incompletos', 'Por favor completa todos los campos.');
             return;
         }
-        
+
         if (!verificarFormatoEmail(email)) {
             showErrorAlert('Formato de correo incorrecto', 'Por favor ingresa un correo electrónico válido.');
             return;
         }
-        
+
         if (!regexPass.test(password)) {
             showErrorAlert('Formato de contraseña incorrecto', 'Debe contener al menos una mayuscula, minusculas y al menos 8 caracteres');
             return;
@@ -95,17 +130,17 @@ export const AdminScreen = () => {
         var { _id, username, email, status, role } = formDateUserEditar;
         role = role ? role.toLowerCase() : "user";
         let statusModif = status ? "active" : "inactive";
-        
+
         if (!_id) {
             showErrorAlert('No se encontro el Usuario', 'Por favor contactese con el administrador.');
             return;
         }
-        
+
         if (!username.trim() || !email.trim() || !role) {
             showErrorAlert('Campos incompletos', 'Por favor completa todos los campos.');
             return;
         }
-        
+
         if (!verificarFormatoEmail(email)) {
             showErrorAlert('Formato de correo incorrecto', 'Por favor ingresa un correo electrónico válido.');
             return;
@@ -116,6 +151,43 @@ export const AdminScreen = () => {
         editarUsuarioDb(_id, username, email, statusModif, role);
         recargarPagina();
     };
+
+    useEffect(() => {
+        const fetchParadasYHorarios = async () => {
+            try {
+                const nuevasParadas = {};
+                const nuevosHorarios = {};
+
+                for (const ruta of rutas) {
+                    // Obtener paradas
+                    const resParadas = await axios.get(`http://localhost:8080/api/paradas?id_ruta=${ruta.id}`); // o el puerto correcto de tu backend
+
+                    const paradas = resParadas.data;
+                    nuevasParadas[ruta.id] = paradas;
+
+                    // Obtener horarios de cada parada
+                    // const horarios = await Promise.all(paradas.map(async parada => {
+                    //     const resHorario = await axios.get(`/obtenerHorarios?id_ruta=${ruta.id}&id_parada=${parada._id}`);
+                    //     return {
+                    //         paradaId: parada._id,
+                    //         nombre: parada.nombre,
+                    //         horarios: resHorario.data
+                    //     };
+                    // }));
+
+                    // nuevosHorarios[ruta.id] = horarios;
+                }
+
+                setParadasPorRuta(nuevasParadas);
+                setHorariosPorRuta(nuevosHorarios);
+            } catch (error) {
+                console.error(error);
+            }
+        };
+
+        fetchParadasYHorarios();
+    }, []);
+
 
     // Funciones de API
     const editarUsuarioDb = async (_id, username, email, status, role) => {
@@ -312,25 +384,25 @@ export const AdminScreen = () => {
 
                 {/* Navegación entre secciones */}
                 <div className="admin-sections">
-                    <button 
+                    <button
                         className={`section-button ${activeSection === 'usuarios' ? 'active' : ''}`}
                         onClick={() => setActiveSection('usuarios')}
                     >
                         <FaUsers className="section-icon" /> Usuarios
                     </button>
-                    <button 
+                    <button
                         className={`section-button ${activeSection === 'horarios' ? 'active' : ''}`}
                         onClick={() => setActiveSection('horarios')}
                     >
                         <FaClock className="section-icon" /> Horarios
                     </button>
-                    <button 
+                    <button
                         className={`section-button ${activeSection === 'unidades' ? 'active' : ''}`}
                         onClick={() => setActiveSection('unidades')}
                     >
                         <FaBus className="section-icon" /> Unidades/Choferes
                     </button>
-                    <button 
+                    <button
                         className={`section-button ${activeSection === 'contacto' ? 'active' : ''}`}
                         onClick={() => setActiveSection('contacto')}
                     >
@@ -396,6 +468,31 @@ export const AdminScreen = () => {
                             <h3>Gestión de Horarios</h3>
                             <p>Aquí podrás gestionar los horarios de la empresa.</p>
                             {/* Contenido de horarios */}
+                            <section>
+                                <h2>Paradas cargadas</h2>
+
+                                {rutas.map((ruta) => (
+                                    <div key={ruta.id} style={{ marginBottom: '20px', border: '1px solid #ddd', padding: '10px', borderRadius: '8px' }}>
+                                        <h3>Ruta: {ruta.nombre}</h3>
+
+                                        {(paradasPorRuta[ruta.id] && paradasPorRuta[ruta.id].length > 0) ? (
+                                            <ul>
+                                                {paradasPorRuta[ruta.id].map(parada => (
+                                                    <li key={parada._id}>{parada.nombre}</li>
+                                                ))}
+                                            </ul>
+                                        ) : (
+                                            <p>No hay paradas cargadas para esta ruta.</p>
+                                        )}
+
+                                        <button onClick={() => { /* Más adelante abriremos el modal aquí */ }}>
+                                            Agregar nueva parada
+                                        </button>
+                                    </div>
+                                ))}
+                            </section>
+
+
                         </div>
                     )}
 
@@ -431,7 +528,7 @@ export const AdminScreen = () => {
                     handleChangeFormUserEditar={handleChangeFormUserEditar}
                     handleSubmitFormUserEditar={handleSubmitFormUserEditar}
                     formDateUserEditar={formDateUserEditar}
-                    //asdasd
+                //asdasd
                 />
             </div>
             <Footer />

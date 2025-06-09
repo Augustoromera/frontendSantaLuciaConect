@@ -16,7 +16,7 @@ const TripFormContainer = () => {
     const [destinosDisponibles, setDestinosDisponibles] = useState([]);
     const [horariosDisponibles, setHorariosDisponibles] = useState([]);
     const [precio, setPrecio] = useState(null);
-    const rutaId = '6841ae01c11032698b6ade09'; // <- cambiar por tu ObjectId real
+    const rutaId = '6846de00f0234bbe5766f9be'; // <- cambiar por tu ObjectId real
 
     useEffect(() => {
         axios.get(`/paradas?id_ruta=${rutaId}`)
