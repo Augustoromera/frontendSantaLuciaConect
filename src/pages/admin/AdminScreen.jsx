@@ -13,6 +13,7 @@ import { Footer } from '../../components/Footer';
 import axios from 'axios';
 import AddParadaModal from '../../components/admin-components/AddParadaModel';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import '../styles/adminHorarios.css'
 
 
 
@@ -283,6 +284,17 @@ export const AdminScreen = () => {
         });
     };
 
+    const eliminarParadaClick = async (idParada) => {
+
+        try {
+            await pruebaApi.delete(`/admin/eliminarParada/${idParada}`);
+            await fetchParadasYHorarios(); // refrescar la lista
+        } catch (error) {
+            console.error('Error al eliminar la parada:', error);
+            alert('No se pudo eliminar la parada. Revisá los logs del servidor.');
+        }
+    }
+
     const inactivarUsuarioClick = async (usuario) => {
         const { _id, username, email, status, role } = usuario;
         const lowerCaserole = role ? role.toLowerCase() : "user";
@@ -494,23 +506,41 @@ export const AdminScreen = () => {
                                         <h3>Ruta: {ruta.nombre}</h3>
 
                                         {(paradasPorRuta[ruta.id] && paradasPorRuta[ruta.id].length > 0) ? (
-                                            <ul>
+                                            <ul className="paradas-lista">
                                                 {paradasPorRuta[ruta.id].map((parada, index) => (
-                                                    <li key={parada._id || `temp-${index}`}> {/* SE UTILIZA EL INDEX PARA EVITAR EL WARNING DE KEY*/}
-                                                        {parada.nombre} (Orden: {parada.orden})
+                                                    <li key={parada._id || `temp-${index}`} className="parada-item">
+                                                        <span className="parada-info">
+                                                            {parada.nombre} (Orden: {parada.orden})
+                                                        </span>
+                                                        <div className="parada-botones">
+                                                            <button onClick={() => editarParada(parada)} title="Editar parada" className="boton-editar">
+                                                                <i className="fa-solid fa-pen-to-square"></i>
+                                                            </button>
+                                                            <button onClick={() => eliminarParadaClick(parada._id)} title="Eliminar parada" className="boton-eliminar">
+                                                                <i className="fa-solid fa-trash"></i>
+                                                            </button>
+                                                            <button onClick={() => verHorarios(parada)} title="Ver horarios" className="boton-horarios">
+                                                                <i className="fa-solid fa-clock"></i>
+                                                            </button>
+                                                        </div>
                                                     </li>
                                                 ))}
                                             </ul>
+
                                         ) : (
                                             <p>No hay paradas cargadas para esta ruta.</p>
                                         )}
 
-                                        <button onClick={() => {
-                                            setRutaSeleccionada(ruta);
-                                            setMostrarModal(true);
-                                        }}>
-                                            Agregar nueva parada
+                                        <button
+                                            className="boton-agregar-parada"
+                                            onClick={() => {
+                                                setRutaSeleccionada(ruta);
+                                                setMostrarModal(true);
+                                            }}
+                                        >
+                                            <i className="fa-solid fa-plus"></i> Agregar parada
                                         </button>
+
                                     </div>
                                 ))}
                             </section>
