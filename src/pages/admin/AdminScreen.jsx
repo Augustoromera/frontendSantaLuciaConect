@@ -63,7 +63,7 @@ export const AdminScreen = () => {
                 id_ruta: rutaSeleccionada.id
             };
 
-            const response = await axios.post('http://localhost:8080/admin/nuevaParada', nuevaParada);
+            const response = await pruebaApi.post('/admin/nuevaParada', nuevaParada);
             const paradaCreada = response.data;
 
             setParadasPorRuta(prev => ({
@@ -162,10 +162,13 @@ export const AdminScreen = () => {
             const nuevasParadas = {};
             const nuevosHorarios = {};
 
+            //const resParadas = await pruebaApi.get(`api/paradas`);
+            //setParadasPorRuta(nuevasParadas);
+
             for (const ruta of rutas) {
                 // Obtener paradas
-                const resParadas = await axios.get(`http://localhost:8080/api/paradas?id_ruta=${ruta.id}`); // REVISAR POR QUÉ NO CARGA LAS PARADAS 
-                                                                                                            // SIN USAR HTTP://LOCALHOST
+                const resParadas = await pruebaApi.get(`api/paradas?id_ruta=${ruta.id}`); // REVISAR POR QUÉ NO CARGA LAS PARADAS 
+                // SIN USAR HTTP://LOCALHOST
 
                 const paradas = resParadas.data;
                 nuevasParadas[ruta.id] = paradas;
@@ -189,9 +192,6 @@ export const AdminScreen = () => {
             console.error(error);
         }
     };
-
-
-
 
     // Funciones de API
     const editarUsuarioDb = async (_id, username, email, status, role) => {
@@ -374,11 +374,12 @@ export const AdminScreen = () => {
     // Efectos
     useEffect(() => {
         cargarUserDB();
+        //fetchParadasYHorarios();
     }, []);
 
     useEffect(() => {
         fetchParadasYHorarios();
-    }, [handleAgregarParada])
+    }, [])
 
     // Renderizado
     return (
@@ -514,12 +515,6 @@ export const AdminScreen = () => {
                                 ))}
                             </section>
 
-                            {/* Modal para agregar parada */}
-                            <AddParadaModal
-                                isOpen={mostrarModal}
-                                onClose={() => setMostrarModal(false)}
-                                onSubmit={handleAgregarParada}
-                            />
                         </div>
                     )}
 
@@ -556,6 +551,12 @@ export const AdminScreen = () => {
                     handleSubmitFormUserEditar={handleSubmitFormUserEditar}
                     formDateUserEditar={formDateUserEditar}
                 //asdasd
+                />
+                {/* Modal para agregar parada */}
+                <AddParadaModal
+                    isOpen={mostrarModal}
+                    onClose={() => setMostrarModal(false)}
+                    onSubmit={handleAgregarParada}
                 />
             </div>
             <Footer />

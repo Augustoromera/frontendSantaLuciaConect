@@ -26,12 +26,7 @@ const AddParadaModal = ({ isOpen, onClose, onSubmit, onRequestClose }) => {
     return (
 
         <Modal
-            isOpen={isOpen}
-            ariaHideApp={false}
-            className="modal-overlay"
-            overlayClassName="modal-backdrop"
-            onRequestClose={onRequestClose}
-        >
+            isOpen={isOpen} ariaHideApp={false} className="modal-overlay" overlayClassName="modal-backdrop" onRequestClose={onRequestClose}>
             <div className="modal-box">
                 <div className="modal-header">
                     <h2 className="modal-title">Agregar nueva parada</h2>
