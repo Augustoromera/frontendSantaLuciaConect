@@ -32,7 +32,7 @@ export const AdminScreen = () => {
     const [isModalOpenUserEditar, setIsModalOpenUserEditar] = useState(false);
 
     const rutas = [
-        { id: "6841ae01c11032698b6ade09", nombre: "Santa Lucía → Monteros" },
+        { id: "6846de00f0234bbe5766f9be", nombre: "Santa Lucía → Monteros" },
         { id: "6841af28447dea60cc03a67d", nombre: "Monteros → Santa Lucía" }
     ];
 
@@ -70,7 +70,7 @@ export const AdminScreen = () => {
                 ...prev,
                 [rutaSeleccionada.id]: [...(prev[rutaSeleccionada.id] || []), paradaCreada]
             }));
-
+            await fetchParadasYHorarios(); // Actualiza las paradas después de agregar
             setMostrarModal(false);
         } catch (error) {
             console.error('Error al agregar parada:', error);
