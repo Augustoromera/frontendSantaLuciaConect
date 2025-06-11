@@ -26,11 +26,11 @@
 }
 
 .boton-eliminar i {
-  color: #dc3545;
+  color: #ffffff;
 }
 
 .boton-horarios i {
-  color: #28a745;
+  color: #ffffff;
 }
 
 .boton-editar,
@@ -48,8 +48,8 @@
   justify-content: space-between;
   padding: 8px 12px;
   border-bottom: 1px solid #ccc;
-  background-color: rgb(20, 91, 172); /* Fondo semitransparente */
-  backdrop-filter: blur(8px); /* Efecto de desenfoque */
+  background-color: rgb(20, 91, 172);
+  backdrop-filter: blur(8px); 
   border-radius: 8px;
   margin-bottom: 10px;
 }
@@ -73,4 +73,57 @@
 .boton-agregar-parada:hover {
   background: linear-gradient(135deg, #009d05, #056400);
   transform: scale(1.05);
+}
+
+.boton-cargar-horario {
+  background-color: #28a745; /* Verde */
+  color: white;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-left: 5px;
+}
+
+.boton-cargar-horario:hover {
+  background-color: #218838;
+}
+
+.boton-editar,
+.boton-eliminar,
+.boton-horarios {
+  background-color: #ffffff;
+  color: white;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.boton-editar {
+  background-color: #6c757d;
+}
+
+.boton-editar:hover {
+  background-color: #5a6268;
+}
+
+.boton-eliminar {
+  background-color: #dc3545;
+}
+
+.boton-eliminar:hover {
+  background-color: #c82333;
+}
+
+.boton-horarios {
+  background-color: #28a745;
+}
+
+.boton-horarios:hover {
+  background-color: #218838;
 }

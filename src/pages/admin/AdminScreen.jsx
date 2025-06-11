@@ -34,7 +34,7 @@ export const AdminScreen = () => {
 
     const rutas = [
         { id: "6846de00f0234bbe5766f9be", nombre: "Santa Lucía → Monteros" },
-        { id: "6841af28447dea60cc03a67d", nombre: "Monteros → Santa Lucía" }
+        { id: "684979a4439c9115ed13b3e5", nombre: "Monteros → Santa Lucía" }
     ];
 
     // Estados para formularios
@@ -185,9 +185,13 @@ export const AdminScreen = () => {
                 // }));
 
                 // nuevosHorarios[ruta.id] = horarios;
+                setParadasPorRuta(prev => ({
+                    ...prev,
+                    [ruta.id]: paradas
+                }));
             }
 
-            setParadasPorRuta(nuevasParadas);
+
             //setHorariosPorRuta(nuevosHorarios);
         } catch (error) {
             console.error(error);
@@ -513,15 +517,21 @@ export const AdminScreen = () => {
                                                             {parada.nombre} (Orden: {parada.orden})
                                                         </span>
                                                         <div className="parada-botones">
-                                                            <button onClick={() => editarParada(parada)} title="Editar parada" className="boton-editar">
-                                                                <i className="fa-solid fa-pen-to-square"></i>
-                                                            </button>
-                                                            <button onClick={() => eliminarParadaClick(parada._id)} title="Eliminar parada" className="boton-eliminar">
-                                                                <i className="fa-solid fa-trash"></i>
-                                                            </button>
-                                                            <button onClick={() => verHorarios(parada)} title="Ver horarios" className="boton-horarios">
-                                                                <i className="fa-solid fa-clock"></i>
-                                                            </button>
+                                                            <div className="parada-botones">
+                                                                <button onClick={() => editarParada(parada)} title="Editar parada" className="boton-editar">
+                                                                    <i className="fa-solid fa-pen-to-square"></i>
+                                                                </button>
+                                                                <button onClick={() => eliminarParadaClick(parada._id)} title="Eliminar parada" className="boton-eliminar">
+                                                                    <i className="fa-solid fa-trash"></i>
+                                                                </button>
+                                                                <button onClick={() => verHorarios(parada)} title="Ver horarios" className="boton-horarios">
+                                                                    <i className="fa-solid fa-clock"></i>
+                                                                </button>
+                                                                <button onClick={() => cargarHorario(parada)} title="Cargar horario" className="boton-cargar-horario">
+                                                                    <i className="fa-solid fa-calendar-plus"></i>
+                                                                </button>
+                                                            </div>
+
                                                         </div>
                                                     </li>
                                                 ))}
