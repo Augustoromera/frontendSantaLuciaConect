@@ -13,7 +13,7 @@ const ruta = await Ruta.create({
 });
 
 const nombresParadas = [
-    'SANTA LUCIA', 'ZAVALIA', 'LA CORTADA', 'LA CIENAGA', 'KM 3',
+    'SANTA LUCIA', 'FAGALDE', 'LA CORTADA', 'LA CIENAGA', 'KM 3',
     'ALTO VERDE', 'ACHERAL', 'CERVECERIA', 'STO DOMINGO', 'CITROMAX', 'MONTEROS'
 ];
 

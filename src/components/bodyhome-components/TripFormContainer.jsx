@@ -1,4 +1,3 @@
-// TripFormContainer.js (Refactor con MongoDB + API)
 import React, { useEffect, useState } from 'react';
 import axios from '../../api/axios';
 import Swal from 'sweetalert2';
@@ -9,47 +8,103 @@ const TripFormContainer = () => {
         destino: '',
         horario: '',
         idaVuelta: false,
-        desdeMonteros: false,
+        haciaSantaLucia: false,
     });
 
     const [paradas, setParadas] = useState([]);
     const [destinosDisponibles, setDestinosDisponibles] = useState([]);
     const [horariosDisponibles, setHorariosDisponibles] = useState([]);
-    const [precio, setPrecio] = useState(null);
-    const rutaId = '6846de00f0234bbe5766f9be'; // <- cambiar por tu ObjectId real
+    const [precio, setPrecio] = useState(null); // Puede ser número o string
+
+    const rutas = {
+        santaLucia: '6841ae01c11032698b6ade09',
+        monteros: '6841af28447dea60cc03a67d',
+    };
+
+    const getRutaId = () =>
+        formData.haciaSantaLucia ? rutas.monteros : rutas.santaLucia;
+
+    const getTipoOrigenTarifa = () =>
+        formData.haciaSantaLucia ? 'MONTEROS' : 'SANTA LUCIA';
 
     useEffect(() => {
-        axios.get(`/paradas?id_ruta=${rutaId}`)
+        axios
+            .get(`/paradas?id_ruta=${getRutaId()}`)
             .then(res => setParadas(res.data))
-            .catch(err => console.error(err));
-    }, []);
+            .catch(err => console.error('Error al obtener paradas', err));
+    }, [formData.haciaSantaLucia]);
 
     useEffect(() => {
-        if (formData.origen && formData.destino) {
-            axios.get(`/horarios?id_ruta=${rutaId}&origen=${formData.origen}&destino=${formData.destino}`)
-                .then(res => setHorariosDisponibles(res.data))
-                .catch(err => console.error(err));
+        const { origen, destino } = formData;
+        if (origen && destino) {
+            const rutaId = getRutaId();
+            const tipoOrigen = getTipoOrigenTarifa();
 
-            axios.get(`/tarifa?id_ruta=${rutaId}&origen=${formData.origen}&destino=${formData.destino}`)
-                .then(res => setPrecio(res.data.precio))
-                .catch(err => console.error(err));
+            console.log('Solicitando tarifa con params:', {
+                id_ruta: rutaId,
+                tipoOrigen,
+                destino,
+            });
+
+            axios
+                .get('/horarios', {
+                    params: { id_ruta: rutaId, origen, destino },
+                })
+                .then(res => setHorariosDisponibles(res.data))
+                .catch(err => console.error('Error al obtener horarios', err));
+
+            axios
+                .get('/tarifa', {
+                    params: {
+                        id_ruta: rutaId,
+                        tipoOrigen,
+                        destino,
+                    },
+                })
+                .then(res => setPrecio(res.data.precio ?? null))
+                .catch(err => {
+                    console.error('Error al obtener tarifa', err);
+                    setPrecio('CONSULTAR'); // Mensaje personalizado
+                });
         }
-    }, [formData.origen, formData.destino]);
+    }, [formData.origen, formData.destino, formData.haciaSantaLucia]);
 
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
-        const newFormData = {
-            ...formData,
-            [name]: type === 'checkbox' ? checked : value,
-        };
-        setFormData(newFormData);
+
+        if (name === 'haciaSantaLucia') {
+            setFormData({
+                origen: '',
+                destino: '',
+                horario: '',
+                idaVuelta: formData.idaVuelta,
+                haciaSantaLucia: checked,
+            });
+            setDestinosDisponibles([]);
+            setHorariosDisponibles([]);
+            setPrecio(null);
+            return;
+        }
 
         if (name === 'origen') {
-            const destinos = paradas.map(p => p.nombre).filter(p => p !== value);
+            const destinos = paradas
+                .map(p => p.nombre)
+                .filter(p => p !== value);
             setDestinosDisponibles(destinos);
-            setFormData(prev => ({ ...prev, destino: '', horario: '' }));
             setHorariosDisponibles([]);
+            setFormData(prev => ({
+                ...prev,
+                origen: value,
+                destino: '',
+                horario: '',
+            }));
+            return;
         }
+
+        setFormData(prev => ({
+            ...prev,
+            [name]: type === 'checkbox' ? checked : value,
+        }));
     };
 
     const calcularDuracion = (salida, llegada) => {
@@ -64,27 +119,46 @@ const TripFormContainer = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        const precioFinal = formData.idaVuelta && precio ? precio * 1.8 : precio;
-        const horarioSeleccionado = horariosDisponibles.find(h => h.salida === formData.horario);
-        const duracion = horarioSeleccionado ? calcularDuracion(horarioSeleccionado.salida, horarioSeleccionado.llegada) : 'No disponible';
+        const { origen, destino, horario, idaVuelta, haciaSantaLucia } = formData;
 
-        if (!formData.origen || !formData.destino || !formData.horario) {
-            return Swal.fire({ icon: 'error', title: 'Faltan campos', text: 'Completa todo.' });
+        if (!origen || !destino || !horario) {
+            return Swal.fire({
+                icon: 'error',
+                title: 'Faltan datos',
+                text: 'Por favor completá todos los campos',
+            });
         }
 
-        if (formData.origen === formData.destino) {
-            return Swal.fire({ icon: 'error', title: 'Error', text: 'Origen y destino no pueden ser iguales' });
+        if (origen === destino) {
+            return Swal.fire({
+                icon: 'error',
+                title: 'Origen y destino no pueden ser iguales',
+            });
         }
+
+        const selectedHorario = horariosDisponibles.find(h => h.salida === horario) || {};
+        const duracion = selectedHorario.salida
+            ? calcularDuracion(selectedHorario.salida, selectedHorario.llegada)
+            : 'N/D';
+
+        const isPrecioValido = typeof precio === 'number' && !isNaN(precio);
+        const precioFinal = idaVuelta && isPrecioValido ? precio * 1.8 : precio;
+
+        const precioTexto = isPrecioValido
+            ? `$${precioFinal?.toFixed(2)}`
+            : 'Por favor consulte la parada siguiente a esta parada para obtener el precio';
 
         Swal.fire({
             title: 'Resumen de viaje',
             html: `
-        <p><strong>Ruta:</strong> ${formData.origen} ➔ ${formData.destino}</p>
-        <p><strong>Salida:</strong> ${formData.horario}</p>
-        <p><strong>Llegada:</strong> ${horarioSeleccionado?.llegada || 'N/D'}</p>
-        <p><strong>Duración:</strong> ${duracion}</p>
-        <p><strong>Precio:</strong> $${precioFinal?.toFixed(2) || '0.00'}</p>
-        ${formData.idaVuelta ? '<p><strong>Tipo:</strong> Ida y vuelta</p>' : ''} `,
+                <p><strong>Ruta:</strong> ${origen} ➔ ${destino}</p>
+                <p><strong>Sentido:</strong> ${haciaSantaLucia ? 'Hacia Santa Lucía' : 'Desde Santa Lucía'}</p>
+                <p><strong>Salida:</strong> ${horario}</p>
+                <p><strong>Llegada:</strong> ${selectedHorario.llegada || 'N/D'}</p>
+                <p><strong>Duración:</strong> ${duracion}</p>
+                <p><strong>Precio:</strong> ${precioTexto}</p>
+                ${idaVuelta && isPrecioValido ? '<p><strong>Tipo:</strong> Ida y vuelta</p>' : ''}
+            `,
         });
     };
 
@@ -101,7 +175,13 @@ const TripFormContainer = () => {
                             ))}
                         </select>
 
-                        <select name="destino" value={formData.destino} onChange={handleChange} required disabled={!formData.origen}>
+                        <select
+                            name="destino"
+                            value={formData.destino}
+                            onChange={handleChange}
+                            required
+                            disabled={!formData.origen}
+                        >
                             <option value="">Seleccione destino</option>
                             {destinosDisponibles.map((dest, i) => (
                                 <option key={i} value={dest}>{dest}</option>
@@ -109,16 +189,37 @@ const TripFormContainer = () => {
                         </select>
                     </div>
 
-                    <label>
-                        <input type="checkbox" name="idaVuelta" checked={formData.idaVuelta} onChange={handleChange} />
-                        Ida y vuelta
-                    </label>
+                    <div className="checkbox-group">
+                        <label>
+                            <input
+                                type="checkbox"
+                                name="idaVuelta"
+                                checked={formData.idaVuelta}
+                                onChange={handleChange}
+                            />
+                            Ida y vuelta
+                        </label>
+                        <label>
+                            <input
+                                type="checkbox"
+                                name="haciaSantaLucia"
+                                checked={formData.haciaSantaLucia}
+                                onChange={handleChange}
+                            />
+                            Volviendo a santa lucia
+                        </label>
+                    </div>
                 </div>
 
                 {formData.origen && formData.destino && (
                     <div className="schedule-options">
                         <label>Horarios disponibles</label>
-                        <select name="horario" value={formData.horario} onChange={handleChange} required>
+                        <select
+                            name="horario"
+                            value={formData.horario}
+                            onChange={handleChange}
+                            required
+                        >
                             <option value="">Seleccione un horario</option>
                             {horariosDisponibles.map((h, i) => (
                                 <option key={i} value={h.salida}>
