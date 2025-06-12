@@ -12,6 +12,7 @@ import { getAuthToken } from '../../api/auth';
 import { Footer } from '../../components/Footer';
 import axios from 'axios';
 import AddParadaModal from '../../components/admin-components/AddParadaModel';
+import AddHorarioModal from '../../components/admin-components/AddHorarioModal';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../styles/adminHorarios.css'
 
@@ -23,10 +24,14 @@ export const AdminScreen = () => {
     const [cargarUsuarios, setCargarUsuarios] = useState([]);
 
     const [paradasPorRuta, setParadasPorRuta] = useState({});
-    const [horariosPorRuta, setHorariosPorRuta] = useState({});
+    //const [horariosPorRuta, setHorariosPorRuta] = useState({});
 
     const [mostrarModal, setMostrarModal] = useState(false);
     const [rutaSeleccionada, setRutaSeleccionada] = useState(null);
+
+    const [modalHorarioAbierto, setModalHorarioAbierto] = useState(false);
+    const [paradaSeleccionada, setParadaSeleccionada] = useState(null);
+
 
     // Estados para los modales
     const [isModalOpenUser, setIsModalOpenUser] = useState(false);
@@ -76,6 +81,37 @@ export const AdminScreen = () => {
         } catch (error) {
             console.error('Error al agregar parada:', error);
         }
+    };
+
+    const cargarHorario = (parada) => {
+        setParadaSeleccionada(parada);
+        setModalHorarioAbierto(true);
+    };
+
+    const cerrarModalHorario = () => {
+        setParadaSeleccionada(null);
+        setModalHorarioAbierto(false);
+    };
+
+    const guardarHorario = async (paradaId, horario) => {
+        try {
+            const nuevoHorario = {
+                id_parada: paradaId,
+                horario: horario
+            };
+
+            const resp = await pruebaApi.post('/admin/nuevoHorario', nuevoHorario);
+
+            if (resp.status === 200 || resp.status === 201) {
+                console.log('Horario guardado correctamente:', resp.data);
+            } else {
+                console.warn('Algo salió mal al guardar el horario:', resp.status);
+            }
+        } catch (error) {
+            console.error('Error al guardar el horario:', error);
+        }
+
+        cerrarModalHorario();
     };
 
     // Funciones de manejo de cambios
@@ -517,26 +553,22 @@ export const AdminScreen = () => {
                                                             {parada.nombre} (Orden: {parada.orden})
                                                         </span>
                                                         <div className="parada-botones">
-                                                            <div className="parada-botones">
-                                                                <button onClick={() => editarParada(parada)} title="Editar parada" className="boton-editar">
-                                                                    <i className="fa-solid fa-pen-to-square"></i>
-                                                                </button>
-                                                                <button onClick={() => eliminarParadaClick(parada._id)} title="Eliminar parada" className="boton-eliminar">
-                                                                    <i className="fa-solid fa-trash"></i>
-                                                                </button>
-                                                                <button onClick={() => verHorarios(parada)} title="Ver horarios" className="boton-horarios">
-                                                                    <i className="fa-solid fa-clock"></i>
-                                                                </button>
-                                                                <button onClick={() => cargarHorario(parada)} title="Cargar horario" className="boton-cargar-horario">
-                                                                    <i className="fa-solid fa-calendar-plus"></i>
-                                                                </button>
-                                                            </div>
-
+                                                            <button onClick={() => editarParada(parada)} title="Editar parada" className="boton-editar">
+                                                                <i className="fa-solid fa-pen-to-square"></i>
+                                                            </button>
+                                                            <button onClick={() => eliminarParadaClick(parada._id)} title="Eliminar parada" className="boton-eliminar">
+                                                                <i className="fa-solid fa-trash"></i>
+                                                            </button>
+                                                            <button onClick={() => verHorarios(parada)} title="Ver horarios" className="boton-horarios">
+                                                                <i className="fa-solid fa-clock"></i>
+                                                            </button>
+                                                            <button onClick={() => cargarHorario(parada)} title="Cargar horario" className="boton-cargar-horario">
+                                                                <i className="fa-solid fa-calendar-plus"></i>
+                                                            </button>
                                                         </div>
                                                     </li>
                                                 ))}
                                             </ul>
-
                                         ) : (
                                             <p>No hay paradas cargadas para esta ruta.</p>
                                         )}
@@ -597,6 +629,12 @@ export const AdminScreen = () => {
                     isOpen={mostrarModal}
                     onClose={() => setMostrarModal(false)}
                     onSubmit={handleAgregarParada}
+                />
+                <AddHorarioModal
+                    isOpen={modalHorarioAbierto}
+                    onRequestClose={cerrarModalHorario}
+                    paradaId={paradaSeleccionada?._id}
+                    onSubmit={guardarHorario}
                 />
             </div>
             <Footer />
