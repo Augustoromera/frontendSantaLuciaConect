@@ -1,6 +1,6 @@
 import React from 'react'
 import "../pages/styles/footer.css"
-import logofooter from "../assets/images/logo/logofooter.png"
+import logofooter from "../assets/images/logo/logoFooter.png"
 export const Footer = () => {
     const currentYear = new Date().getFullYear();
     return (
