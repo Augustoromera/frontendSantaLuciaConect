@@ -16,9 +16,7 @@ body::before {
 
 
 .contenedor1 {
-  margin-top: 10vw !important;
   background-color: rgb(27, 27, 27); /* Negro se mantiene igual */
-  width: 20%;
   display: flex;
   justify-content: center;
   margin: 0 auto;
@@ -137,26 +135,25 @@ body::before {
 }
 
 /* Media queries se mantienen igual */
-@media all and (max-width:500px) {
+@media (max-width:800px) {
   .contenedor1 {
+    
+  margin-top: 30vw;
     width: 90vw;
   }
 }
 
-@media all and (min-width:500px) and (max-width:800px) {
-  .contenedor1 {
-    width: 70vw
-  }
-}
 
 @media all and (min-width:800px) and (max-width:1400px) {
   .contenedor1 {
+    margin-top: 15vw;
     width: 50vw;
   }
 }
 
 @media all and (min-width:1400px) and (max-width:2000px) {
   .contenedor1 {
+    margin-top: 15vw;
     width: 30vw;
   }
 }
