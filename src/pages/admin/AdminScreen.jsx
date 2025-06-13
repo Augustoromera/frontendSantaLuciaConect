@@ -93,11 +93,14 @@ export const AdminScreen = () => {
         setModalHorarioAbierto(false);
     };
 
-    const guardarHorario = async (paradaId, horario) => {
+    const guardarHorario = async (paradaId, horario, tipoDia, orden, turno) => {
         try {
             const nuevoHorario = {
                 id_parada: paradaId,
-                horario: horario
+                horario: horario,
+                tipo_dia: tipoDia,
+                nro_orden: orden,
+                turno: turno
             };
 
             const resp = await pruebaApi.post('/admin/nuevoHorario', nuevoHorario);

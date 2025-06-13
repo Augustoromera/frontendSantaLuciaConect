@@ -1,14 +1,19 @@
 import React, { useState } from 'react';
 import Modal from 'react-modal';
 
-
 const ModalCargarHorario = ({ isOpen, onRequestClose, paradaId, onSubmit }) => {
     const [horario, setHorario] = useState('');
+    const [tipoDia, setTipoDia] = useState('habil');
+    const [turno, setTurno] = useState('mañana');
+    const [orden, setOrden] = useState(1);
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        onSubmit(paradaId, horario);
+        onSubmit(paradaId, horario, tipoDia, orden, turno);
         setHorario('');
+        setTipoDia('habil');
+        setTurno('mañana');
+        setOrden(1);
     };
 
     return (
@@ -30,6 +35,41 @@ const ModalCargarHorario = ({ isOpen, onRequestClose, paradaId, onSubmit }) => {
                         onChange={(e) => setHorario(e.target.value)}
                         required
                     />
+
+                    <label htmlFor="tipoDia">Tipo de día:</label>
+                    <select
+                        id="tipoDia"
+                        value={tipoDia}
+                        onChange={(e) => setTipoDia(e.target.value)}
+                        required
+                    >
+                        <option value="habil">Hábil</option>
+                        <option value="sabado">Sábado</option>
+                        <option value="domingo">Domingo</option>
+                    </select>
+
+                    <label htmlFor="turno">Turno:</label>
+                    <select
+                        id="turno"
+                        value={turno}
+                        onChange={(e) => setTurno(e.target.value)}
+                        required
+                    >
+                        <option value="mañana">Mañana</option>
+                        <option value="tarde">Tarde</option>
+                        <option value="noche">Noche</option>
+                    </select>
+
+                    <label htmlFor="orden">Orden:</label>
+                    <input
+                        type="number"
+                        id="orden"
+                        value={orden}
+                        min="1"
+                        onChange={(e) => setOrden(Number(e.target.value))}
+                        required
+                    />
+
                     <div className="modal-actions">
                         <button type="submit" className="modal-button primary">Guardar</button>
                         <button type="button" className="modal-button secondary" onClick={onRequestClose}>Cancelar</button>
