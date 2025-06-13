@@ -196,3 +196,25 @@
         font-size: 1.3rem;
     }
 }
+/* Mantengo tu CSS original, solo asegúrate de que las clases coincidan */
+.horarios-container {
+    padding: 100px 2rem 2rem;
+    background-color: #9ec3e8;
+    min-height: 100vh;
+}
+
+.title {
+    text-align: center;
+    font-size: 2.5rem;
+    color: #003366;
+    margin-bottom: 1rem;
+}
+
+.subtitle {
+    text-align: center;
+    color: #005799;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+}
+
+/* ... (el resto de tu CSS permanece igual) ... */
