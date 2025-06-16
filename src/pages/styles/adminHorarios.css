@@ -127,3 +127,34 @@
 .boton-horarios:hover {
   background-color: #218838;
 }
+
+.modal-editar-horarios {
+  margin-top: 10px;
+  background-color: #ffffff;
+  padding: 10px;
+  border: 1px solid #ffffff;
+  border-radius: 8px;
+}
+
+.modal-editar-horarios {
+  margin-top: 10px;
+  background-color: #efefef;
+  padding: 15px;
+  border: 1px solid #ffffff;
+  border-radius: 10px;
+}
+.modal-editar-horarios ul {
+  list-style: none;
+  padding: 0;
+}
+.modal-editar-horarios li {
+  margin-bottom: 10px;
+}
+.modal-editar-horarios input[type="time"] {
+  padding: 5px;
+  margin-left: 10px;
+}
+.modal-editar-horarios button {
+  margin-top: 10px;
+  margin-right: 5px;
+}

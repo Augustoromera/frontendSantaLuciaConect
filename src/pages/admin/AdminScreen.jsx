@@ -13,6 +13,7 @@ import { Footer } from '../../components/Footer';
 import axios from 'axios';
 import AddParadaModal from '../../components/admin-components/AddParadaModel';
 import AddHorarioModal from '../../components/admin-components/AddHorarioModal';
+import EditHorariosModal from '../../components/admin-components/EditHorariosModal';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../styles/adminHorarios.css'
 
@@ -36,6 +37,9 @@ export const AdminScreen = () => {
     // Estados para los modales
     const [isModalOpenUser, setIsModalOpenUser] = useState(false);
     const [isModalOpenUserEditar, setIsModalOpenUserEditar] = useState(false);
+
+    const [paradaEditando, setParadaEditando] = useState(null); // Guarda la parada seleccionada
+
 
     const rutas = [
         { id: "6841ae01c11032698b6ade09", nombre: "Santa Lucía → Monteros" },
@@ -556,19 +560,42 @@ export const AdminScreen = () => {
                                                             {parada.nombre} (Orden: {parada.orden})
                                                         </span>
                                                         <div className="parada-botones">
-                                                            <button onClick={() => editarParada(parada)} title="Editar parada" className="boton-editar">
+                                                            <button
+                                                                onClick={() => setParadaEditando(parada)}
+                                                                title="Editar parada"
+                                                                className="boton-editar"
+                                                            >
                                                                 <i className="fa-solid fa-pen-to-square"></i>
                                                             </button>
-                                                            <button onClick={() => eliminarParadaClick(parada._id)} title="Eliminar parada" className="boton-eliminar">
+                                                            <button
+                                                                onClick={() => eliminarParadaClick(parada._id)}
+                                                                title="Eliminar parada"
+                                                                className="boton-eliminar"
+                                                            >
                                                                 <i className="fa-solid fa-trash"></i>
                                                             </button>
-                                                            <button onClick={() => verHorarios(parada)} title="Ver horarios" className="boton-horarios">
+                                                            <button
+                                                                onClick={() => verHorarios(parada)}
+                                                                title="Ver horarios"
+                                                                className="boton-horarios"
+                                                            >
                                                                 <i className="fa-solid fa-clock"></i>
                                                             </button>
-                                                            <button onClick={() => cargarHorario(parada)} title="Cargar horario" className="boton-cargar-horario">
+                                                            <button
+                                                                onClick={() => cargarHorario(parada)}
+                                                                title="Cargar horario"
+                                                                className="boton-cargar-horario"
+                                                            >
                                                                 <i className="fa-solid fa-calendar-plus"></i>
                                                             </button>
                                                         </div>
+
+                                                        {paradaEditando && paradaEditando._id === parada._id && (
+                                                            <EditHorariosModal
+                                                                parada={paradaEditando}
+                                                                onClose={() => setParadaEditando(null)}
+                                                            />
+                                                        )}
                                                     </li>
                                                 ))}
                                             </ul>
