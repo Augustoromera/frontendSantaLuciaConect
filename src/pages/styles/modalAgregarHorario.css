@@ -1,0 +1,102 @@
+/* Fondo desenfocado del modal */
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5); /* fondo oscuro con opacidad */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+/* Caja del modal */
+
+
+/* Título */
+.modal-title {
+  margin-top: 0;
+  font-size: 1.6rem;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+/* Formulario */
+.modal-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* Inputs y selects */
+.modal-form input,
+.modal-form select {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #555;
+  border-radius: 6px;
+  font-size: 1rem;
+  background-color: #333;
+  color: #fff;
+  outline: none;
+}
+
+.modal-form input:focus,
+.modal-form select:focus {
+  border-color: #00bfff;
+}
+
+/* Botones */
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.8rem;
+  margin-top: 1rem;
+}
+
+.modal-button {
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-size: 1rem;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.modal-button.primary {
+  background-color: #00bfff;
+  color: #fff;
+}
+
+.modal-button.primary:hover {
+  background-color: #009fd1;
+}
+
+.modal-button.secondary {
+  background-color: #555;
+  color: #fff;
+}
+
+.modal-button.secondary:hover {
+  background-color: #444;
+}
+
+/* Ícono blanco para "ver horarios" */
+.boton-horarios i {
+  color: white;
+  margin-left: 6px;
+}
+
+/* Animación de entrada */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}

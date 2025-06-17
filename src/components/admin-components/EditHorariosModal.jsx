@@ -120,7 +120,7 @@ const EditarHorariosModal = ({ parada, onClose }) => {
                             </Form>
 
                         ) : (
-                            <p>No hay horarios cargados para esta parada.</p>
+                            <p className='text-white'>No hay horarios cargados para esta parada.</p>
                         )}
 
                     </>

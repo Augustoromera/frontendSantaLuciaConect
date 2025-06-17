@@ -574,7 +574,7 @@ export const AdminScreen = () => {
                                                         <div className="parada-botones">
                                                             
                                                             <button
-                                                                onClick={() => setParadaEditando(parada)}
+                                                                onClick={() => verHorarios(parada)}
                                                                 title="Editar parada"
                                                                 className="boton-editar"
                                                             >Editar
@@ -588,7 +588,8 @@ export const AdminScreen = () => {
                                                                 <i className="fa-solid fa-trash icono-boton"></i>
                                                             </button>
                                                             <button
-                                                                onClick={() => verHorarios(parada)}
+                                                                
+                                                                onClick={() => setParadaEditando(parada)}
                                                                 title="Ver horarios"
                                                                 className="boton-horarios"
                                                             >Ver 
