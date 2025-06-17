@@ -332,14 +332,26 @@ export const AdminScreen = () => {
     };
 
     const eliminarParadaClick = async (idParada) => {
+        //const confirmacion = window.confirm("¿Estás seguro de que querés eliminar este elemento?");
+        const result = await Swal.fire({
+            title: '¿Estás seguro?',
+            text: 'Esta acción eliminará el elemento permanentemente.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'Cancelar',
+        });
 
-        try {
-            await pruebaApi.delete(`/admin/eliminarParada/${idParada}`);
-            await fetchParadasYHorarios(); // refrescar la lista
-        } catch (error) {
-            console.error('Error al eliminar la parada:', error);
-            alert('No se pudo eliminar la parada. Revisá los logs del servidor.');
+        if (result.isConfirmed) {
+            try {
+                await pruebaApi.delete(`/admin/eliminarParada/${idParada}`);
+                await fetchParadasYHorarios(); // refrescar la lista
+            } catch (error) {
+                console.error('Error al eliminar la parada:', error);
+                alert('No se pudo eliminar la parada. Revisá los logs del servidor.');
+            }
         }
+
     }
 
     const inactivarUsuarioClick = async (usuario) => {
@@ -560,33 +572,34 @@ export const AdminScreen = () => {
                                                             {parada.nombre} (Orden: {parada.orden})
                                                         </span>
                                                         <div className="parada-botones">
+                                                            
                                                             <button
                                                                 onClick={() => setParadaEditando(parada)}
                                                                 title="Editar parada"
                                                                 className="boton-editar"
-                                                            >
-                                                                <i className="fa-solid fa-pen-to-square"></i>
+                                                            >Editar
+                                                                <i className="fa-solid fa-pen-to-square icono-boton"></i>
                                                             </button>
                                                             <button
                                                                 onClick={() => eliminarParadaClick(parada._id)}
                                                                 title="Eliminar parada"
                                                                 className="boton-eliminar"
-                                                            >
-                                                                <i className="fa-solid fa-trash"></i>
+                                                            >Eliminar 
+                                                                <i className="fa-solid fa-trash icono-boton"></i>
                                                             </button>
                                                             <button
                                                                 onClick={() => verHorarios(parada)}
                                                                 title="Ver horarios"
                                                                 className="boton-horarios"
-                                                            >
-                                                                <i className="fa-solid fa-clock"></i>
+                                                            >Ver 
+                                                                <i className="fa-solid fa-clock icono-boton"></i>
                                                             </button>
                                                             <button
                                                                 onClick={() => cargarHorario(parada)}
                                                                 title="Cargar horario"
                                                                 className="boton-cargar-horario"
-                                                            >
-                                                                <i className="fa-solid fa-calendar-plus"></i>
+                                                            >Agregar 
+                                                                <i className="fa-solid fa-calendar-plus icono-boton"></i>
                                                             </button>
                                                         </div>
 
