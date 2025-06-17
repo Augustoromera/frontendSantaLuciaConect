@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import Modal from 'react-modal';
+import '../../pages/styles/modalAgregarHorario.css'
 
 const ModalCargarHorario = ({ isOpen, onRequestClose, paradaId, onSubmit }) => {
     const [horario, setHorario] = useState('');
