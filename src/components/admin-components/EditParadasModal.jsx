@@ -5,7 +5,7 @@ import '../../pages/styles/modalEditarParada.css';
 import pruebaApi from '../../api/pruebaApi';
 import { Spinner, Alert } from 'react-bootstrap';
 
-const EditParadaModal = ({ isOpen, onRequestClose, parada }) => {
+const EditParadaModal = ({ isOpen, onRequestClose, parada, onRecargarParadas }) => {
   const [formData, setFormData] = useState({ nombre: '', ubicacion: '', orden: 0 });
   const [mensaje, setMensaje] = useState(null);
   const [error, setError] = useState(null);
@@ -47,6 +47,10 @@ const EditParadaModal = ({ isOpen, onRequestClose, parada }) => {
       setTimeout(() => {
         setMensaje(null);
         onRequestClose();
+
+        if(onRecargarParadas){
+          onRecargarParadas()
+        }
       }, 1000);
     } catch (err) {
       console.error(err);

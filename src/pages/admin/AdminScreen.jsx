@@ -18,8 +18,6 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import '../styles/adminHorarios.css'
 import EditParadaModal from '../../components/admin-components/EditParadasModal';
 
-
-
 export const AdminScreen = () => {
     const { user } = useAuth();
     const [activeSection, setActiveSection] = useState('usuarios');
@@ -46,12 +44,8 @@ export const AdminScreen = () => {
 
     const [horarioEditando, setHorarioEditando] = useState(null); // Guarda la parada seleccionada
 
-    const [paradaEditando, setParadaEditando] = useState(null);
-
     // MODAL PARA EDITAR UNA PARADA
     const [modalEditarParadaAbierto, setModalEditarParadaAbierto] = useState(false)
-
-    //const [modalEditar]
 
 
     const rutas = [
@@ -75,10 +69,6 @@ export const AdminScreen = () => {
         password: '',
         role: ''
     });
-
-    // const cerrarModalEditarParada = () => {
-    //     setParadaSeleccionada(null);
-    // };
 
     const handleAgregarParada = async ({ nombre, orden }) => {
         if (!rutaSeleccionada) return;
@@ -239,8 +229,7 @@ export const AdminScreen = () => {
 
             for (const ruta of rutas) {
                 // Obtener paradas
-                const resParadas = await pruebaApi.get(`api/paradas?id_ruta=${ruta.id}`); // REVISAR POR QUÉ NO CARGA LAS PARADAS 
-                // SIN USAR HTTP://LOCALHOST
+                const resParadas = await pruebaApi.get(`api/paradas?id_ruta=${ruta.id}`);
 
                 const paradas = resParadas.data;
                 nuevasParadas[ruta.id] = paradas;
@@ -261,8 +250,6 @@ export const AdminScreen = () => {
                     [ruta.id]: paradas
                 }));
             }
-
-
             //setHorariosPorRuta(nuevosHorarios);
         } catch (error) {
             console.error(error);
@@ -473,7 +460,6 @@ export const AdminScreen = () => {
     // Efectos
     useEffect(() => {
         cargarUserDB();
-        //fetchParadasYHorarios();
     }, []);
 
     useEffect(() => {
@@ -719,6 +705,7 @@ export const AdminScreen = () => {
                     isOpen={modalEditarParadaAbierto} 
                     onRequestClose={cerrarModalEditarParada}
                     parada={paradaSeleccionada}
+                    onRecargarParadas={fetchParadasYHorarios}
                 />
             </div>
             <Footer />
