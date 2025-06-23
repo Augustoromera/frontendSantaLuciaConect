@@ -5,7 +5,7 @@ import '../../pages/styles/modalEditarParada.css';
 import pruebaApi from '../../api/pruebaApi';
 import { Spinner, Alert } from 'react-bootstrap';
 
-const EditParadaModal = ({ onClose, parada }) => {
+const EditParadaModal = ({ isOpen, onRequestClose, parada }) => {
   const [formData, setFormData] = useState({ nombre: '', ubicacion: '', orden: 0 });
   const [mensaje, setMensaje] = useState(null);
   const [error, setError] = useState(null);
@@ -37,7 +37,7 @@ const EditParadaModal = ({ onClose, parada }) => {
 
     try {
       await pruebaApi.put('/admin/editarParada', {
-        _id: parada._id, // 👈 importante para identificar qué parada se edita
+        _id: parada._id, 
         nombre: formData.nombre,
         ubicacion: formData.ubicacion,
         orden: formData.orden,
@@ -46,7 +46,7 @@ const EditParadaModal = ({ onClose, parada }) => {
       setMensaje('Parada editada correctamente');
       setTimeout(() => {
         setMensaje(null);
-        onClose();
+        onRequestClose();
       }, 1000);
     } catch (err) {
       console.error(err);
@@ -58,12 +58,11 @@ const EditParadaModal = ({ onClose, parada }) => {
 
   return (
     <Modal
-      isOpen={!!parada}
-      onRequestClose={onClose}
+      isOpen={isOpen}
       contentLabel="Editar Parada"
       className="modal-contenido"
       overlayClassName="modal-overlay"
-      
+      onRequestClose={onRequestClose}
     >
       <h2>Editar Parada</h2>
 
@@ -110,7 +109,7 @@ const EditParadaModal = ({ onClose, parada }) => {
           <button type="submit" className="boton-guardar" disabled={loading}>
             Guardar
           </button>
-          <button type="button" onClick={onClose} className="boton-cancelar">
+          <button type="button" onClick={onRequestClose} className="boton-cancelar">
             Cancelar
           </button>
         </div>

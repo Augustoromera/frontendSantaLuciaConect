@@ -26,23 +26,32 @@ export const AdminScreen = () => {
     const [cargarUsuarios, setCargarUsuarios] = useState([]);
 
     const [paradasPorRuta, setParadasPorRuta] = useState({});
-    //const [horariosPorRuta, setHorariosPorRuta] = useState({});
 
+    // MODAL PARA AGREGAR UNA NUEVA PARADA
     const [mostrarModal, setMostrarModal] = useState(false);
+
     const [rutaSeleccionada, setRutaSeleccionada] = useState(null);
 
+    // MODAL PARA AGREGAR UN HORARIO
     const [modalHorarioAbierto, setModalHorarioAbierto] = useState(false);
 
+    // GUARDA LA PARADA SELECCIONADA Y SE LLAMA EN EL MODAL PARA EDITAR EL NOMBRE Y ORDEN DE UNA PARADA
     const [paradaSeleccionada, setParadaSeleccionada] = useState(null);
 
-
-    // Estados para los modales
+    // MODAL PARA AGREGAR UN USUARIO
     const [isModalOpenUser, setIsModalOpenUser] = useState(false);
+
+    // MODAL PARA EDITAR UN USUARIO
     const [isModalOpenUserEditar, setIsModalOpenUserEditar] = useState(false);
 
     const [horarioEditando, setHorarioEditando] = useState(null); // Guarda la parada seleccionada
 
     const [paradaEditando, setParadaEditando] = useState(null);
+
+    // MODAL PARA EDITAR UNA PARADA
+    const [modalEditarParadaAbierto, setModalEditarParadaAbierto] = useState(false)
+
+    //const [modalEditar]
 
 
     const rutas = [
@@ -67,13 +76,9 @@ export const AdminScreen = () => {
         role: ''
     });
 
-    const abrirModalEditarParada = (parada) => {
-        setParadaSeleccionada(parada);
-    };
-
-    const cerrarModalEditarParada = () => {
-        setParadaSeleccionada(null);
-    };
+    // const cerrarModalEditarParada = () => {
+    //     setParadaSeleccionada(null);
+    // };
 
     const handleAgregarParada = async ({ nombre, orden }) => {
         if (!rutaSeleccionada) return;
@@ -99,6 +104,17 @@ export const AdminScreen = () => {
         }
     };
 
+    // CONTROL DEL MODAL PARA EDITAR UNA PARADA
+    const editarParada = (parada) => {
+        setParadaSeleccionada(parada)
+        setModalEditarParadaAbierto(true)
+    }
+    const cerrarModalEditarParada = () => {
+        setParadaSeleccionada(null);
+        setModalEditarParadaAbierto(false)
+    }
+
+    // CONTROL DEL MODAL PARA AGREGAR UN HORARIO
     const cargarHorario = (parada) => {
         setParadaSeleccionada(parada);
         setModalHorarioAbierto(true);
@@ -586,7 +602,7 @@ export const AdminScreen = () => {
                                                         <div className="parada-botones">
 
                                                             <button
-                                                                onClick={() => setParadaEditando(parada)}
+                                                                onClick={() => editarParada(parada)}
                                                                 title="Editar parada"
                                                                 className="boton-editar"
                                                             >Editar
@@ -601,7 +617,7 @@ export const AdminScreen = () => {
                                                             </button>
                                                             <button
 
-                                                                onClick={() => abrirModalEditarParada(parada)}
+                                                                onClick={() => setHorarioEditando(parada)}
                                                                 title="Ver horarios"
                                                                 className="boton-horarios"
                                                             >Ver
@@ -622,12 +638,12 @@ export const AdminScreen = () => {
                                                                 onClose={() => setHorarioEditando(null)}
                                                             />
                                                         )}
-                                                        {paradaEditando && paradaEditando._id === parada._id && (
+                                                        {/* {paradaEditando && paradaEditando._id === parada._id && (
                                                             <EditParadaModal
-                                                                parada={paradaEditando}
                                                                 onClose={() => setParadaEditando(null)}
+                                                                parada={paradaEditando}
                                                             />
-                                                        )}
+                                                        )} */}
 
                                                     </li>
                                                 ))}
@@ -699,7 +715,11 @@ export const AdminScreen = () => {
                     paradaId={paradaSeleccionada?._id}
                     onSubmit={guardarHorario}
                 />
-                <EditParadaModal parada={paradaSeleccionada} onClose={cerrarModalEditarParada} />
+                <EditParadaModal
+                    isOpen={modalEditarParadaAbierto} 
+                    onRequestClose={cerrarModalEditarParada}
+                    parada={paradaSeleccionada}
+                />
             </div>
             <Footer />
         </>
