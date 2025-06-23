@@ -1,0 +1,93 @@
+.modal-backdrop {
+  background-color: rgba(0, 0, 0, 0.75);
+  position: fixed;
+  inset: 0; /* atajo para top/left/right/bottom: 0 */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1050;
+}
+
+.modal-contenido {
+  background-color: #030303; /* fondo más oscuro para mejor integración con UIs oscuras */
+  color: #f0f0f0;
+  padding: 2rem;
+  width: 100%;
+  max-width: 500px;
+  border-radius: 12px;
+  border: 1px solid #3000f2;
+  position: relative;
+}
+
+.modal-contenido h2 {
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+  font-size: 1.5rem;
+  text-align: center;
+  color: #ffffff;
+}
+
+.modal-form label {
+  display: block;
+  margin-bottom: 0.25rem;
+  color: #ccc;
+  font-weight: 500;
+}
+
+.modal-form input {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  margin-bottom: 1rem;
+  border: 1px solid #555;
+  border-radius: 6px;
+  background-color: #333;
+  color: #f0f0f0;
+  font-size: 1rem;
+  transition: border 0.2s ease;
+}
+
+.modal-form input:focus {
+  border-color: #66afe9;
+  outline: none;
+  background-color: #2f2f45;
+}
+
+.modal-botones {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.boton-guardar,
+.boton-cancelar {
+  padding: 0.5rem 1.25rem;
+  font-size: 1rem;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.boton-guardar {
+  background-color: #28a745;
+  color: white;
+}
+
+.boton-guardar:hover {
+  background-color: #218838;
+}
+
+.boton-cancelar {
+  background-color: #dc3545;
+  color: white;
+}
+
+.boton-cancelar:hover {
+  background-color: #c82333;
+}
+
+.custom-input {
+  background-color: #1f1f1f !important;
+  color: #f0f0f0 !important;
+}

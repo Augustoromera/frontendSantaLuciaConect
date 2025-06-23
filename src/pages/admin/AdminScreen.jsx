@@ -16,8 +16,7 @@ import AddHorarioModal from '../../components/admin-components/AddHorarioModal';
 import EditHorariosModal from '../../components/admin-components/EditHorariosModal';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../styles/adminHorarios.css'
-
-
+import EditParadaModal from '../../components/admin-components/EditParadasModal';
 
 export const AdminScreen = () => {
     const { user } = useAuth();
@@ -25,20 +24,28 @@ export const AdminScreen = () => {
     const [cargarUsuarios, setCargarUsuarios] = useState([]);
 
     const [paradasPorRuta, setParadasPorRuta] = useState({});
-    //const [horariosPorRuta, setHorariosPorRuta] = useState({});
 
+    // MODAL PARA AGREGAR UNA NUEVA PARADA
     const [mostrarModal, setMostrarModal] = useState(false);
+
     const [rutaSeleccionada, setRutaSeleccionada] = useState(null);
 
+    // MODAL PARA AGREGAR UN HORARIO
     const [modalHorarioAbierto, setModalHorarioAbierto] = useState(false);
+
+    // GUARDA LA PARADA SELECCIONADA Y SE LLAMA EN EL MODAL PARA EDITAR EL NOMBRE Y ORDEN DE UNA PARADA
     const [paradaSeleccionada, setParadaSeleccionada] = useState(null);
 
-
-    // Estados para los modales
+    // MODAL PARA AGREGAR UN USUARIO
     const [isModalOpenUser, setIsModalOpenUser] = useState(false);
+
+    // MODAL PARA EDITAR UN USUARIO
     const [isModalOpenUserEditar, setIsModalOpenUserEditar] = useState(false);
 
-    const [paradaEditando, setParadaEditando] = useState(null); // Guarda la parada seleccionada
+    const [horarioEditando, setHorarioEditando] = useState(null); // Guarda la parada seleccionada
+
+    // MODAL PARA EDITAR UNA PARADA
+    const [modalEditarParadaAbierto, setModalEditarParadaAbierto] = useState(false)
 
 
     const rutas = [
@@ -87,6 +94,17 @@ export const AdminScreen = () => {
         }
     };
 
+    // CONTROL DEL MODAL PARA EDITAR UNA PARADA
+    const editarParada = (parada) => {
+        setParadaSeleccionada(parada)
+        setModalEditarParadaAbierto(true)
+    }
+    const cerrarModalEditarParada = () => {
+        setParadaSeleccionada(null);
+        setModalEditarParadaAbierto(false)
+    }
+
+    // CONTROL DEL MODAL PARA AGREGAR UN HORARIO
     const cargarHorario = (parada) => {
         setParadaSeleccionada(parada);
         setModalHorarioAbierto(true);
@@ -211,8 +229,7 @@ export const AdminScreen = () => {
 
             for (const ruta of rutas) {
                 // Obtener paradas
-                const resParadas = await pruebaApi.get(`api/paradas?id_ruta=${ruta.id}`); // REVISAR POR QUÉ NO CARGA LAS PARADAS 
-                // SIN USAR HTTP://LOCALHOST
+                const resParadas = await pruebaApi.get(`api/paradas?id_ruta=${ruta.id}`);
 
                 const paradas = resParadas.data;
                 nuevasParadas[ruta.id] = paradas;
@@ -233,8 +250,6 @@ export const AdminScreen = () => {
                     [ruta.id]: paradas
                 }));
             }
-
-
             //setHorariosPorRuta(nuevosHorarios);
         } catch (error) {
             console.error(error);
@@ -445,7 +460,6 @@ export const AdminScreen = () => {
     // Efectos
     useEffect(() => {
         cargarUserDB();
-        //fetchParadasYHorarios();
     }, []);
 
     useEffect(() => {
@@ -572,9 +586,9 @@ export const AdminScreen = () => {
                                                             {parada.nombre} (Orden: {parada.orden})
                                                         </span>
                                                         <div className="parada-botones">
-                                                            
+
                                                             <button
-                                                                onClick={() => verHorarios(parada)}
+                                                                onClick={() => editarParada(parada)}
                                                                 title="Editar parada"
                                                                 className="boton-editar"
                                                             >Editar
@@ -584,32 +598,39 @@ export const AdminScreen = () => {
                                                                 onClick={() => eliminarParadaClick(parada._id)}
                                                                 title="Eliminar parada"
                                                                 className="boton-eliminar"
-                                                            >Eliminar 
+                                                            >Eliminar
                                                                 <i className="fa-solid fa-trash icono-boton"></i>
                                                             </button>
                                                             <button
-                                                                
-                                                                onClick={() => setParadaEditando(parada)}
+
+                                                                onClick={() => setHorarioEditando(parada)}
                                                                 title="Ver horarios"
                                                                 className="boton-horarios"
-                                                            >Ver 
+                                                            >Ver
                                                                 <i className="fa-solid fa-clock icono-boton"></i>
                                                             </button>
                                                             <button
                                                                 onClick={() => cargarHorario(parada)}
                                                                 title="Cargar horario"
                                                                 className="boton-cargar-horario"
-                                                            >Agregar 
+                                                            >Agregar
                                                                 <i className="fa-solid fa-calendar-plus icono-boton"></i>
                                                             </button>
                                                         </div>
 
-                                                        {paradaEditando && paradaEditando._id === parada._id && (
+                                                        {horarioEditando && horarioEditando._id === parada._id && (
                                                             <EditHorariosModal
-                                                                parada={paradaEditando}
-                                                                onClose={() => setParadaEditando(null)}
+                                                                parada={horarioEditando}
+                                                                onClose={() => setHorarioEditando(null)}
                                                             />
                                                         )}
+                                                        {/* {paradaEditando && paradaEditando._id === parada._id && (
+                                                            <EditParadaModal
+                                                                onClose={() => setParadaEditando(null)}
+                                                                parada={paradaEditando}
+                                                            />
+                                                        )} */}
+
                                                     </li>
                                                 ))}
                                             </ul>
@@ -679,6 +700,12 @@ export const AdminScreen = () => {
                     onRequestClose={cerrarModalHorario}
                     paradaId={paradaSeleccionada?._id}
                     onSubmit={guardarHorario}
+                />
+                <EditParadaModal
+                    isOpen={modalEditarParadaAbierto} 
+                    onRequestClose={cerrarModalEditarParada}
+                    parada={paradaSeleccionada}
+                    onRecargarParadas={fetchParadasYHorarios}
                 />
             </div>
             <Footer />
