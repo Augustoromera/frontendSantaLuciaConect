@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Modal, Button, Form, Spinner, Alert } from 'react-bootstrap';
 import pruebaApi from '../../api/pruebaApi';
+import '../../pages/styles/editHorariosModal.css'
 import axios from 'axios';
 
 const EditarHorariosModal = ({ parada, onClose }) => {
@@ -128,11 +129,11 @@ const EditarHorariosModal = ({ parada, onClose }) => {
             </Modal.Body>
 
             <Modal.Footer>
-                <Button variant="secondary" onClick={onClose}>
-                    Cancelar
-                </Button>
-                <Button variant="primary" onClick={guardarCambios} disabled={loading}>
+                <Button className='botonGuardar' onClick={guardarCambios} disabled={loading}>
                     Guardar cambios
+                </Button>
+                <Button className='botonCancelar' onClick={onClose}>
+                    Cancelar
                 </Button>
             </Modal.Footer>
         </Modal>

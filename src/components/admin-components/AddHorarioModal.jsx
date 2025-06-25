@@ -32,6 +32,7 @@ const ModalCargarHorario = ({ isOpen, onRequestClose, paradaId, onSubmit }) => {
                     <input
                         type="time"
                         id="horario"
+                        className='text-center'
                         value={horario}
                         onChange={(e) => setHorario(e.target.value)}
                         required
@@ -41,6 +42,7 @@ const ModalCargarHorario = ({ isOpen, onRequestClose, paradaId, onSubmit }) => {
                     <select
                         id="tipoDia"
                         value={tipoDia}
+                        className='text-center'
                         onChange={(e) => setTipoDia(e.target.value)}
                         required
                     >
@@ -52,6 +54,7 @@ const ModalCargarHorario = ({ isOpen, onRequestClose, paradaId, onSubmit }) => {
                     <label htmlFor="turno">Turno:</label>
                     <select
                         id="turno"
+                        className='text-center'
                         value={turno}
                         onChange={(e) => setTurno(e.target.value)}
                         required
@@ -65,6 +68,7 @@ const ModalCargarHorario = ({ isOpen, onRequestClose, paradaId, onSubmit }) => {
                     <input
                         type="number"
                         id="orden"
+                        className='text-center'
                         value={orden}
                         min="1"
                         onChange={(e) => setOrden(Number(e.target.value))}

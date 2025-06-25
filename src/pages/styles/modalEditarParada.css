@@ -1,7 +1,8 @@
 .modal-backdrop {
   background-color: rgba(0, 0, 0, 0.75);
   position: fixed;
-  inset: 0; /* atajo para top/left/right/bottom: 0 */
+  inset: 0;
+  /* atajo para top/left/right/bottom: 0 */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -9,7 +10,8 @@
 }
 
 .modal-contenido {
-  background-color: #030303; /* fondo más oscuro para mejor integración con UIs oscuras */
+  background-color: #030303;
+  /* fondo más oscuro para mejor integración con UIs oscuras */
   color: #f0f0f0;
   padding: 2rem;
   width: 100%;
@@ -70,12 +72,12 @@
 }
 
 .boton-guardar {
-  background-color: #28a745;
+  background-color: #00bfff;
   color: white;
 }
 
 .boton-guardar:hover {
-  background-color: #218838;
+  background-color: #009fd1;
 }
 
 .boton-cancelar {
@@ -88,6 +90,13 @@
 }
 
 .custom-input {
-  background-color: #1f1f1f !important;
-  color: #f0f0f0 !important;
+  width: 50%;
+  padding: 0.5rem 0.75rem;
+  margin-bottom: 1rem;
+  border: 1px solid #555;
+  border-radius: 6px;
+  background-color: #333;
+  color: #f0f0f0;
+  font-size: 1rem;
+  transition: border 0.2s ease;
 }
