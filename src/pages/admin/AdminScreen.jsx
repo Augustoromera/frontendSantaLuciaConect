@@ -624,13 +624,6 @@ export const AdminScreen = () => {
                                                                 onClose={() => setHorarioEditando(null)}
                                                             />
                                                         )}
-                                                        {/* {paradaEditando && paradaEditando._id === parada._id && (
-                                                            <EditParadaModal
-                                                                onClose={() => setParadaEditando(null)}
-                                                                parada={paradaEditando}
-                                                            />
-                                                        )} */}
-
                                                     </li>
                                                 ))}
                                             </ul>
