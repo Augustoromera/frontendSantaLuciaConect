@@ -15,7 +15,7 @@ import AddParadaModal from '../../components/admin-components/AddParadaModel';
 import AddHorarioModal from '../../components/admin-components/AddHorarioModal';
 import EditHorariosModal from '../../components/admin-components/EditHorariosModal';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import '../styles/adminHorarios.css'
+import '../styles/adminHorarios.css';
 import EditParadaModal from '../../components/admin-components/EditParadasModal';
 
 export const AdminScreen = () => {
