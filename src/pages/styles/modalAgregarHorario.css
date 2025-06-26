@@ -34,6 +34,9 @@
 /* Inputs y selects */
 .modal-form input,
 .modal-form select {
+  width: 100%;
+  max-width: 250px;
+  padding: 8px;
   padding: 0.5rem 0.75rem;
   border: 1px solid #555;
   border-radius: 6px;

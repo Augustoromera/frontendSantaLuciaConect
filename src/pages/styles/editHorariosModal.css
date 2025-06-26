@@ -1,0 +1,27 @@
+.botonGuardar {
+    background-color: #00bfff;
+    color: #fff;
+}
+
+.botonGuardar:hover {
+    background-color: #009fd1;
+}
+
+.botonCancelar {
+    margin-right: 4rem;
+    background-color: red;
+    color: #fff;
+}
+
+.botonCancelar:hover {
+    background-color: rgb(167, 0, 0);
+}
+
+.pos {
+    padding: auto;
+}
+
+.margen {
+    padding-top: 5px;
+    padding-bottom: 5px ;
+}

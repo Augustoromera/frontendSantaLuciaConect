@@ -86,7 +86,7 @@ const EditParadaModal = ({ isOpen, onRequestClose, parada, onRecargarParadas }) 
           value={formData.nombre}
           onChange={handleChange}
           required
-          className="custom-input"
+          className="custom-input text-center"
         />
 
         <label className="text-white p-2">Ubicación:</label>
@@ -96,7 +96,7 @@ const EditParadaModal = ({ isOpen, onRequestClose, parada, onRecargarParadas }) 
           value={formData.ubicacion}
           onChange={handleChange}
           required
-          className="custom-input"
+          className="custom-input text-center"
         />
 
         <label className="text-white p-2">Orden:</label>
@@ -106,7 +106,7 @@ const EditParadaModal = ({ isOpen, onRequestClose, parada, onRecargarParadas }) 
           value={formData.orden}
           onChange={handleChange}
           required
-          className="custom-input"
+          className="custom-input text-center"
         />
 
         <div className="modal-botones">
