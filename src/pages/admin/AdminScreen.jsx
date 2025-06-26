@@ -614,7 +614,7 @@ export const AdminScreen = () => {
                                                                 title="Cargar horario"
                                                                 className="boton-cargar-horario"
                                                             >Agregar
-                                                                <i className="fa-solid fa-calendar-plus icono-boton"></i>
+                                                                <i className="fa-solid fa-calendar-plus icono-boton "></i>
                                                             </button>
                                                         </div>
 
