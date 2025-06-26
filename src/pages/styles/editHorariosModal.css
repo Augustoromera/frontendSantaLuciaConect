@@ -16,3 +16,12 @@
 .botonCancelar:hover {
     background-color: rgb(167, 0, 0);
 }
+
+.pos {
+    padding: auto;
+}
+
+.margen {
+    padding-top: 5px;
+    padding-bottom: 5px ;
+}
