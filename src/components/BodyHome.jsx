@@ -33,7 +33,7 @@ export const BodyHome = () => {
   const textButtonBanner = isMobile ? 'VER MAS' : 'SABER MAS';
 
   const bannerImages = [Bannerrapiburguerjpeg, bannerPsh1, bannerPsh2, bannerPsh3];
-  const bannerImagesMini = [bannerMobile1,bannerMobile2,bannerMobile3];
+  const bannerImagesMini = [bannerMobile3,bannerMobile2,bannerMobile1];
 
   const currentBannerImage = isMobile
     ? bannerImagesMini[currentImageIndex]
@@ -99,7 +99,7 @@ export const BodyHome = () => {
       setCurrentImageIndex((prevIndex) =>
         (prevIndex + 1) % (isMobile ? bannerImagesMini.length : bannerImages.length)
       );
-    }, currentImageIndex === 0 ? 7000 : 5000);
+    }, currentImageIndex === 0 ? 10000 : 7000);
     return () => clearInterval(intervalId);
   }, [currentImageIndex, isMobile]);
 
