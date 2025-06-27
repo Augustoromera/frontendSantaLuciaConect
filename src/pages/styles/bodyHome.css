@@ -347,7 +347,7 @@ body::before {
 		min-height: 100vh !important;
 		margin: 0;
 		padding: 0;
-		background-attachment: scroll;
+		background-attachment: fixed;
 	}
 	body::before {
 		content: "";

@@ -12,7 +12,6 @@ import Bannerrapiburguerjpeg from '../assets/banner/Bannerrapiburguerjpeg.jpg';
 import bannerPsh1 from '../assets/banner/bannerPsh1.jpg';
 import bannerPsh2 from '../assets/banner/bannerPsh2.jpg';
 import bannerPsh3 from '../assets/banner/bannerPsh3.jpg';
-import bannerMobile from '../assets/banner/bannerMobile.jpg';
 import bannerMobile1 from '../assets/banner/bannerMobile1.jpg';
 import bannerMobile2 from '../assets/banner/bannerMobile2.jpg';
 import bannerMobile3 from '../assets/banner/bannerMobile3.jpeg';
@@ -34,7 +33,7 @@ export const BodyHome = () => {
   const textButtonBanner = isMobile ? 'VER MAS' : 'SABER MAS';
 
   const bannerImages = [Bannerrapiburguerjpeg, bannerPsh1, bannerPsh2, bannerPsh3];
-  const bannerImagesMini = [...bannerImages];
+  const bannerImagesMini = [bannerMobile1,bannerMobile2,bannerMobile3];
 
   const currentBannerImage = isMobile
     ? bannerImagesMini[currentImageIndex]
