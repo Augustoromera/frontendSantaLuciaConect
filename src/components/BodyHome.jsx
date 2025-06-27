@@ -33,7 +33,7 @@ export const BodyHome = () => {
   const textButtonBanner = isMobile ? 'VER MAS' : 'SABER MAS';
 
   const bannerImages = [Bannerrapiburguerjpeg, bannerPsh1, bannerPsh2, bannerPsh3];
-  const bannerImagesMini = [bannerMobile3,bannerMobile2,bannerMobile1];
+  const bannerImagesMini = [bannerMobile2,bannerMobile1, bannerMobile3];
 
   const currentBannerImage = isMobile
     ? bannerImagesMini[currentImageIndex]
