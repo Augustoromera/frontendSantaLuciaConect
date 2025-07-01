@@ -30,3 +30,29 @@
     border-radius: 0.5rem;
     color: #212529;
 }
+
+.alert-guardar {
+  background-color: #28a745 !important; 
+  color: #fff; /* Letras blancas */
+  text-align: center;
+  font-weight: 600;
+  font-size: 1.1rem;
+  margin-top: 1rem;
+  padding: 12px 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: opacity 0.3s ease-in-out;
+}
+
+.alert-error {
+  background-color: #a72828 !important; 
+  color: #fff; /* Letras blancas */
+  text-align: center;
+  font-weight: 600;
+  font-size: 1.1rem;
+  margin-top: 1rem;
+  padding: 12px 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: opacity 0.3s ease-in-out;
+}

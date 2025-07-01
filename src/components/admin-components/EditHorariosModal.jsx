@@ -63,7 +63,7 @@ const EditarHorariosModal = ({ parada, onClose }) => {
             setTimeout(() => {
                 setMensaje(null);
                 onClose();
-            }, 1000);
+            }, 1500);
         } catch (err) {
             console.error('Error al guardar horarios:', err);
             setError('Error al guardar los horarios');
@@ -72,7 +72,7 @@ const EditarHorariosModal = ({ parada, onClose }) => {
 
     const eliminarHorario = async (idHorario) => {
         try {
-            // NOTA: AL USAR SWEETALERT2 EN UN MODAL, NOS ARROJA UN ERROR DE ARIA-HIDEN (PROBLEMAS CON EL FOCO) (NO ROMPE LA APP PERO INTENTAR ARREGLAR) 
+            // NOTA: AL USAR SWEETALERT2 EN UN MODAL, NOS ARROJA UNA ADVERTENCIA DE ARIA-HIDEN (PROBLEMAS CON EL FOCO) (NO ROMPE LA APP PERO INTENTAR ARREGLAR) 
             const result = await Swal.fire({
                 title: '¿Estás seguro?',
                 text: 'Esta acción eliminará el horario permanentemente.',
@@ -147,7 +147,6 @@ const EditarHorariosModal = ({ parada, onClose }) => {
                         </Form.Group>
                     </Col>
                 </Row>
-                F
 
 
                 <Modal.Body>
@@ -158,9 +157,6 @@ const EditarHorariosModal = ({ parada, onClose }) => {
                         </div>
                     ) : (
                         <>
-                            {error && <Alert variant="danger">{error}</Alert>}
-                            {mensaje && <Alert variant="success">{mensaje}</Alert>}
-
                             {horariosOriginales.length > 0 ? (
                                 <Form>
                                     <div className="row gx-4">
@@ -212,6 +208,9 @@ const EditarHorariosModal = ({ parada, onClose }) => {
                             ) : (
                                 <p className='text-white'>No hay horarios cargados para esta parada.</p>
                             )}
+
+                            {error && <Alert className='alert-error'>{error}</Alert>}
+                            {mensaje && <Alert className='alert-guardar'>{mensaje}</Alert>}
 
                         </>
                     )}
