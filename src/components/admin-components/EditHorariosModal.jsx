@@ -17,15 +17,18 @@ const EditarHorariosModal = ({ parada, onClose }) => {
     const [horariosEditados, setHorariosEditados] = useState([]);
 
 
-    const fetchHorarios = async () => {
+    const fetchHorarios = async (d, turno) => {
         try {
             const res = await pruebaApi.get(`api/obtenerHorarios?id_ruta=${parada.id_ruta}&id_parada=${parada._id}`);
             const horarios = res.data.map(h => ({
                 ...h,
                 hora: h.hora
             }));
-            setHorariosOriginales(horarios);
+            const horarioFiltrado = horarios.filter(h => h.tipo_dia === d && h.turno === turno);
+            setHorariosOriginales(horarioFiltrado);
             setHorariosEditados(horarios.map(h => ({ ...h })));
+            setDia(dia);
+            setHorario(horario);
         } catch (err) {
             console.error('Error al obtener horarios:', err);
             setError('Error al obtener los horarios');
@@ -36,9 +39,9 @@ const EditarHorariosModal = ({ parada, onClose }) => {
 
     useEffect(() => {
         if (parada && parada._id && parada.id_ruta) {
-            fetchHorarios();
+            fetchHorarios(dia, horario);
         }
-    }, [parada]);
+    }, [parada, dia, horario]);
 
 
 
@@ -89,7 +92,7 @@ const EditarHorariosModal = ({ parada, onClose }) => {
                     timer: 1500
                 });
 
-                fetchHorarios();
+                fetchHorarios(dia, horario);
             }
         } catch (error) {
             console.error('Error al eliminar el horario:', error);
@@ -112,13 +115,12 @@ const EditarHorariosModal = ({ parada, onClose }) => {
                     <Col xs={6} md={6}>
                         <Form.Group controlId="selectDia">
                             <div className="custom-select m-3">
-                                <Form.Label htmlFor="selectDia">Día</Form.Label>
+                                <Form.Label>Día</Form.Label>
                                 <Form.Select
                                     id="selectDia"
                                     value={dia}
                                     onChange={e => {
                                         setDia(e.target.value);
-                                        setHorario('');
                                     }}
                                 >
                                     <option value="habil">Hábil</option>
@@ -132,7 +134,7 @@ const EditarHorariosModal = ({ parada, onClose }) => {
                     <Col xs={6} md={6}>
                         <Form.Group controlId="selectHorario">
                             <div className="custom-select m-3">
-                                <Form.Label htmlFor="selectHorario">Horarios</Form.Label>
+                                <Form.Label>Horarios</Form.Label>
                                 <Form.Select
                                     id="selectHorario"
                                     value={horario}
