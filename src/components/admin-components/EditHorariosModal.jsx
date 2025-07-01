@@ -112,9 +112,9 @@ const EditarHorariosModal = ({ parada, onClose }) => {
         try {
             const nuevoHorario = {
                 id_parada: parada._id,
-                horario: '00:00',
+                horario: '99:99',
                 tipo_dia: dia,
-                nro_orden: '50',
+                nro_orden: '0',
                 turno: horario
             };
 
