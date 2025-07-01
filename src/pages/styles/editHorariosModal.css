@@ -17,11 +17,16 @@
     background-color: rgb(167, 0, 0);
 }
 
-.pos {
-    padding: auto;
-}
-
 .margen {
     padding-top: 5px;
-    padding-bottom: 5px ;
+    padding-bottom: 5px;
+}
+
+.custom-select {
+    width: 150px;
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    border-radius: 0.5rem;
+    color: #212529;
 }

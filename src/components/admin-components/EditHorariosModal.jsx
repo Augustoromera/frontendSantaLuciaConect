@@ -1,14 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import { Modal, Button, Form, Spinner, Alert } from 'react-bootstrap';
+import { Row, Col, Modal, Button, Form, Spinner, Alert } from 'react-bootstrap';
 import pruebaApi from '../../api/pruebaApi';
 import '../../pages/styles/editHorariosModal.css'
 import Swal from 'sweetalert2';
-import axios from 'axios';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 const EditarHorariosModal = ({ parada, onClose }) => {
     const [loading, setLoading] = useState(true);
     const [mensaje, setMensaje] = useState(null);
     const [error, setError] = useState(null);
+
+    const [dia, setDia] = useState('habil');
+    const [horario, setHorario] = useState('mañana');
 
     const [horariosOriginales, setHorariosOriginales] = useState([]);
     const [horariosEditados, setHorariosEditados] = useState([]);
@@ -104,6 +107,46 @@ const EditarHorariosModal = ({ parada, onClose }) => {
                 <Modal.Header closeButton>
                     <Modal.Title>Editar horarios de: {parada.nombre}</Modal.Title>
                 </Modal.Header>
+
+                <Row>
+                    <Col xs={6} md={6}>
+                        <Form.Group controlId="selectDia">
+                            <div className="custom-select m-3">
+                                <Form.Label htmlFor="selectDia">Día</Form.Label>
+                                <Form.Select
+                                    id="selectDia"
+                                    value={dia}
+                                    onChange={e => {
+                                        setDia(e.target.value);
+                                        setHorario('');
+                                    }}
+                                >
+                                    <option value="habil">Hábil</option>
+                                    <option value="sabado">Sábado</option>
+                                    <option value="domingo">Domingo</option>
+                                </Form.Select>
+                            </div>
+                        </Form.Group>
+                    </Col>
+
+                    <Col xs={6} md={6}>
+                        <Form.Group controlId="selectHorario">
+                            <div className="custom-select m-3">
+                                <Form.Label htmlFor="selectHorario">Horarios</Form.Label>
+                                <Form.Select
+                                    id="selectHorario"
+                                    value={horario}
+                                    onChange={e => setHorario(e.target.value)}
+                                >
+                                    <option value="mañana">Mañana</option>
+                                    <option value="tarde">Tarde</option>
+                                </Form.Select>
+                            </div>
+                        </Form.Group>
+                    </Col>
+                </Row>
+                F
+
 
                 <Modal.Body>
                     {loading ? (
