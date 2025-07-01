@@ -4,6 +4,7 @@ import pruebaApi from '../../api/pruebaApi';
 import '../../pages/styles/editHorariosModal.css'
 import Swal from 'sweetalert2';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { use } from 'react';
 
 const EditarHorariosModal = ({ parada, onClose }) => {
     const [loading, setLoading] = useState(true);
@@ -12,6 +13,8 @@ const EditarHorariosModal = ({ parada, onClose }) => {
 
     const [dia, setDia] = useState('habil');
     const [horario, setHorario] = useState('mañana');
+
+    //const [horarioNuevo, setHorarioNuevo] = useState('');
 
     const [horariosOriginales, setHorariosOriginales] = useState([]);
     const [horariosEditados, setHorariosEditados] = useState([]);
@@ -24,9 +27,10 @@ const EditarHorariosModal = ({ parada, onClose }) => {
                 ...h,
                 hora: h.hora
             }));
+            //console.log(d, turno);
             const horarioFiltrado = horarios.filter(h => h.tipo_dia === d && h.turno === turno);
             setHorariosOriginales(horarioFiltrado);
-            setHorariosEditados(horarios.map(h => ({ ...h })));
+            setHorariosEditados(horarioFiltrado.map(h => ({ ...h })));
             setDia(dia);
             setHorario(horario);
         } catch (err) {
@@ -104,6 +108,30 @@ const EditarHorariosModal = ({ parada, onClose }) => {
         }
     };
 
+    const guardarHorario = async () => {
+        try {
+            const nuevoHorario = {
+                id_parada: parada._id,
+                horario: '00:00',
+                tipo_dia: dia,
+                nro_orden: '50',
+                turno: horario
+            };
+
+            const resp = await pruebaApi.post('/admin/nuevoHorario', nuevoHorario);
+
+            if (resp.status === 200 || resp.status === 201) {
+                console.log('Horario guardado correctamente:', resp.data);
+                fetchHorarios(dia, horario);
+            } else {
+                console.warn('Algo salió mal al guardar el horario:', resp.status);
+            }
+        } catch (error) {
+            console.error('Error al guardar el horario:', error);
+        }
+    };
+
+
     return (
         parada && (
             <Modal show={!!parada} onHide={onClose} centered enforceFocus>
@@ -117,6 +145,7 @@ const EditarHorariosModal = ({ parada, onClose }) => {
                             <div className="custom-select m-3">
                                 <Form.Label>Día</Form.Label>
                                 <Form.Select
+                                    className='p-1'
                                     id="selectDia"
                                     value={dia}
                                     onChange={e => {
@@ -136,6 +165,7 @@ const EditarHorariosModal = ({ parada, onClose }) => {
                             <div className="custom-select m-3">
                                 <Form.Label>Horarios</Form.Label>
                                 <Form.Select
+                                    className='p-1'
                                     id="selectHorario"
                                     value={horario}
                                     onChange={e => setHorario(e.target.value)}
@@ -208,6 +238,8 @@ const EditarHorariosModal = ({ parada, onClose }) => {
                             ) : (
                                 <p className='text-white'>No hay horarios cargados para esta parada.</p>
                             )}
+
+                            <button type='button' className='agregarHorario' onClick={() => guardarHorario()}>Agregar</button>
 
                             {error && <Alert className='alert-error'>{error}</Alert>}
                             {mensaje && <Alert className='alert-guardar'>{mensaje}</Alert>}

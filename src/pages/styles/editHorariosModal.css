@@ -1,6 +1,7 @@
 .botonGuardar {
     background-color: #00bfff;
     color: #fff;
+    margin-right: 2.5rem;
 }
 
 .botonGuardar:hover {
@@ -8,7 +9,7 @@
 }
 
 .botonCancelar {
-    margin-right: 4rem;
+    margin-right: 3rem;
     background-color: red;
     color: #fff;
 }
@@ -55,4 +56,16 @@
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   transition: opacity 0.3s ease-in-out;
+}
+
+.agregarHorario {
+    background-color: #00bfff;
+    color: #fff;
+    border-radius: 10%;
+    padding: 0.4rem;
+    margin-left: 2rem;
+}
+
+.agregarHorario:hover {
+    background-color: #009fd1;
 }
