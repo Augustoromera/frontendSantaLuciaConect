@@ -23,12 +23,13 @@ const EditarHorariosModal = ({ parada, onClose }) => {
     const fetchHorarios = async (d, turno) => {
         try {
             const res = await pruebaApi.get(`api/obtenerHorarios?id_ruta=${parada.id_ruta}&id_parada=${parada._id}`);
-            const horarios = res.data.map(h => ({
+            const todos = res.data.allHorarios;
+            const horarios = todos.map(h => ({
                 ...h,
-                hora: h.hora
+                hora: h.hora,
             }));
             //console.log(d, turno);
-            const horarioFiltrado = horarios.filter(h => h.tipo_dia === d && h.turno === turno);
+            const horarioFiltrado = horarios.filter(h => h.tipo_dia === d && h.turno === turno );
             setHorariosOriginales(horarioFiltrado);
             setHorariosEditados(horarioFiltrado.map(h => ({ ...h })));
             setDia(dia);
@@ -58,10 +59,16 @@ const EditarHorariosModal = ({ parada, onClose }) => {
 
     const guardarCambios = async () => {
         try {
+
+            const horariosConShown = horariosEditados.map(h => ({
+                ...h,
+                shown: true
+            }));
+
             await pruebaApi.put(`admin/editarHorario`, {
                 id_ruta: parada.id_ruta,
                 id_parada: parada._id,
-                horarios: horariosEditados,
+                horarios: horariosConShown
             });
             setMensaje('Horarios actualizados correctamente');
             setTimeout(() => {
@@ -112,7 +119,7 @@ const EditarHorariosModal = ({ parada, onClose }) => {
         try {
             const nuevoHorario = {
                 id_parada: parada._id,
-                horario: '99:99',
+                horario: 'hh:mm',
                 tipo_dia: dia,
                 nro_orden: '0',
                 turno: horario
