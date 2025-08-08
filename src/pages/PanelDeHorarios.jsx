@@ -15,6 +15,7 @@ export const PanelDeHorarios = () => {
     const [origen, setOrigen] = useState('');
     const [destino, setDestino] = useState('');
     const [tipo_dia, setDia] = useState('habil');
+    const [horario, setHorario] = useState('mañana');
     const [mostrarFiltrado, setMostrarFiltrado] = useState(false);
     const [horariosFiltrados, setHorariosFiltrados] = useState([]);
     const [destinosDisponibles, setDestinosDisponibles] = useState([]);
@@ -85,9 +86,9 @@ export const PanelDeHorarios = () => {
         const horariosDestino = horarios.find(h => h.paradaId === paradas[indexDestino]._id)?.horarios || [];
 
         const horariosFiltrados = horariosOrigen
-            .filter(h => h.tipo_dia === tipo_dia)
+            .filter(h => h.tipo_dia === tipo_dia && h.turno === horario)
             .map(h => {
-                const llegada = horariosDestino.find(d => d.horario > h.horario && d.tipo_dia === tipo_dia);
+                const llegada = horariosDestino.find(d => d.horario > h.horario && d.tipo_dia === tipo_dia && d.turno === horario);
                 return llegada ? { salida: h.horario, llegada: llegada.horario } : null;
             })
             .filter(Boolean);
@@ -103,13 +104,13 @@ export const PanelDeHorarios = () => {
         const viajesPorDia = [];
 
         const maxViajes = Math.max(...horarios.map(p =>
-            p.horarios.filter(h => h.tipo_dia === tipo_dia).length
+            p.horarios.filter(h => h.tipo_dia === tipo_dia && h.turno === horario).length
         ));
 
         for (let i = 0; i < maxViajes; i++) {
             const fila = paradas.map(parada => {
                 const h = horarios.find(h => h.paradaId === parada._id);
-                const hs = h?.horarios.filter(hh => hh.tipo_dia === tipo_dia);
+                const hs = h?.horarios.filter(hh => hh.tipo_dia === tipo_dia && hh.turno === horario);
                 return hs?.[i]?.horario || '-';
             });
             viajesPorDia.push(fila);
@@ -151,7 +152,7 @@ export const PanelDeHorarios = () => {
                 {/* Filtros */}
                 <div className="filtro-container">
                     <Row>
-                        <Col md={3}>
+                        <Col md={2}>
                             <Form.Group>
                                 <Form.Label>Tipo de Ruta</Form.Label>
                                 <Form.Select value={tipoRuta} onChange={e => {
@@ -164,7 +165,7 @@ export const PanelDeHorarios = () => {
                                 </Form.Select>
                             </Form.Group>
                         </Col>
-                        <Col md={3}>
+                        <Col md={2}>
                             <Form.Group>
                                 <Form.Label>Origen</Form.Label>
                                 <Form.Select value={origen} onChange={e => {
@@ -178,7 +179,7 @@ export const PanelDeHorarios = () => {
                                 </Form.Select>
                             </Form.Group>
                         </Col>
-                        <Col md={3}>
+                        <Col md={2}>
                             <Form.Group>
                                 <Form.Label>Destino</Form.Label>
                                 <Form.Select value={destino} onChange={e => setDestino(e.target.value)} disabled={!origen}>
@@ -198,6 +199,14 @@ export const PanelDeHorarios = () => {
                                     <option value="domingo">Domingo</option>
                                 </Form.Select>
                             </Form.Group>
+                        </Col><Col md={2}>
+                            <Form.Group>
+                                <Form.Label>Horario</Form.Label>
+                                <Form.Select value={horario} onChange={e => setHorario(e.target.value)}>
+                                    <option value="mañana">Mañana</option>
+                                    <option value="tarde">Tarde</option>
+                                </Form.Select>
+                            </Form.Group>
                         </Col>
                         <Col md={1} className="d-flex align-items-end">
                             <Button className="w-100" onClick={filtrarHorarios} disabled={!origen || !destino}>
@@ -211,7 +220,7 @@ export const PanelDeHorarios = () => {
                 {mostrarFiltrado ? (
                     <div className="resultado-filtrado">
                         <div className="d-flex justify-content-between align-items-center mb-3">
-                            <h3 className="subtitle">Horarios {origen} → {destino} ({tipo_dia})</h3>
+                            <h3 className="subtitle">Horarios {origen} → {destino} (dia: {tipo_dia}) (turno: {horario})</h3>
                             <Button variant="outline-secondary" onClick={() => setMostrarFiltrado(false)}>Ver todos</Button>
                         </div>
                         <div className="table-responsive">
