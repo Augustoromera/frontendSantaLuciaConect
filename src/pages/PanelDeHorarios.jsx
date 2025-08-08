@@ -4,6 +4,8 @@ import './styles/panel-horarios.css';
 import { Row, Col, Form, Button } from 'react-bootstrap';
 import Header from '../components/Header';
 import { Footer } from '../components/Footer';
+import jsPDF from "jspdf";
+import html2canvas from "html2canvas";
 
 export const PanelDeHorarios = () => {
     const rutas = [
@@ -117,7 +119,7 @@ export const PanelDeHorarios = () => {
         }
 
         return (
-            <div>
+            <div id="tabla-horarios">
                 <h2 className="subtitle">{rutas.find(r => r.tipo === tipoRuta)?.nombre} - {tipo_dia}</h2>
                 <div className="table-responsive">
                     <table className="schedule-table">
@@ -141,6 +143,39 @@ export const PanelDeHorarios = () => {
                 </div>
             </div>
         );
+    };
+
+    const generarPDF = () => {
+        const elemento = document.getElementById("tabla-horarios");
+        if (!elemento) {
+            alert("No se encontró la tabla para generar el PDF.");
+            return;
+        }
+
+        html2canvas(elemento, { scale: 2 }).then((canvas) => {
+            const imgData = canvas.toDataURL("image/png");
+            const pdf = new jsPDF({
+                orientation: "landscape",
+                unit: "pt",
+                format: "a4",
+            });
+
+            const pageWidth = pdf.internal.pageSize.getWidth();
+            const pageHeight = pdf.internal.pageSize.getHeight();
+
+            const ratio = Math.min(pageWidth / canvas.width, pageHeight / canvas.height);
+            const imgWidth = canvas.width * ratio;
+            const imgHeight = canvas.height * ratio;
+
+            const marginX = (pageWidth - imgWidth) / 2;
+            const marginY = 20; // Espacio superior
+
+            pdf.addImage(imgData, "PNG", marginX, marginY, imgWidth, imgHeight);
+            pdf.save(`horarios-${tipoRuta}-${tipo_dia}.pdf`);
+        }).catch((error) => {
+            console.error("Error generando PDF:", error);
+            alert("Ocurrió un error al generar el PDF.");
+        });
     };
 
     return (
@@ -250,6 +285,13 @@ export const PanelDeHorarios = () => {
                     </div>
                 ) : (
                     getTablaCompleta()
+                )}
+                {!mostrarFiltrado && (
+                    <div className="d-flex justify-content-end mb-3">
+                        <Button variant="success" onClick={generarPDF}>
+                            Descargar como PDF
+                        </Button>
+                    </div>
                 )}
             </div>
             <Footer />
