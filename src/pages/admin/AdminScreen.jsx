@@ -30,9 +30,6 @@ export const AdminScreen = () => {
 
     const [rutaSeleccionada, setRutaSeleccionada] = useState(null);
 
-    // MODAL PARA AGREGAR UN HORARIO
-    const [modalHorarioAbierto, setModalHorarioAbierto] = useState(false);
-
     // GUARDA LA PARADA SELECCIONADA Y SE LLAMA EN EL MODAL PARA EDITAR EL NOMBRE Y ORDEN DE UNA PARADA
     const [paradaSeleccionada, setParadaSeleccionada] = useState(null);
 
@@ -103,41 +100,6 @@ export const AdminScreen = () => {
         setParadaSeleccionada(null);
         setModalEditarParadaAbierto(false)
     }
-
-    // CONTROL DEL MODAL PARA AGREGAR UN HORARIO
-    const cargarHorario = (parada) => {
-        setParadaSeleccionada(parada);
-        setModalHorarioAbierto(true);
-    };
-
-    const cerrarModalHorario = () => {
-        setParadaSeleccionada(null);
-        setModalHorarioAbierto(false);
-    };
-
-    const guardarHorario = async (paradaId, horario, tipoDia, orden, turno) => {
-        try {
-            const nuevoHorario = {
-                id_parada: paradaId,
-                horario: horario,
-                tipo_dia: tipoDia,
-                nro_orden: orden,
-                turno: turno
-            };
-
-            const resp = await pruebaApi.post('/admin/nuevoHorario', nuevoHorario);
-
-            if (resp.status === 200 || resp.status === 201) {
-                console.log('Horario guardado correctamente:', resp.data);
-            } else {
-                console.warn('Algo salió mal al guardar el horario:', resp.status);
-            }
-        } catch (error) {
-            console.error('Error al guardar el horario:', error);
-        }
-
-        cerrarModalHorario();
-    };
 
     // Funciones de manejo de cambios
     const handleChangeFormUser = (e) => {
@@ -606,15 +568,8 @@ export const AdminScreen = () => {
                                                                 onClick={() => setHorarioEditando(parada)}
                                                                 title="Ver horarios"
                                                                 className="boton-horarios"
-                                                            >Ver
+                                                            >Ver Horarios
                                                                 <i className="fa-solid fa-clock icono-boton"></i>
-                                                            </button>
-                                                            <button
-                                                                onClick={() => cargarHorario(parada)}
-                                                                title="Cargar horario"
-                                                                className="boton-cargar-horario"
-                                                            >Agregar
-                                                                <i className="fa-solid fa-calendar-plus icono-boton "></i>
                                                             </button>
                                                         </div>
 
@@ -687,12 +642,6 @@ export const AdminScreen = () => {
                     isOpen={mostrarModal}
                     onClose={() => setMostrarModal(false)}
                     onSubmit={handleAgregarParada}
-                />
-                <AddHorarioModal
-                    isOpen={modalHorarioAbierto}
-                    onRequestClose={cerrarModalHorario}
-                    paradaId={paradaSeleccionada?._id}
-                    onSubmit={guardarHorario}
                 />
                 <EditParadaModal
                     isOpen={modalEditarParadaAbierto} 

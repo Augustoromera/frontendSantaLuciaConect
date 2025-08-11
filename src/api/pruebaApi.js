@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const pruebaApi = axios.create({
-    baseURL: 'https://backendsantaluciaconnect.onrender.com/',
+    baseURL: 'http://localhost:8080/',
 });
 
 export default pruebaApi;
