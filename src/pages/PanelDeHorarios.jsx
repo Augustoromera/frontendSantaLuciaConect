@@ -37,13 +37,14 @@ export const PanelDeHorarios = () => {
 
                 const horariosParadas = await Promise.all(paradas.map(async parada => {
                     const resHorarios = await axios.get(`/obtenerHorarios?id_ruta=${ruta.id}&id_parada=${parada._id}`);
+                    
                     return {
                         paradaId: parada._id,
                         nombre: parada.nombre,
-                        horarios: resHorarios.data
+                        horarios: resHorarios.data.horarioFiltrado
                     };
                 }));
-
+                
                 nuevosHorarios[ruta.tipo] = horariosParadas;
             }
 
