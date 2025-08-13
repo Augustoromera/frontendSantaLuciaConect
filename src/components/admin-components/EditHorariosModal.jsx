@@ -29,7 +29,7 @@ const EditarHorariosModal = ({ parada, onClose }) => {
                 hora: h.hora,
             }));
             //console.log(d, turno);
-            const horarioFiltrado = horarios.filter(h => h.tipo_dia === d && h.turno === turno );
+            const horarioFiltrado = horarios.filter(h => h.tipo_dia === d && h.turno === turno);
             setHorariosOriginales(horarioFiltrado);
             setHorariosEditados(horarioFiltrado.map(h => ({ ...h })));
             setDia(dia);
@@ -138,10 +138,29 @@ const EditarHorariosModal = ({ parada, onClose }) => {
         }
     };
 
+    const handleClose = () => {
+        const hayCambios = JSON.stringify(horariosOriginales) !== JSON.stringify(horariosEditados);
+        if (hayCambios) {
+            Swal.fire({
+                title: 'Cambios sin guardar',
+                text: 'Si cierras ahora, los cambios se perderán. ¿Quieres continuar?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Sí, salir',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    onClose();
+                }
+            });
+        } else {
+            onClose();
+        }
+    };
 
     return (
         parada && (
-            <Modal show={!!parada} onHide={onClose} centered enforceFocus>
+            <Modal show={!!parada} onHide={handleClose} centered enforceFocus>
                 <Modal.Header closeButton>
                     <Modal.Title>Editar horarios de: {parada.nombre}</Modal.Title>
                 </Modal.Header>
@@ -259,7 +278,7 @@ const EditarHorariosModal = ({ parada, onClose }) => {
                     <Button className='botonGuardar' onClick={guardarCambios} disabled={loading}>
                         Guardar cambios
                     </Button>
-                    <Button className='botonCancelar' onClick={onClose}>
+                    <Button className='botonCancelar' onClick={handleClose}>
                         Cancelar
                     </Button>
                 </Modal.Footer>
