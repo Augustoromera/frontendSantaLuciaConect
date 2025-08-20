@@ -8,6 +8,8 @@ import { faFacebook, faInstagram, faWhatsapp } from '@fortawesome/free-brands-sv
 import { Footer } from '../components/Footer';
 import Swal from 'sweetalert2';
 import imgMonteros from '../assets/images/nosotros/monterosHD.png'
+import pruebaApi from '../api/pruebaApi';
+import axios from 'axios';
 
 export const ContactScreen = () => {
   const [formData, setFormData] = useState({
@@ -19,7 +21,7 @@ export const ContactScreen = () => {
     message: ''
   });
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     //  ---------------------------Validaciones de campos--------------------------------
 
@@ -98,8 +100,8 @@ export const ContactScreen = () => {
       });
       return;
     }
-    
-    
+
+
 
     // Validación para el campo de asunto
     if (formData.subject.trim() === '') {
@@ -139,6 +141,14 @@ export const ContactScreen = () => {
       return;
     }
 
+    try {
+      await guardarFormulario(formData);
+      
+    } catch (error) {
+      
+      console.log(error);
+    }
+
     setTimeout(() => {
       Swal.fire({
         icon: 'success',
@@ -161,6 +171,28 @@ export const ContactScreen = () => {
     }, 200);
   };
 
+  const guardarFormulario = async (data) => {
+
+    try {
+      const mappedData = {
+        nombre: data.firstName,
+        apellido: data.lastName,
+        email: data.email,
+        telefono: data.phone,
+        asunto: data.subject,
+        mensaje: data.message,
+      };
+
+      console.log("Datos a enviar:", data);
+      const res = await pruebaApi.post('/admin/mensajeContacto', mappedData);
+      console.log("Formulario enviado correctamente");
+    } catch (error) {
+      console.log(error);
+      console.log("Error al enviar el formulario");
+    }
+
+  }
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     if (name === "firstName" || name === "lastName") {
@@ -170,8 +202,8 @@ export const ContactScreen = () => {
       }
     }
     if (name === "phone") {
-      const numericRegex =/^[0-9+]+$/
-      ;
+      const numericRegex = /^[0-9+]+$/
+        ;
       if (!numericRegex.test(value) && value !== "") {
         return;
       }
@@ -339,14 +371,14 @@ export const ContactScreen = () => {
             </div>
           </div>
           <iframe
-  className="w-75"
-  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d401.5182812300712!2d-65.49917265342305!3d-27.170849417938307!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x9423cb0036e45713%3A0xe2024072b0caf79d!2sEmpresa%20Santa%20Luc%C3%ADa!5e1!3m2!1ses-419!2sar!4v1747335748994!5m2!1ses-419!2sar"
-  width="1000"
-  height="450"
-  allowFullScreen=""
-  loading="lazy"
-  referrerPolicy="no-referrer-when-downgrade"
-></iframe>
+            className="w-75"
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d401.5182812300712!2d-65.49917265342305!3d-27.170849417938307!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x9423cb0036e45713%3A0xe2024072b0caf79d!2sEmpresa%20Santa%20Luc%C3%ADa!5e1!3m2!1ses-419!2sar!4v1747335748994!5m2!1ses-419!2sar"
+            width="1000"
+            height="450"
+            allowFullScreen=""
+            loading="lazy"
+            referrerPolicy="no-referrer-when-downgrade"
+          ></iframe>
         </div>
       </div>
       <Footer />
