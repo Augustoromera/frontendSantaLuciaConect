@@ -17,6 +17,7 @@ import EditHorariosModal from '../../components/admin-components/EditHorariosMod
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../styles/adminHorarios.css';
 import EditParadaModal from '../../components/admin-components/EditParadasModal';
+import AdminContactScreen from './AdminContactScreen';
 
 export const AdminScreen = () => {
     const { user } = useAuth();
@@ -615,6 +616,7 @@ export const AdminScreen = () => {
                         <div className="table-container">
                             <h3>Contacto y Soporte</h3>
                             <p>Información de contacto y soporte técnico.</p>
+                            <AdminContactScreen/>
                             {/* Contenido de contacto */}
                         </div>
                     )}
