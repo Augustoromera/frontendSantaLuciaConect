@@ -310,7 +310,7 @@ export const ContactScreen = () => {
                       type="text"
                       name="subject"
                       minLength={4}
-                      maxLength={20}
+                      maxLength={50}
                       required
                       placeholder="Ingresa un asunto"
                       value={formData.subject}
@@ -326,7 +326,7 @@ export const ContactScreen = () => {
                       name="message"
                       required
                       minLength={5}
-                      maxLength={75}
+                      maxLength={200}
                       placeholder="Escribe un mensaje"
                       value={formData.message}
                       onChange={(e) => handleChange(e)}
