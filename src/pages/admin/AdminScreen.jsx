@@ -431,146 +431,171 @@ export const AdminScreen = () => {
 
     // Renderizado
     return (
-        <>
-            <Header />
-            <div className="pt-5">
-                <div className="text-center mt-4 p-5">
-                    <h1>Bienvenido al Panel de Administración</h1>
-                    <p>¡Gestiona todos los aspectos de tu empresa desde un solo lugar!</p>
-                </div>
+        <div className="admin-layout-wrapper">
+            <Header /> {/* Header Global */}
 
-                {/* Navegación entre secciones */}
-                <div className="admin-sections">
-                    <button
-                        className={`section-button ${activeSection === 'usuarios' ? 'active' : ''}`}
-                        onClick={() => setActiveSection('usuarios')}
-                    >
-                        <FaUsers className="section-icon" /> Usuarios
-                    </button>
-                    <button
-                        className={`section-button ${activeSection === 'horarios' ? 'active' : ''}`}
-                        onClick={() => setActiveSection('horarios')}
-                    >
-                        <FaClock className="section-icon" /> Horarios
-                    </button>
-                    <button
-                        className={`section-button ${activeSection === 'unidades' ? 'active' : ''}`}
-                        onClick={() => setActiveSection('unidades')}
-                    >
-                        <FaBus className="section-icon" /> Unidades/Choferes
-                    </button>
-                    <button
-                        className={`section-button ${activeSection === 'contacto' ? 'active' : ''}`}
-                        onClick={() => setActiveSection('contacto')}
-                    >
-                        <FaEnvelope className="section-icon" /> Contacto
-                    </button>
-                </div>
+            <div className="admin-dashboard-container">
+                {/* Sidebar Navigation */}
+                <aside className="admin-sidebar">
+                    <div className="sidebar-header">
+                        <h3>Admin Panel</h3>
+                    </div>
+                    <div className="sidebar-menu">
+                        <button
+                            className={`sidebar-item ${activeSection === 'usuarios' ? 'active' : ''}`}
+                            onClick={() => setActiveSection('usuarios')}
+                        >
+                            <FaUsers className="sidebar-icon" />
+                            <span>Usuarios</span>
+                        </button>
+                        <button
+                            className={`sidebar-item ${activeSection === 'horarios' ? 'active' : ''}`}
+                            onClick={() => setActiveSection('horarios')}
+                        >
+                            <FaClock className="sidebar-icon" />
+                            <span>Horarios</span>
+                        </button>
+                        <button
+                            className={`sidebar-item ${activeSection === 'unidades' ? 'active' : ''}`}
+                            onClick={() => setActiveSection('unidades')}
+                        >
+                            <FaBus className="sidebar-icon" />
+                            <span>Unidades</span>
+                        </button>
+                        <button
+                            className={`sidebar-item ${activeSection === 'contacto' ? 'active' : ''}`}
+                            onClick={() => setActiveSection('contacto')}
+                        >
+                            <FaEnvelope className="sidebar-icon" />
+                            <span>Contacto</span>
+                        </button>
+                    </div>
+                </aside>
 
-                {/* Contenido dinámico según sección */}
-                <div className="section-content">
+                {/* Main Content Area */}
+                <main className="admin-main-content">
+
+                    {/* Welcome / Header of content */}
                     {activeSection === 'usuarios' && (
                         <div className="table-container">
-                            <h3>Gestión de Usuarios</h3>
+                            <div className="header-actions">
+                                <h3>Gestión de Usuarios</h3>
+                                <button
+                                    className="btn-add-user"
+                                    onClick={() => setIsModalOpenUser(true)}
+                                    title='Agregar Usuario'
+                                >
+                                    <FaPlus /> Nuevo Usuario
+                                </button>
+                            </div>
+
                             <div className="table-responsive">
-                                <Table className="custom-table" striped bordered hover variant="dark">
+                                <Table className="custom-table" hover variant="dark">
                                     <thead>
                                         <tr>
-                                            <th>#ID</th>
-                                            <th>Nombre y apellido</th>
+                                            <th>Usuario</th>
                                             <th>Email</th>
-                                            <th>Estado</th>
                                             <th>Rol</th>
+                                            <th>Estado</th>
                                             <th>Acciones</th>
                                         </tr>
                                     </thead>
-                                    <tbody >
+                                    <tbody>
                                         {cargarUsuarios.map((usuario) => (
                                             <tr key={usuario._id}>
-                                                <td>{usuario._id}</td>
-                                                <td>{usuario.username}</td>
-                                                <td>{usuario.email}</td>
-                                                <td>{capitalizeFirstLetter(usuario.status)}</td>
-                                                <td>{capitalizeFirstLetter(usuario.role)}</td>
                                                 <td>
-                                                    <button onClick={() => editarUsuarioClick(usuario)} title="Editar usuario">
-                                                        <i className="fa-solid fa-pen-to-square fa-lg" style={{ color: '#000000' }}></i>
-                                                    </button>
-                                                    <button onClick={() => eliminarUsuarioClick(usuario._id)} title="Eliminar usuario">
-                                                        <i className="fa-solid fa-trash fa-lg" style={{ color: '#c43131' }}></i>
-                                                    </button>
-                                                    <button onClick={() => inactivarUsuarioClick(usuario)} title={usuario.status === "inactive" ? "Activar usuario" : "Inactivar usuario"}>
-                                                        <i className="fa-solid fa-unlock fa-lg" style={{ color: usuario.status === "inactive" ? '#ff0000' : '#3f9240' }}></i>
-                                                    </button>
+                                                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                                        <div style={{ width: '30px', height: '30px', borderRadius: '50%', background: '#004aad', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 'bold' }}>
+                                                            {usuario.username.charAt(0).toUpperCase()}
+                                                        </div>
+                                                        {usuario.username}
+                                                    </div>
+                                                </td>
+                                                <td>{usuario.email}</td>
+                                                <td>
+                                                    <span className={`badge-role ${usuario.role}`}>
+                                                        {capitalizeFirstLetter(usuario.role)}
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <span className={`badge-status ${usuario.status === 'active' ? 'active' : 'inactive'}`}>
+                                                        {usuario.status === 'active' ? 'Activo' : 'Inactivo'}
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <div className="parada-botones" style={{ justifyContent: 'center' }}>
+                                                        <button className="boton-icon edit" onClick={() => editarUsuarioClick(usuario)} title="Editar usuario">
+                                                            <i className="fa-solid fa-pen-to-square"></i>
+                                                        </button>
+                                                        <button className="boton-icon toggle" onClick={() => inactivarUsuarioClick(usuario)} title={usuario.status === "inactive" ? "Activar" : "Inactivar"}>
+                                                            <i className={`fa-solid ${usuario.status === "inactive" ? "fa-lock" : "fa-unlock"}`}></i>
+                                                        </button>
+                                                        <button className="boton-icon delete" onClick={() => eliminarUsuarioClick(usuario._id)} title="Eliminar usuario">
+                                                            <i className="fa-solid fa-trash"></i>
+                                                        </button>
+                                                    </div>
                                                 </td>
                                             </tr>
                                         ))}
                                     </tbody>
-
                                 </Table>
-                            </div>
-                            <div className="d-flex justify-content-end me-5">
-                                <button
-                                    className="add-product-button border rounded-circle p-3 bg-dark"
-                                    onClick={() => setIsModalOpenUser(true)}
-                                    title='Agregar Usuario'
-                                >
-                                    <FaPlus className="add-product-icon text-white" />
-                                </button>
                             </div>
                         </div>
                     )}
 
                     {activeSection === 'horarios' && (
-                        <div className="table-container">
-                            <h3>Gestión de Horarios</h3>
-                            <p>Aquí podrás gestionar los horarios de la empresa.</p>
+                        <div className="section-container">
+                            <div className="header-actions">
+                                <h3>Gestión de Horarios</h3>
+                            </div>
+                            <p style={{ color: '#aaa', marginBottom: '2rem' }}>Administra las rutas, paradas y horarios de los recorridos.</p>
 
-                            <section>
-                                <h2>Paradas cargadas</h2>
-
+                            <div className="routes-grid">
                                 {rutas.map((ruta) => (
-                                    <div
-                                        key={ruta.nombre}
-                                        style={{
-                                            marginBottom: '20px',
-                                            border: '1px solid #ddd',
-                                            padding: '10px',
-                                            borderRadius: '8px'
-                                        }}
-                                    >
-                                        <h3>Ruta: {ruta.nombre}</h3>
+                                    <div key={ruta.id} className="route-card">
+                                        <div className="route-header">
+                                            <h3>{ruta.nombre}</h3>
+                                            <button
+                                                className="btn-add-parada"
+                                                onClick={() => {
+                                                    setRutaSeleccionada(ruta);
+                                                    setMostrarModal(true);
+                                                }}
+                                            >
+                                                <FaPlus /> Agregar Parada
+                                            </button>
+                                        </div>
 
                                         {(paradasPorRuta[ruta.id] && paradasPorRuta[ruta.id].length > 0) ? (
                                             <ul className="paradas-lista">
                                                 {paradasPorRuta[ruta.id].map((parada, index) => (
                                                     <li key={parada._id || `temp-${index}`} className="parada-item">
-                                                        <span className="parada-info">
-                                                            {parada.nombre} (Orden: {parada.orden})
-                                                        </span>
-                                                        <div className="parada-botones">
+                                                        <div className="parada-info">
+                                                            <span style={{ display: 'block', fontWeight: 'bold' }}>{parada.nombre}</span>
+                                                            <span style={{ fontSize: '0.85rem', color: '#888' }}>Orden: {parada.orden}</span>
+                                                        </div>
 
+                                                        <div className="parada-botones">
                                                             <button
                                                                 onClick={() => editarParada(parada)}
                                                                 title="Editar parada"
-                                                                className="boton-editar"
-                                                            >Editar
-                                                                <i className="fa-solid fa-pen-to-square icono-boton"></i>
+                                                                className="boton-icon edit"
+                                                            >
+                                                                <i className="fa-solid fa-pen-to-square"></i>
+                                                            </button>
+                                                            <button
+                                                                onClick={() => setHorarioEditando(parada)}
+                                                                title="Ver horarios"
+                                                                className="boton-icon clock"
+                                                            >
+                                                                <i className="fa-solid fa-clock"></i>
                                                             </button>
                                                             <button
                                                                 onClick={() => eliminarParadaClick(parada._id)}
                                                                 title="Eliminar parada"
-                                                                className="boton-eliminar"
-                                                            >Eliminar
-                                                                <i className="fa-solid fa-trash icono-boton"></i>
-                                                            </button>
-                                                            <button
-
-                                                                onClick={() => setHorarioEditando(parada)}
-                                                                title="Ver horarios"
-                                                                className="boton-horarios"
-                                                            >Ver Horarios
-                                                                <i className="fa-solid fa-clock icono-boton"></i>
+                                                                className="boton-icon delete"
+                                                            >
+                                                                <i className="fa-solid fa-trash"></i>
                                                             </button>
                                                         </div>
 
@@ -584,75 +609,58 @@ export const AdminScreen = () => {
                                                 ))}
                                             </ul>
                                         ) : (
-                                            <p>No hay paradas cargadas para esta ruta.</p>
+                                            <p style={{ color: '#888', fontStyle: 'italic' }}>No hay paradas cargadas.</p>
                                         )}
-
-                                        <button
-                                            className="boton-agregar-parada"
-                                            onClick={() => {
-                                                setRutaSeleccionada(ruta);
-                                                setMostrarModal(true);
-                                            }}
-                                        >
-                                            <i className="fa-solid fa-plus"></i> Agregar parada
-                                        </button>
-
                                     </div>
                                 ))}
-                            </section>
-
+                            </div>
                         </div>
                     )}
 
                     {activeSection === 'unidades' && (
-                        <div className="table-container">
+                        <div className="section-container">
                             <h3>Gestión de Unidades y Choferes</h3>
-                            <p>Aquí podrás gestionar las unidades y choferes de la empresa.</p>
-                            {/* Contenido de unidades */}
+                            <p>Funcionalidad en desarrollo...</p>
                         </div>
                     )}
 
                     {activeSection === 'contacto' && (
-                        <div className="table-container">
-                            <h3>Contacto y Soporte</h3>
-                            <p>Información de contacto y soporte técnico.</p>
-                            <AdminContactScreen/>
-                            {/* Contenido de contacto */}
+                        <div className="section-container">
+                            <AdminContactScreen />
                         </div>
                     )}
-                </div>
-
-                {/* Modales */}
-                <AddUserModal
-                    isOpen={isModalOpenUser}
-                    setIsOpen={setIsModalOpenUser}
-                    onRequestClose={() => setIsModalOpenUser(false)}
-                    handleChangeFormUser={handleChangeFormUser}
-                    handleSubmitFormUser={handleSubmitFormUser}
-                    formDateUser={formDateUser}
-                />
-                <EditUserModal
-                    isOpen={isModalOpenUserEditar}
-                    setIsOpen={setIsModalOpenUserEditar}
-                    handleChangeFormUserEditar={handleChangeFormUserEditar}
-                    handleSubmitFormUserEditar={handleSubmitFormUserEditar}
-                    formDateUserEditar={formDateUserEditar}
-                //asdasd
-                />
-                {/* Modal para agregar parada */}
-                <AddParadaModal
-                    isOpen={mostrarModal}
-                    onClose={() => setMostrarModal(false)}
-                    onSubmit={handleAgregarParada}
-                />
-                <EditParadaModal
-                    isOpen={modalEditarParadaAbierto} 
-                    onRequestClose={cerrarModalEditarParada}
-                    parada={paradaSeleccionada}
-                    onRecargarParadas={fetchParadasYHorarios}
-                />
+                </main>
             </div>
+
+            {/* Modales - Preservados */}
+            <AddUserModal
+                isOpen={isModalOpenUser}
+                setIsOpen={setIsModalOpenUser}
+                onRequestClose={() => setIsModalOpenUser(false)}
+                handleChangeFormUser={handleChangeFormUser}
+                handleSubmitFormUser={handleSubmitFormUser}
+                formDateUser={formDateUser}
+            />
+            <EditUserModal
+                isOpen={isModalOpenUserEditar}
+                setIsOpen={setIsModalOpenUserEditar}
+                handleChangeFormUserEditar={handleChangeFormUserEditar}
+                handleSubmitFormUserEditar={handleSubmitFormUserEditar}
+                formDateUserEditar={formDateUserEditar}
+            />
+            <AddParadaModal
+                isOpen={mostrarModal}
+                onClose={() => setMostrarModal(false)}
+                onSubmit={handleAgregarParada}
+            />
+            <EditParadaModal
+                isOpen={modalEditarParadaAbierto}
+                onRequestClose={cerrarModalEditarParada}
+                parada={paradaSeleccionada}
+                onRecargarParadas={fetchParadasYHorarios}
+            />
+
             <Footer />
-        </>
+        </div>
     );
 };
