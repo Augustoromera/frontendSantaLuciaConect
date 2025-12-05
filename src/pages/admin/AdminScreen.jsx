@@ -18,6 +18,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import '../styles/adminHorarios.css';
 import EditParadaModal from '../../components/admin-components/EditParadasModal';
 import AdminContactScreen from './AdminContactScreen';
+import { ScheduleMatrix } from './components/ScheduleMatrix';
 
 export const AdminScreen = () => {
     const { user } = useAuth();
@@ -25,6 +26,7 @@ export const AdminScreen = () => {
     const [cargarUsuarios, setCargarUsuarios] = useState([]);
 
     const [paradasPorRuta, setParadasPorRuta] = useState({});
+    const [lastUpdate, setLastUpdate] = useState(Date.now());
 
     // MODAL PARA AGREGAR UNA NUEVA PARADA
     const [mostrarModal, setMostrarModal] = useState(false);
@@ -87,6 +89,7 @@ export const AdminScreen = () => {
             }));
             await fetchParadasYHorarios(); // Actualiza las paradas después de agregar
             setMostrarModal(false);
+            setLastUpdate(Date.now());
         } catch (error) {
             console.error('Error al agregar parada:', error);
         }
@@ -324,6 +327,7 @@ export const AdminScreen = () => {
             try {
                 await pruebaApi.delete(`/admin/eliminarParada/${idParada}`);
                 await fetchParadasYHorarios(); // refrescar la lista
+                setLastUpdate(Date.now());
             } catch (error) {
                 console.error('Error al eliminar la parada:', error);
                 alert('No se pudo eliminar la parada. Revisá los logs del servidor.');
@@ -546,74 +550,26 @@ export const AdminScreen = () => {
                     {activeSection === 'horarios' && (
                         <div className="section-container">
                             <div className="header-actions">
-                                <h3>Gestión de Horarios</h3>
+                                <h3>Gestión de Horarios (Vista Matriz)</h3>
                             </div>
-                            <p style={{ color: '#aaa', marginBottom: '2rem' }}>Administra las rutas, paradas y horarios de los recorridos.</p>
+                            <p style={{ color: '#aaa', marginBottom: '2rem' }}>
+                                Edita los horarios como una tabla. Agrega filas para nuevos recorridos.
+                            </p>
 
-                            <div className="routes-grid">
-                                {rutas.map((ruta) => (
-                                    <div key={ruta.id} className="route-card">
-                                        <div className="route-header">
-                                            <h3>{ruta.nombre}</h3>
-                                            <button
-                                                className="btn-add-parada"
-                                                onClick={() => {
-                                                    setRutaSeleccionada(ruta);
-                                                    setMostrarModal(true);
-                                                }}
-                                            >
-                                                <FaPlus /> Agregar Parada
-                                            </button>
-                                        </div>
-
-                                        {(paradasPorRuta[ruta.id] && paradasPorRuta[ruta.id].length > 0) ? (
-                                            <ul className="paradas-lista">
-                                                {paradasPorRuta[ruta.id].map((parada, index) => (
-                                                    <li key={parada._id || `temp-${index}`} className="parada-item">
-                                                        <div className="parada-info">
-                                                            <span style={{ display: 'block', fontWeight: 'bold' }}>{parada.nombre}</span>
-                                                            <span style={{ fontSize: '0.85rem', color: '#888' }}>Orden: {parada.orden}</span>
-                                                        </div>
-
-                                                        <div className="parada-botones">
-                                                            <button
-                                                                onClick={() => editarParada(parada)}
-                                                                title="Editar parada"
-                                                                className="boton-icon edit"
-                                                            >
-                                                                <i className="fa-solid fa-pen-to-square"></i>
-                                                            </button>
-                                                            <button
-                                                                onClick={() => setHorarioEditando(parada)}
-                                                                title="Ver horarios"
-                                                                className="boton-icon clock"
-                                                            >
-                                                                <i className="fa-solid fa-clock"></i>
-                                                            </button>
-                                                            <button
-                                                                onClick={() => eliminarParadaClick(parada._id)}
-                                                                title="Eliminar parada"
-                                                                className="boton-icon delete"
-                                                            >
-                                                                <i className="fa-solid fa-trash"></i>
-                                                            </button>
-                                                        </div>
-
-                                                        {horarioEditando && horarioEditando._id === parada._id && (
-                                                            <EditHorariosModal
-                                                                parada={horarioEditando}
-                                                                onClose={() => setHorarioEditando(null)}
-                                                            />
-                                                        )}
-                                                    </li>
-                                                ))}
-                                            </ul>
-                                        ) : (
-                                            <p style={{ color: '#888', fontStyle: 'italic' }}>No hay paradas cargadas.</p>
-                                        )}
-                                    </div>
-                                ))}
-                            </div>
+                            <ScheduleMatrix
+                                initialRutaId={rutas[0]?.id}
+                                rutas={rutas}
+                                onAddStop={(rutaId) => {
+                                    const r = rutas.find(r => r.id === rutaId);
+                                    if (r) {
+                                        setRutaSeleccionada(r);
+                                        setMostrarModal(true);
+                                    }
+                                }}
+                                onEditStop={editarParada}
+                                onDeleteStop={eliminarParadaClick}
+                                lastUpdate={lastUpdate}
+                            />
                         </div>
                     )}
 
