@@ -14,6 +14,7 @@
     --danger: #c43131;
     --success: #3f9240;
     --sidebar-width: 260px;
+    --header-height: 100px;
 }
 
 /* --- Layout Wrapper --- */
@@ -29,7 +30,7 @@
     display: flex;
     flex: 1;
     position: relative;
-    margin-top: 100px;
+    margin-top: var(--header-height);
     /* Space for the fixed header */
 }
 
@@ -41,8 +42,12 @@
     display: flex;
     flex-direction: column;
     padding: 1.5rem;
-    min-height: calc(100vh - 80px);
-    /* Adjust based on header */
+
+    /* STICKY CONFIGURATION */
+    position: sticky;
+    top: var(--header-height);
+    height: calc(100vh - var(--header-height));
+    overflow-y: auto;
 }
 
 .sidebar-header h3 {
@@ -123,7 +128,8 @@
 
 /* Buttons */
 .btn-add-user,
-.btn-add-parada {
+.btn-add-parada,
+.custom-button {
     background-color: var(--primary-blue);
     color: white;
     border: none;
@@ -135,10 +141,12 @@
     font-weight: 600;
     transition: background 0.3s ease;
     cursor: pointer;
+    justify-content: center;
 }
 
 .btn-add-user:hover,
-.btn-add-parada:hover {
+.btn-add-parada:hover,
+.custom-button:hover {
     background-color: var(--primary-blue-hover);
     transform: translateY(-2px);
 }
@@ -220,7 +228,7 @@
     background: rgba(244, 67, 54, 0.1);
 }
 
-/* --- Schedule Cards (New) --- */
+/* --- Schedule Cards --- */
 .routes-grid {
     display: flex;
     flex-direction: column;
@@ -233,7 +241,6 @@
     border: 1px solid var(--surface-border);
     padding: 1.5rem;
     position: relative;
-    /* margin-bottom replaced by grid gap */
 }
 
 .route-header {
@@ -265,7 +272,6 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    /* Space out content and buttons */
     padding: 0.8rem;
     background-color: rgba(255, 255, 255, 0.03);
     border-radius: 8px;
@@ -306,12 +312,110 @@
     color: #64b5f6;
 }
 
+.boton-icon.toggle:hover {
+    color: #ffb74d;
+}
+
 .boton-icon.delete:hover {
     color: #e57373;
 }
 
 .boton-icon.clock:hover {
     color: #81c784;
+}
+
+/* =========================================
+   MODAL STYLES (NEW - Professional Look)
+   ========================================= */
+
+/* The Modal Content */
+.custom-modal {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    background-color: var(--surface-dark);
+    border: 1px solid var(--surface-border);
+    border-radius: 12px;
+
+    width: 90%;
+    max-width: 500px;
+    /* Constrained width - No full screen */
+    max-height: 90vh;
+    overflow-y: auto;
+
+    padding: 0;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.7);
+    outline: none;
+}
+
+/* Modal Inner Structure */
+.modal-content {
+    background: transparent;
+    border: none;
+    color: white;
+}
+
+.modal-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--surface-border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin: 0;
+    color: var(--primary-blue);
+}
+
+.modal-body {
+    padding: 1.5rem;
+}
+
+.modal-footer {
+    padding: 1rem 1.5rem;
+    border-top: 1px solid var(--surface-border);
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+}
+
+/* Form Styles */
+.ctm-form-group label {
+    color: var(--text-secondary);
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.ctm-form-group .form-control,
+.ctm-form-group .form-select {
+    background-color: #252525;
+    border: 1px solid #333;
+    color: white;
+    border-radius: 6px;
+    padding: 0.6rem 1rem;
+}
+
+.ctm-form-group .form-control:focus,
+.ctm-form-group .form-select:focus {
+    border-color: var(--primary-blue);
+    box-shadow: 0 0 0 2px rgba(0, 74, 173, 0.25);
+    background-color: #2a2a2a;
+}
+
+/* Close Button Override */
+.btn-close {
+    filter: invert(1) grayscale(100%) brightness(200%);
+    opacity: 0.8;
+}
+
+.btn-close:hover {
+    opacity: 1;
 }
 
 /* Responsive */
@@ -323,6 +427,10 @@
     .admin-sidebar {
         width: 100%;
         min-height: auto;
+        height: auto;
+        /* Reset sticky height on mobile */
+        position: static;
+        /* Or sticky top: 100px if header is fixed */
         flex-direction: row;
         overflow-x: auto;
         padding: 1rem;
@@ -338,7 +446,6 @@
         display: none;
     }
 
-    /* Show only icons on mobile maybe? or keep small text */
     .section-container {
         padding: 1rem;
     }
