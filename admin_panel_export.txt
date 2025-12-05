@@ -1,0 +1,3039 @@
+CONTEXTO DEL PROYECTO:
+- Frontend: React + Vite
+- Backend: Probablemente Node.js/Express (Inferred)
+- Base de Datos: MongoDB (IMPORTANTE)
+- Objetivo: Actualización del módulo de administración y correcciones en la gestión de horarios.
+- Nota: "Los cambios de horarios son los mas delicados ya que se muestran en otra seccion llamada panel de horarios".
+- Archivos incluidos: Panel de Administración, Gestión de Usuarios, Gestión de Horarios (Admin), Panel de Horarios (Publico), Modales y Estilos.
+
+LISTA DE ARCHIVOS EXPORTADOS:
+src/pages/admin/AdminScreen.jsx
+src/pages/admin/AdminContactScreen.jsx
+src/pages/admin/components/AdminSidebar.jsx
+src/pages/admin/components/UserManagement.jsx
+src/pages/admin/components/ScheduleManagement.jsx
+src/pages/admin/components/ScheduleMatrix.jsx
+src/pages/PanelDeHorarios.jsx
+src/components/admin-components/AddParadaModel.jsx
+src/components/admin-components/EditParadasModal.jsx
+src/components/admin-components/EditHorariosModal.jsx
+src/components/admin-components/AddUserModal.jsx
+src/components/admin-components/EditUserModal.jsx
+src/components/admin-components/AddHorarioModal.jsx
+src/pages/styles/adminscreen.css
+src/pages/styles/adminHorarios.css
+src/pages/styles/modalParadas.css
+src/pages/styles/modalEditarParada.css
+src/pages/styles/editHorariosModal.css
+src/pages/styles/modalAgregarHorario.css
+
+==================================================================
+INICIO DEL CÓDIGO FUENTE
+==================================================================
+
+==================================================================
+FILE: src/pages/admin/AdminScreen.jsx
+==================================================================
+import React, { useEffect, useState } from 'react';
+import Table from 'react-bootstrap/Table';
+import { FaPlus, FaUsers, FaBus, FaClock, FaEnvelope } from 'react-icons/fa';
+import pruebaApi from '../../api/pruebaApi';
+import Header from '../../components/Header';
+import '../styles/adminscreen.css';
+import Swal from 'sweetalert2';
+import EditUserModal from '../../components/admin-components/EditUserModal';
+import AddUserModal from '../../components/admin-components/AddUserModal';
+import { useAuth } from '../../context/AuthContext';
+import { getAuthToken } from '../../api/auth';
+import { Footer } from '../../components/Footer';
+import axios from 'axios';
+import AddParadaModal from '../../components/admin-components/AddParadaModel';
+import AddHorarioModal from '../../components/admin-components/AddHorarioModal';
+import EditHorariosModal from '../../components/admin-components/EditHorariosModal';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import '../styles/adminHorarios.css';
+import EditParadaModal from '../../components/admin-components/EditParadasModal';
+import AdminContactScreen from './AdminContactScreen';
+import { ScheduleMatrix } from './components/ScheduleMatrix';
+
+export const AdminScreen = () => {
+    const { user } = useAuth();
+    const [activeSection, setActiveSection] = useState('usuarios');
+    const [cargarUsuarios, setCargarUsuarios] = useState([]);
+
+    const [paradasPorRuta, setParadasPorRuta] = useState({});
+    const [lastUpdate, setLastUpdate] = useState(Date.now());
+
+    // MODAL PARA AGREGAR UNA NUEVA PARADA
+    const [mostrarModal, setMostrarModal] = useState(false);
+
+    const [rutaSeleccionada, setRutaSeleccionada] = useState(null);
+
+    // GUARDA LA PARADA SELECCIONADA Y SE LLAMA EN EL MODAL PARA EDITAR EL NOMBRE Y ORDEN DE UNA PARADA
+    const [paradaSeleccionada, setParadaSeleccionada] = useState(null);
+
+    // MODAL PARA AGREGAR UN USUARIO
+    const [isModalOpenUser, setIsModalOpenUser] = useState(false);
+
+    // MODAL PARA EDITAR UN USUARIO
+    const [isModalOpenUserEditar, setIsModalOpenUserEditar] = useState(false);
+
+    const [horarioEditando, setHorarioEditando] = useState(null); // Guarda la parada seleccionada
+
+    // MODAL PARA EDITAR UNA PARADA
+    const [modalEditarParadaAbierto, setModalEditarParadaAbierto] = useState(false)
+
+
+    const rutas = [
+        { id: "6841ae01c11032698b6ade09", nombre: "Santa Lucía → Monteros" },
+        { id: "6841af28447dea60cc03a67d", nombre: "Monteros → Santa Lucía" }
+    ];
+
+    // Estados para formularios
+    const [formDateUser, setFormDateUser] = useState({
+        username: '',
+        email: '',
+        status: '',
+        password: '',
+        role: ''
+    });
+    const [formDateUserEditar, setFormDateUserEditar] = useState({
+        _id: '',
+        username: '',
+        email: '',
+        status: '',
+        password: '',
+        role: ''
+    });
+
+    const handleAgregarParada = async ({ nombre, orden }) => {
+        if (!rutaSeleccionada) return;
+
+        try {
+            const nuevaParada = {
+                nombre,
+                orden,
+                id_ruta: rutaSeleccionada.id
+            };
+
+            const response = await pruebaApi.post('/admin/nuevaParada', nuevaParada);
+            const paradaCreada = response.data;
+
+            setParadasPorRuta(prev => ({
+                ...prev,
+                [rutaSeleccionada.id]: [...(prev[rutaSeleccionada.id] || []), paradaCreada]
+            }));
+            await fetchParadasYHorarios(); // Actualiza las paradas después de agregar
+            setMostrarModal(false);
+            setLastUpdate(Date.now());
+        } catch (error) {
+            console.error('Error al agregar parada:', error);
+        }
+    };
+
+    // CONTROL DEL MODAL PARA EDITAR UNA PARADA
+    const editarParada = (parada) => {
+        setParadaSeleccionada(parada)
+        setModalEditarParadaAbierto(true)
+    }
+    const cerrarModalEditarParada = () => {
+        setParadaSeleccionada(null);
+        setModalEditarParadaAbierto(false)
+    }
+
+    // Funciones de manejo de cambios
+    const handleChangeFormUser = (e) => {
+        const value = e.target.type === "checkbox" ? (e.target.checked ? "active" : "inactive") : e.target.value;
+        setFormDateUser({
+            ...formDateUser,
+            [e.target.name]: value,
+        });
+    };
+
+    const handleChangeFormUserEditar = (e) => {
+        const { value, type, checked } = e.target;
+        if (type === "checkbox") {
+            setFormDateUserEditar({
+                ...formDateUserEditar,
+                [e.target.name]: checked,
+            });
+        } else {
+            setFormDateUserEditar({
+                ...formDateUserEditar,
+                [e.target.name]: value,
+            });
+        }
+    };
+
+    // Funciones de envío de formularios
+    const handleSubmitFormUser = (e) => {
+        e.preventDefault();
+        var { username, email, status, password, role } = formDateUser;
+        const regexPass = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/;
+        role = role ? role.toLowerCase() : "user";
+        status = status ? status.toLowerCase() : "inactive";
+
+        if (!username.trim() || !email.trim() || !password.trim()) {
+            showErrorAlert('Campos incompletos', 'Por favor completa todos los campos.');
+            return;
+        }
+
+        if (!verificarFormatoEmail(email)) {
+            showErrorAlert('Formato de correo incorrecto', 'Por favor ingresa un correo electrónico válido.');
+            return;
+        }
+
+        if (!regexPass.test(password)) {
+            showErrorAlert('Formato de contraseña incorrecto', 'Debe contener al menos una mayuscula, minusculas y al menos 8 caracteres');
+            return;
+        }
+
+        showSuccessAlert('Usuario agregado!', 'El Usuario ha sido agregado exitosamente.');
+        setFormDateUser({ username: '', email: '', status: '', password: '', role: '' });
+        guardarUsuarioDb(username, email, status, password, role);
+        recargarPagina();
+    };
+
+    const handleSubmitFormUserEditar = async (e) => {
+        e.preventDefault();
+        var { _id, username, email, status, role } = formDateUserEditar;
+        role = role ? role.toLowerCase() : "user";
+        let statusModif = status ? "active" : "inactive";
+
+        if (!_id) {
+            showErrorAlert('No se encontro el Usuario', 'Por favor contactese con el administrador.');
+            return;
+        }
+
+        if (!username.trim() || !email.trim() || !role) {
+            showErrorAlert('Campos incompletos', 'Por favor completa todos los campos.');
+            return;
+        }
+
+        if (!verificarFormatoEmail(email)) {
+            showErrorAlert('Formato de correo incorrecto', 'Por favor ingresa un correo electrónico válido.');
+            return;
+        }
+
+        showSuccessAlert('Usuario editado!', 'El Usuario ha sido editado exitosamente.');
+        setFormDateUser({ username: '', email: '', status: '', password: '', role: '' });
+        editarUsuarioDb(_id, username, email, statusModif, role);
+        recargarPagina();
+    };
+
+    const fetchParadasYHorarios = async () => {
+        try {
+            const nuevasParadas = {};
+            const nuevosHorarios = {};
+
+            //const resParadas = await pruebaApi.get(`api/paradas`);
+            //setParadasPorRuta(nuevasParadas);
+
+            for (const ruta of rutas) {
+                // Obtener paradas
+                const resParadas = await pruebaApi.get(`api/paradas?id_ruta=${ruta.id}`);
+
+                const paradas = resParadas.data;
+                nuevasParadas[ruta.id] = paradas;
+
+                // Obtener horarios de cada parada
+                // const horarios = await Promise.all(paradas.map(async parada => {
+                //     const resHorario = await axios.get(`/obtenerHorarios?id_ruta=${ruta.id}&id_parada=${parada._id}`);
+                //     return {
+                //         paradaId: parada._id,
+                //         nombre: parada.nombre,
+                //         horarios: resHorario.data
+                //     };
+                // }));
+
+                // nuevosHorarios[ruta.id] = horarios;
+                setParadasPorRuta(prev => ({
+                    ...prev,
+                    [ruta.id]: paradas
+                }));
+            }
+            //setHorariosPorRuta(nuevosHorarios);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    // Funciones de API
+    const editarUsuarioDb = async (_id, username, email, status, role) => {
+        try {
+            await pruebaApi.put('/api/admin-page/editarUsuario', {
+                _id, username, email, status, role
+            }, {
+                withCredentials: true,
+                headers: {
+                    Authorization: `Bearer ${getAuthToken()}`,
+                    User: JSON.stringify(user),
+                },
+            });
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    const guardarUsuarioDb = async (username, email, status, password, role) => {
+        try {
+            await pruebaApi.post('api/admin-page/nuevoUsuario', {
+                username, email, status, password, role
+            }, {
+                withCredentials: true,
+                headers: {
+                    Authorization: `Bearer ${getAuthToken()}`,
+                    User: JSON.stringify(user),
+                },
+            });
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    const cargarUserDB = async () => {
+        try {
+            const resp = await pruebaApi.get('/api/admin-page/listarUsuarios', {
+                withCredentials: true,
+                headers: {
+                    Authorization: `Bearer ${getAuthToken()}`,
+                    User: JSON.stringify(user),
+                },
+            });
+            setCargarUsuarios(resp.data.usuarios);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    // Funciones de UI
+    const editarUsuarioClick = async (usuario) => {
+        setFormDateUserEditar(usuario);
+        setIsModalOpenUserEditar(true);
+    };
+
+    const eliminarUsuarioClick = async (id) => {
+        Swal.fire({
+            icon: 'warning',
+            title: '¿Estás seguro?',
+            text: 'Esta acción eliminará el usuario permanentemente.',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'Cancelar',
+            background: 'black',
+            color: 'white',
+            customClass: {
+                container: 'custom-swal-container',
+                title: 'custom-swal-title',
+                content: 'custom-swal-content',
+                confirmButton: 'custom-swal-confirm-button',
+                cancelButton: 'custom-swal-cancel-button',
+            },
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                try {
+                    await pruebaApi.delete(`/api/admin-page/eliminarUsuario/${id}`, {
+                        withCredentials: true,
+                        headers: {
+                            Authorization: `Bearer ${getAuthToken()}`,
+                            User: JSON.stringify(user),
+                        },
+                    });
+                    showSuccessAlert('¡Usuario Eliminado!', 'El usuario ha sido eliminado exitosamente.');
+                    recargarPagina();
+                } catch (error) {
+                    console.log(error);
+                }
+            }
+        });
+    };
+
+    const eliminarParadaClick = async (idParada) => {
+        //const confirmacion = window.confirm("¿Estás seguro de que querés eliminar este elemento?");
+        const result = await Swal.fire({
+            title: '¿Estás seguro?',
+            text: 'Esta acción eliminará el elemento permanentemente.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'Cancelar',
+        });
+
+        if (result.isConfirmed) {
+            try {
+                await pruebaApi.delete(`/admin/eliminarParada/${idParada}`);
+                await fetchParadasYHorarios(); // refrescar la lista
+                setLastUpdate(Date.now());
+            } catch (error) {
+                console.error('Error al eliminar la parada:', error);
+                alert('No se pudo eliminar la parada. Revisá los logs del servidor.');
+            }
+        }
+
+    }
+
+    const inactivarUsuarioClick = async (usuario) => {
+        const { _id, username, email, status, role } = usuario;
+        const lowerCaserole = role ? role.toLowerCase() : "user";
+        const lowerCasestatus = status ? status.toLowerCase() : "inactive";
+        const newstatus = lowerCasestatus === "active" ? "inactive" : "active";
+
+        if (!_id) {
+            showErrorAlert('No se encontró el Usuario', 'Por favor contacte al administrador.');
+            return;
+        }
+
+        Swal.fire({
+            icon: 'warning',
+            title: '¿Estás seguro?',
+            text: 'Esta acción cambiará el estado del usuario, luego podrá modificarlo.',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, cambiar',
+            cancelButtonText: 'Cancelar',
+            background: 'black',
+            color: 'white',
+            customClass: {
+                container: 'custom-swal-container',
+                title: 'custom-swal-title',
+                content: 'custom-swal-content',
+                confirmButton: 'custom-swal-confirm-button',
+                cancelButton: 'custom-swal-cancel-button',
+            },
+        }).then((result) => {
+            if (result.isConfirmed) {
+                setFormDateUser({
+                    username: '', email: '', status: '', password: '', role: ''
+                });
+                editarUsuarioDb(_id, username, email, newstatus, lowerCaserole);
+                recargarPagina();
+            }
+        });
+    };
+
+    // Helpers
+    const recargarPagina = () => {
+        setTimeout(() => {
+            window.location.reload();
+        }, 2000);
+    };
+
+    const capitalizeFirstLetter = (str) => {
+        return str.charAt(0).toUpperCase() + str.slice(1);
+    };
+
+    const verificarFormatoEmail = (email) => {
+        const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
+        return emailRegex.test(email);
+    };
+
+    const showErrorAlert = (title, text) => {
+        Swal.fire({
+            icon: 'error',
+            title,
+            text,
+            background: 'black',
+            color: 'white',
+            customClass: {
+                container: 'custom-swal-container',
+                title: 'custom-swal-title',
+                content: 'custom-swal-content',
+                confirmButton: 'custom-swal-confirm-button',
+                cancelButton: 'custom-swal-cancel-button',
+            },
+        });
+    };
+
+    const showSuccessAlert = (title, text) => {
+        Swal.fire({
+            icon: 'success',
+            title,
+            text,
+            background: 'black',
+            color: 'white',
+            customClass: {
+                container: 'custom-swal-container',
+                title: 'custom-swal-title',
+                content: 'custom-swal-content',
+                confirmButton: 'custom-swal-confirm-button',
+                cancelButton: 'custom-swal-cancel-button',
+            },
+        });
+    };
+
+    // Efectos
+    useEffect(() => {
+        cargarUserDB();
+    }, []);
+
+    useEffect(() => {
+        fetchParadasYHorarios();
+    }, [])
+
+    // Renderizado
+    return (
+        <div className="admin-layout-wrapper">
+            <Header /> {/* Header Global */}
+
+            <div className="admin-dashboard-container">
+                {/* Sidebar Navigation */}
+                <aside className="admin-sidebar">
+                    <div className="sidebar-header">
+                        <h3>Admin Panel</h3>
+                    </div>
+                    <div className="sidebar-menu">
+                        <button
+                            className={`sidebar-item ${activeSection === 'usuarios' ? 'active' : ''}`}
+                            onClick={() => setActiveSection('usuarios')}
+                        >
+                            <FaUsers className="sidebar-icon" />
+                            <span>Usuarios</span>
+                        </button>
+                        <button
+                            className={`sidebar-item ${activeSection === 'horarios' ? 'active' : ''}`}
+                            onClick={() => setActiveSection('horarios')}
+                        >
+                            <FaClock className="sidebar-icon" />
+                            <span>Horarios</span>
+                        </button>
+                        <button
+                            className={`sidebar-item ${activeSection === 'unidades' ? 'active' : ''}`}
+                            onClick={() => setActiveSection('unidades')}
+                        >
+                            <FaBus className="sidebar-icon" />
+                            <span>Unidades</span>
+                        </button>
+                        <button
+                            className={`sidebar-item ${activeSection === 'contacto' ? 'active' : ''}`}
+                            onClick={() => setActiveSection('contacto')}
+                        >
+                            <FaEnvelope className="sidebar-icon" />
+                            <span>Contacto</span>
+                        </button>
+                    </div>
+                </aside>
+
+                {/* Main Content Area */}
+                <main className="admin-main-content">
+
+                    {/* Welcome / Header of content */}
+                    {activeSection === 'usuarios' && (
+                        <div className="table-container">
+                            <div className="header-actions">
+                                <h3>Gestión de Usuarios</h3>
+                                <button
+                                    className="btn-add-user"
+                                    onClick={() => setIsModalOpenUser(true)}
+                                    title='Agregar Usuario'
+                                >
+                                    <FaPlus /> Nuevo Usuario
+                                </button>
+                            </div>
+
+                            <div className="table-responsive">
+                                <Table className="custom-table" hover variant="dark">
+                                    <thead>
+                                        <tr>
+                                            <th>Usuario</th>
+                                            <th>Email</th>
+                                            <th>Rol</th>
+                                            <th>Estado</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {cargarUsuarios.map((usuario) => (
+                                            <tr key={usuario._id}>
+                                                <td>
+                                                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                                        <div style={{ width: '30px', height: '30px', borderRadius: '50%', background: '#004aad', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 'bold' }}>
+                                                            {usuario.username.charAt(0).toUpperCase()}
+                                                        </div>
+                                                        {usuario.username}
+                                                    </div>
+                                                </td>
+                                                <td>{usuario.email}</td>
+                                                <td>
+                                                    <span className={`badge-role ${usuario.role}`}>
+                                                        {capitalizeFirstLetter(usuario.role)}
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <span className={`badge-status ${usuario.status === 'active' ? 'active' : 'inactive'}`}>
+                                                        {usuario.status === 'active' ? 'Activo' : 'Inactivo'}
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <div className="parada-botones" style={{ justifyContent: 'center' }}>
+                                                        <button className="boton-icon edit" onClick={() => editarUsuarioClick(usuario)} title="Editar usuario">
+                                                            <i className="fa-solid fa-pen-to-square"></i>
+                                                        </button>
+                                                        <button className="boton-icon toggle" onClick={() => inactivarUsuarioClick(usuario)} title={usuario.status === "inactive" ? "Activar" : "Inactivar"}>
+                                                            <i className={`fa-solid ${usuario.status === "inactive" ? "fa-lock" : "fa-unlock"}`}></i>
+                                                        </button>
+                                                        <button className="boton-icon delete" onClick={() => eliminarUsuarioClick(usuario._id)} title="Eliminar usuario">
+                                                            <i className="fa-solid fa-trash"></i>
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </Table>
+                            </div>
+                        </div>
+                    )}
+
+                    {activeSection === 'horarios' && (
+                        <div className="section-container">
+                            <div className="header-actions">
+                                <h3>Gestión de Horarios (Vista Matriz)</h3>
+                            </div>
+                            <p style={{ color: '#aaa', marginBottom: '2rem' }}>
+                                Edita los horarios como una tabla. Agrega filas para nuevos recorridos.
+                            </p>
+
+                            <ScheduleMatrix
+                                initialRutaId={rutas[0]?.id}
+                                rutas={rutas}
+                                onAddStop={(rutaId) => {
+                                    const r = rutas.find(r => r.id === rutaId);
+                                    if (r) {
+                                        setRutaSeleccionada(r);
+                                        setMostrarModal(true);
+                                    }
+                                }}
+                                onEditStop={editarParada}
+                                onDeleteStop={eliminarParadaClick}
+                                lastUpdate={lastUpdate}
+                            />
+                        </div>
+                    )}
+
+                    {activeSection === 'unidades' && (
+                        <div className="section-container">
+                            <h3>Gestión de Unidades y Choferes</h3>
+                            <p>Funcionalidad en desarrollo...</p>
+                        </div>
+                    )}
+
+                    {activeSection === 'contacto' && (
+                        <div className="section-container">
+                            <AdminContactScreen />
+                        </div>
+                    )}
+                </main>
+            </div>
+
+            {/* Modales - Preservados */}
+            <AddUserModal
+                isOpen={isModalOpenUser}
+                setIsOpen={setIsModalOpenUser}
+                onRequestClose={() => setIsModalOpenUser(false)}
+                handleChangeFormUser={handleChangeFormUser}
+                handleSubmitFormUser={handleSubmitFormUser}
+                formDateUser={formDateUser}
+            />
+            <EditUserModal
+                isOpen={isModalOpenUserEditar}
+                setIsOpen={setIsModalOpenUserEditar}
+                handleChangeFormUserEditar={handleChangeFormUserEditar}
+                handleSubmitFormUserEditar={handleSubmitFormUserEditar}
+                formDateUserEditar={formDateUserEditar}
+            />
+            <AddParadaModal
+                isOpen={mostrarModal}
+                onClose={() => setMostrarModal(false)}
+                onSubmit={handleAgregarParada}
+            />
+            <EditParadaModal
+                isOpen={modalEditarParadaAbierto}
+                onRequestClose={cerrarModalEditarParada}
+                parada={paradaSeleccionada}
+                onRecargarParadas={fetchParadasYHorarios}
+            />
+
+            <Footer />
+        </div>
+    );
+};
+
+==================================================================
+FILE: src/pages/admin/AdminContactScreen.jsx
+==================================================================
+import React, { useEffect, useState } from 'react'
+import Table from 'react-bootstrap/Table';
+import pruebaApi from '../../api/pruebaApi';
+
+export default function AdminContactScreen() {
+
+  const [datos, setDatos] = useState([]);
+
+  const cargarMensajesContacto = async () => {
+    try {
+
+      const respuesta = await pruebaApi.get('/admin/listarMensajes');
+      const datos = respuesta.data.mensajes;
+      setDatos(datos);
+      console.log("Datos cargados correctamente");
+
+    } catch (error) {
+      console.log("No fue posible cargar los datos");
+      console.log(error);
+    }
+  }
+
+  useEffect(() => {
+    cargarMensajesContacto();
+  }, [])
+
+  return (
+    <>
+      <Table striped bordered hover variant="dark">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Nombre</th>
+            <th>Apellido</th>
+            <th>Email</th>
+            <th>Telefono</th>
+            <th>Asunto</th>
+            <th>Mensaje</th>
+          </tr>
+        </thead>
+        <tbody>
+          {datos.map((mensaje, index) => (
+            <tr key={mensaje._id}>
+              <td>{index + 1}</td>
+              <td>{mensaje.nombre}</td>
+              <td>{mensaje.apellido}</td>
+              <td>{mensaje.email}</td>
+              <td>{mensaje.telefono}</td>
+              <td>{mensaje.asunto}</td>
+              <td>{mensaje.mensaje}</td>
+            </tr>
+          ))}
+
+        </tbody>
+      </Table>
+    </>
+  )
+}
+
+
+WARNING: FILE NOT FOUND: src/pages/admin/components/AdminSidebar.jsx
+
+WARNING: FILE NOT FOUND: src/pages/admin/components/UserManagement.jsx
+
+WARNING: FILE NOT FOUND: src/pages/admin/components/ScheduleManagement.jsx
+
+==================================================================
+FILE: src/pages/admin/components/ScheduleMatrix.jsx
+==================================================================
+import React, { useState, useEffect } from 'react';
+import { Table, Button, Spinner, Form } from 'react-bootstrap';
+import { FaPlus, FaTrash, FaSave, FaClock } from 'react-icons/fa';
+import Swal from 'sweetalert2';
+import pruebaApi from '../../../api/pruebaApi';
+import '../../styles/adminscreen.css'; // Re-use main styles
+
+export const ScheduleMatrix = ({ initialRutaId, rutas, onAddStop, onEditStop, onDeleteStop, lastUpdate }) => {
+    const [selectedRutaId, setSelectedRutaId] = useState(initialRutaId || (rutas[0] ? rutas[0].id : ''));
+    const [paradas, setParadas] = useState([]);
+    const [matrix, setMatrix] = useState([]); // Array of Rows (Trips), each Row is Array of Times
+    const [loading, setLoading] = useState(false);
+    const [saving, setSaving] = useState(false);
+
+    // Load Data
+    const fetchData = async () => {
+        if (!selectedRutaId) return;
+        setLoading(true);
+        try {
+            // 1. Fetch Paradas (Columns)
+            const resParadas = await pruebaApi.get(`api/paradas?id_ruta=${selectedRutaId}`);
+            const paradasData = resParadas.data.sort((a, b) => a.orden - b.orden);
+            setParadas(paradasData);
+
+            // 2. Fetch All Times for these Paradas
+            const timesByStop = {};
+            let maxTrips = 0;
+
+            for (const p of paradasData) {
+                const resHorario = await pruebaApi.get(`api/obtenerHorarios?id_ruta=${selectedRutaId}&id_parada=${p._id}`);
+                const all = resHorario.data.allHorarios || [];
+                // const filtered = all.filter(h => h.tipo_dia === 'habil'); // kept for reference
+                const filtered = all;
+
+                timesByStop[p._id] = filtered;
+                if (filtered.length > maxTrips) maxTrips = filtered.length;
+            }
+
+            // Build Matrix: Rows = Trips
+            const newMatrix = [];
+            for (let i = 0; i < maxTrips; i++) {
+                const row = {};
+                row.id = `trip-${i}`; // Virtual ID
+                row.cells = {}; // Key: paradaId, Value: { time, id (if exists) }
+
+                paradasData.forEach(p => {
+                    const times = timesByStop[p._id];
+                    if (times && times[i]) {
+                        row.cells[p._id] = {
+                            value: times[i].horario,
+                            id: times[i]._id, // original DB id to update
+                            originalValue: times[i].horario
+                        };
+                    } else {
+                        row.cells[p._id] = { value: '', id: null };
+                    }
+                });
+                newMatrix.push(row);
+            }
+            setMatrix(newMatrix);
+
+        } catch (error) {
+            console.error("Error fetching data", error);
+            Swal.fire('Error', 'No se pudieron cargar los horarios', 'error');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchData();
+    }, [selectedRutaId, rutas, lastUpdate]); // Reload if route changes or props change
+
+    // Handlers
+    const handleCellChange = (rowIndex, paradaId, newValue) => {
+        const newMatrix = [...matrix];
+        // Ensure cell exists
+        if (!newMatrix[rowIndex].cells[paradaId]) {
+            newMatrix[rowIndex].cells[paradaId] = { value: '', id: null };
+        }
+        newMatrix[rowIndex].cells[paradaId].value = newValue;
+        newMatrix[rowIndex].isDirty = true;
+        setMatrix(newMatrix);
+    };
+
+    const addTrip = () => {
+        const newRow = {
+            id: `new-${Date.now()}`,
+            cells: {},
+            isDirty: true,
+            isNew: true
+        };
+        paradas.forEach(p => {
+            newRow.cells[p._id] = { value: '', id: null };
+        });
+        setMatrix([...matrix, newRow]);
+    };
+
+    const saveRow = async (rowIndex) => {
+        const row = matrix[rowIndex];
+        setSaving(true);
+        try {
+            // Save each cell in the row
+            const promises = paradas.map(async p => {
+                const cell = row.cells[p._id];
+                if (!cell || !cell.value) return; // Skip empty
+
+                if (cell.id) {
+                    // Update existing - Logic pending backend support for individual update or we assume insert works?
+                    // For now, focusing on Adds.
+                } else {
+                    // Create New
+                    const nuevoHorario = {
+                        id_parada: p._id,
+                        horario: cell.value,
+                        tipo_dia: 'habil', // Default
+                        nro_orden: '0',
+                        turno: 'mañana' // Logic to guess?
+                    };
+                    await pruebaApi.post('/admin/nuevoHorario', nuevoHorario);
+                }
+            });
+
+            await Promise.all(promises);
+            Swal.fire('Guardado', 'Fila guardada correctamente', 'success');
+            fetchData(); // Refresh to get IDs
+        } catch (e) {
+            console.error(e);
+            Swal.fire('Error', 'Error al guardar', 'error');
+        } finally {
+            setSaving(false);
+        }
+    };
+
+    const deleteRow = async (rowIndex) => {
+        const row = matrix[rowIndex];
+        const result = await Swal.fire({
+            title: '¿Eliminar fila?',
+            text: 'Esto eliminará los horarios asociados en todas las paradas de esta fila.',
+            icon: 'warning',
+            showCancelButton: true
+        });
+
+        if (result.isConfirmed) {
+            try {
+                const promises = [];
+                Object.values(row.cells).forEach(cell => {
+                    if (cell.id) {
+                        promises.push(pruebaApi.delete(`/admin/eliminarHorario/${cell.id}`));
+                    }
+                });
+                await Promise.all(promises);
+                fetchData();
+            } catch (e) {
+                Swal.fire('Error', 'No se pudieron eliminar algunos horarios', 'error');
+            }
+        }
+    };
+
+
+    return (
+        <div className="schedule-matrix-container">
+            <div className="matrix-header mb-3 d-flex gap-3 align-items-center flex-wrap">
+                <Form.Select
+                    value={selectedRutaId}
+                    onChange={e => setSelectedRutaId(e.target.value)}
+                    style={{ maxWidth: '300px', backgroundColor: '#1e1e1e', color: 'white', border: '1px solid #333' }}
+                >
+                    {rutas.map(r => <option key={r.id} value={r.id}>{r.nombre}</option>)}
+                </Form.Select>
+
+                <div className="d-flex gap-2">
+                    <Button variant="success" onClick={addTrip}>
+                        <FaPlus /> Nuevo Recorrido (Fila)
+                    </Button>
+                    <Button variant="primary" onClick={() => onAddStop && onAddStop(selectedRutaId)}>
+                        <FaPlus /> Nueva Parada (Columna)
+                    </Button>
+                </div>
+            </div>
+
+            {loading ? <Spinner animation="border" variant="light" /> : (
+                <div className="table-responsive">
+                    <Table bordered variant="dark" hover className="matrix-table text-center align-middle">
+                        <thead>
+                            <tr>
+                                <th style={{ width: '50px' }}>#</th>
+                                {paradas.map(p => (
+                                    <th key={p._id} style={{ minWidth: '150px' }}>
+                                        <div className="d-flex flex-column align-items-center">
+                                            <span>{p.nombre}</span>
+                                            <div className="d-flex gap-2 mt-1">
+                                                <Button size="sm" variant="link" className="p-0 text-info" onClick={() => onEditStop && onEditStop(p)} title="Editar nombre">
+                                                    <i className="fa-solid fa-pen-to-square"></i>
+                                                </Button>
+                                                <Button size="sm" variant="link" className="p-0 text-danger" onClick={() => onDeleteStop && onDeleteStop(p._id)} title="Eliminar columna">
+                                                    <FaTrash />
+                                                </Button>
+                                            </div>
+                                        </div>
+                                    </th>
+                                ))}
+                                <th style={{ width: '100px' }}>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {matrix.map((row, rowIndex) => (
+                                <tr key={row.id}>
+                                    <td className="text-muted">{rowIndex + 1}</td>
+                                    {paradas.map(p => (
+                                        <td key={p._id} className="p-1">
+                                            <input
+                                                type="time"
+                                                className="form-control form-control-sm bg-dark text-white border-0 text-center"
+                                                value={row.cells[p._id]?.value || ''}
+                                                onChange={(e) => handleCellChange(rowIndex, p._id, e.target.value)}
+                                            />
+                                        </td>
+                                    ))}
+                                    <td>
+                                        {row.isDirty && (
+                                            <Button size="sm" variant="outline-success" className="me-1" onClick={() => saveRow(rowIndex)} disabled={saving}>
+                                                <FaSave />
+                                            </Button>
+                                        )}
+                                        <Button size="sm" variant="outline-danger" onClick={() => deleteRow(rowIndex)}>
+                                            <FaTrash />
+                                        </Button>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </Table>
+                </div>
+            )}
+        </div>
+    );
+};
+
+
+==================================================================
+FILE: src/pages/PanelDeHorarios.jsx
+==================================================================
+import React, { useState, useEffect } from 'react';
+import axios from '../api/axios';
+import './styles/panel-horarios.css';
+import { Row, Col, Form, Button } from 'react-bootstrap';
+import Header from '../components/Header';
+import { Footer } from '../components/Footer';
+import jsPDF from "jspdf";
+import html2canvas from "html2canvas";
+
+export const PanelDeHorarios = () => {
+    const rutas = [
+        { id: "6841ae01c11032698b6ade09", tipo: "ida", nombre: "Santa Lucía → Monteros" },
+        { id: "6841af28447dea60cc03a67d", tipo: "vuelta", nombre: "Monteros → Santa Lucía" }
+    ];
+
+    const [tipoRuta, setTipoRuta] = useState('ida');
+    const [origen, setOrigen] = useState('');
+    const [destino, setDestino] = useState('');
+    const [tipo_dia, setDia] = useState('habil');
+    const [horario, setHorario] = useState('mañana');
+    const [mostrarFiltrado, setMostrarFiltrado] = useState(false);
+    const [horariosFiltrados, setHorariosFiltrados] = useState([]);
+    const [destinosDisponibles, setDestinosDisponibles] = useState([]);
+    const [paradasPorRuta, setParadasPorRuta] = useState({});
+    const [horariosPorRuta, setHorariosPorRuta] = useState({});
+
+    // Cargar paradas y horarios
+    useEffect(() => {
+        const fetchData = async () => {
+            const nuevasParadas = {};
+            const nuevosHorarios = {};
+
+            for (const ruta of rutas) {
+                const resParadas = await axios.get(`/paradas?id_ruta=${ruta.id}`);
+                const paradas = resParadas.data;
+                nuevasParadas[ruta.tipo] = paradas;
+
+                const horariosParadas = await Promise.all(paradas.map(async parada => {
+                    const resHorarios = await axios.get(`/obtenerHorarios?id_ruta=${ruta.id}&id_parada=${parada._id}`);
+                    
+                    return {
+                        paradaId: parada._id,
+                        nombre: parada.nombre,
+                        horarios: resHorarios.data.horarioFiltrado
+                    };
+                }));
+                
+                nuevosHorarios[ruta.tipo] = horariosParadas;
+            }
+
+            setParadasPorRuta(nuevasParadas);
+            setHorariosPorRuta(nuevosHorarios);
+        };
+
+        fetchData();
+    }, []);
+
+    // Actualizar destinos disponibles cuando cambia el origen
+    useEffect(() => {
+        if (!origen || !paradasPorRuta[tipoRuta]) return;
+
+        const paradas = paradasPorRuta[tipoRuta];
+        const indexOrigen = paradas.findIndex(p => p.nombre === origen);
+        if (indexOrigen >= 0) {
+            setDestinosDisponibles(paradas.slice(indexOrigen + 1));
+        }
+        setDestino('');
+    }, [origen, tipoRuta, paradasPorRuta]);
+
+    // Filtrar horarios
+    const filtrarHorarios = () => {
+        if (!origen || !destino) {
+            alert("Seleccione origen y destino");
+            return;
+        }
+
+        const paradas = paradasPorRuta[tipoRuta] || [];
+        const horarios = horariosPorRuta[tipoRuta] || [];
+
+        const indexOrigen = paradas.findIndex(p => p.nombre === origen);
+        const indexDestino = paradas.findIndex(p => p.nombre === destino);
+
+        if (indexOrigen === -1 || indexDestino === -1 || indexDestino <= indexOrigen) {
+            alert("Selección inválida");
+            return;
+        }
+
+        const horariosOrigen = horarios.find(h => h.paradaId === paradas[indexOrigen]._id)?.horarios || [];
+        const horariosDestino = horarios.find(h => h.paradaId === paradas[indexDestino]._id)?.horarios || [];
+
+        const horariosFiltrados = horariosOrigen
+            .filter(h => h.tipo_dia === tipo_dia && h.turno === horario)
+            .map(h => {
+                const llegada = horariosDestino.find(d => d.horario > h.horario && d.tipo_dia === tipo_dia && d.turno === horario);
+                return llegada ? { salida: h.horario, llegada: llegada.horario } : null;
+            })
+            .filter(Boolean);
+
+        setHorariosFiltrados(horariosFiltrados);
+        setMostrarFiltrado(true);
+    };
+
+    const getTablaCompleta = () => {
+        const paradas = paradasPorRuta[tipoRuta] || [];
+        const horarios = horariosPorRuta[tipoRuta] || [];
+
+        const viajesPorDia = [];
+
+        const maxViajes = Math.max(...horarios.map(p =>
+            p.horarios.filter(h => h.tipo_dia === tipo_dia && h.turno === horario).length
+        ));
+
+        for (let i = 0; i < maxViajes; i++) {
+            const fila = paradas.map(parada => {
+                const h = horarios.find(h => h.paradaId === parada._id);
+                const hs = h?.horarios.filter(hh => hh.tipo_dia === tipo_dia && hh.turno === horario);
+                return hs?.[i]?.horario || '-';
+            });
+            viajesPorDia.push(fila);
+        }
+
+        return (
+            <div id="tabla-horarios">
+                <h2 className="subtitle">{rutas.find(r => r.tipo === tipoRuta)?.nombre} - {tipo_dia}</h2>
+                <div className="table-responsive">
+                    <table className="schedule-table">
+                        <thead>
+                            <tr>
+                                {paradas.map(parada => (
+                                    <th key={parada._id}>{parada.nombre}</th>
+                                ))}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {viajesPorDia.map((fila, index) => (
+                                <tr key={index}>
+                                    {fila.map((hora, idx) => (
+                                        <td key={idx}>{hora}</td>
+                                    ))}
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        );
+    };
+
+    const generarPDF = () => {
+        const elemento = document.getElementById("tabla-horarios");
+        if (!elemento) {
+            alert("No se encontró la tabla para generar el PDF.");
+            return;
+        }
+
+        html2canvas(elemento, { scale: 2 }).then((canvas) => {
+            const imgData = canvas.toDataURL("image/png");
+            const pdf = new jsPDF({
+                orientation: "landscape",
+                unit: "pt",
+                format: "a4",
+            });
+
+            const pageWidth = pdf.internal.pageSize.getWidth();
+            const pageHeight = pdf.internal.pageSize.getHeight();
+
+            const ratio = Math.min(pageWidth / canvas.width, pageHeight / canvas.height);
+            const imgWidth = canvas.width * ratio;
+            const imgHeight = canvas.height * ratio;
+
+            const marginX = (pageWidth - imgWidth) / 2;
+            const marginY = 20; // Espacio superior
+
+            pdf.addImage(imgData, "PNG", marginX, marginY, imgWidth, imgHeight);
+            pdf.save(`horarios-${tipoRuta}-${tipo_dia}.pdf`);
+        }).catch((error) => {
+            console.error("Error generando PDF:", error);
+            alert("Ocurrió un error al generar el PDF.");
+        });
+    };
+
+    return (
+        <>
+            <Header />
+            <div className="horarios-container">
+                <h1 className="title">Horarios Santa Lucía - Monteros</h1>
+
+                {/* Filtros */}
+                <div className="filtro-container">
+                    <Row>
+                        <Col md={2}>
+                            <Form.Group>
+                                <Form.Label>Tipo de Ruta</Form.Label>
+                                <Form.Select value={tipoRuta} onChange={e => {
+                                    setTipoRuta(e.target.value);
+                                    setOrigen('');
+                                    setDestino('');
+                                }}>
+                                    <option value="ida">Santa Lucía → Monteros</option>
+                                    <option value="vuelta">Monteros → Santa Lucía</option>
+                                </Form.Select>
+                            </Form.Group>
+                        </Col>
+                        <Col md={2}>
+                            <Form.Group>
+                                <Form.Label>Origen</Form.Label>
+                                <Form.Select value={origen} onChange={e => {
+                                    setOrigen(e.target.value);
+                                    updateDestinos(e.target.value);
+                                }}>
+                                    <option value="">Seleccionar origen</option>
+                                    {(paradasPorRuta[tipoRuta] || []).map(p => (
+                                        <option key={p._id} value={p.nombre}>{p.nombre}</option>
+                                    ))}
+                                </Form.Select>
+                            </Form.Group>
+                        </Col>
+                        <Col md={2}>
+                            <Form.Group>
+                                <Form.Label>Destino</Form.Label>
+                                <Form.Select value={destino} onChange={e => setDestino(e.target.value)} disabled={!origen}>
+                                    <option value="">Seleccionar destino</option>
+                                    {destinosDisponibles.map(p => (
+                                        <option key={p._id} value={p.nombre}>{p.nombre}</option>
+                                    ))}
+                                </Form.Select>
+                            </Form.Group>
+                        </Col>
+                        <Col md={2}>
+                            <Form.Group>
+                                <Form.Label>Día</Form.Label>
+                                <Form.Select value={tipo_dia} onChange={e => setDia(e.target.value)}>
+                                    <option value="habil">Día hábil</option>
+                                    <option value="sabado">Sábado</option>
+                                    <option value="domingo">Domingo</option>
+                                </Form.Select>
+                            </Form.Group>
+                        </Col><Col md={2}>
+                            <Form.Group>
+                                <Form.Label>Horario</Form.Label>
+                                <Form.Select value={horario} onChange={e => setHorario(e.target.value)}>
+                                    <option value="mañana">Mañana</option>
+                                    <option value="tarde">Tarde</option>
+                                </Form.Select>
+                            </Form.Group>
+                        </Col>
+                        <Col md={1} className="d-flex align-items-end">
+                            <Button className="w-100" onClick={filtrarHorarios} disabled={!origen || !destino}>
+                                Filtrar
+                            </Button>
+                        </Col>
+                    </Row>
+                </div>
+
+                {/* Resultados filtrados */}
+                {mostrarFiltrado ? (
+                    <div className="resultado-filtrado">
+                        <div className="d-flex justify-content-between align-items-center mb-3">
+                            <h3 className="subtitle">Horarios {origen} → {destino} (dia: {tipo_dia}) (turno: {horario})</h3>
+                            <Button variant="outline-secondary" onClick={() => setMostrarFiltrado(false)}>Ver todos</Button>
+                        </div>
+                        <div className="table-responsive">
+                            <table className="schedule-table">
+                                <thead>
+                                    <tr>
+                                        <th>Salida</th>
+                                        <th>Llegada</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {horariosFiltrados.length > 0 ? (
+                                        horariosFiltrados.map((h, i) => (
+                                            <tr key={i}>
+                                                <td>{h.salida}</td>
+                                                <td>{h.llegada}</td>
+                                            </tr>
+                                        ))
+                                    ) : (
+                                        <tr>
+                                            <td colSpan="2" className="text-center">No hay horarios disponibles</td>
+                                        </tr>
+                                    )}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                ) : (
+                    getTablaCompleta()
+                )}
+                {!mostrarFiltrado && (
+                    <div className="d-flex justify-content-end mb-3">
+                        <Button variant="success" onClick={generarPDF}>
+                            Descargar como PDF
+                        </Button>
+                    </div>
+                )}
+            </div>
+            <Footer />
+        </>
+    );
+};
+
+
+==================================================================
+FILE: src/components/admin-components/AddParadaModel.jsx
+==================================================================
+import React, { useState } from 'react';
+import Modal from 'react-modal';
+import '../../pages/styles/modalParadas.css';
+
+const AddParadaModal = ({ isOpen, onClose, onSubmit, onRequestClose }) => {
+    const [nombre, setNombre] = useState('');
+    const [orden, setOrden] = useState('');
+
+    const customStyles = {
+        overlay: {
+            backgroundColor: 'rgba(0, 0, 0, 0.7)',
+            backdropFilter: 'blur(3px)',
+        },
+    };
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        onSubmit({ nombre, orden: parseInt(orden) });
+        setNombre('');
+        setOrden('');
+        onClose();
+    };
+
+    if (!isOpen) return null;
+
+    return (
+
+        <Modal
+            isOpen={isOpen} ariaHideApp={false} className="modal-overlay" overlayClassName="modal-backdrop" onRequestClose={onRequestClose}>
+            <div className="modal-box">
+                <div className="modal-header">
+                    <h2 className="modal-title">Agregar nueva parada</h2>
+                    <form onSubmit={handleSubmit} className="modal-form">
+                        <label htmlFor="nombre">Nombre:</label>
+                        <input
+                            type="text"
+                            id="nombre"
+                            value={nombre}
+                            onChange={(e) => setNombre(e.target.value)}
+                            required
+                        />
+                        <label htmlFor="orden">Orden:</label>
+                        <input
+                            type="number"
+                            id="orden"
+                            value={orden}
+                            onChange={(e) => setOrden(e.target.value)}
+                            required
+                        />
+                        <div className="modal-actions">
+                            <button type="submit" className="modal-button primary">Guardar</button>
+                            <button type="button" className="modal-button secondary" onClick={onClose}>Cancelar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </Modal>
+
+    );
+};
+
+export default AddParadaModal;
+
+
+==================================================================
+FILE: src/components/admin-components/EditParadasModal.jsx
+==================================================================
+import React, { useState, useEffect } from 'react';
+import Modal from 'react-modal';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import '../../pages/styles/modalEditarParada.css';
+import pruebaApi from '../../api/pruebaApi';
+import { Spinner, Alert } from 'react-bootstrap';
+
+const EditParadaModal = ({ isOpen, onRequestClose, parada, onRecargarParadas }) => {
+  const [formData, setFormData] = useState({ nombre: '', ubicacion: '', orden: 0 });
+  const [mensaje, setMensaje] = useState(null);
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (parada) {
+      setFormData({
+        nombre: parada.nombre || '',
+        ubicacion: parada.ubicacion || '',
+        orden: parada.orden || 0,
+      });
+    }
+  }, [parada]);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: name === 'orden' ? parseInt(value) : value,
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setMensaje(null);
+    setError(null);
+
+    try {
+      await pruebaApi.put('/admin/editarParada', {
+        _id: parada._id, 
+        nombre: formData.nombre,
+        ubicacion: formData.ubicacion,
+        orden: formData.orden,
+      });
+
+      setMensaje('Parada editada correctamente');
+      setTimeout(() => {
+        setMensaje(null);
+        onRequestClose();
+
+        if(onRecargarParadas){
+          onRecargarParadas()
+        }
+      }, 1000);
+    } catch (err) {
+      console.error(err);
+      setError('Error al editar la parada. Intenta nuevamente.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <Modal
+      isOpen={isOpen}
+      contentLabel="Editar Parada"
+      className="modal-contenido"
+      overlayClassName="modal-overlay"
+      onRequestClose={onRequestClose}
+    >
+      <h2>Editar Parada</h2>
+
+      {loading && (
+        <div className="text-center my-2">
+          <Spinner animation="border" />
+        </div>
+      )}
+      {mensaje && <Alert variant="success">{mensaje}</Alert>}
+      {error && <Alert variant="danger">{error}</Alert>}
+
+      <form onSubmit={handleSubmit} className="formulario-parada">
+        <label className="text-white p-2">Nombre:</label>
+        <input
+          type="text"
+          name="nombre"
+          value={formData.nombre}
+          onChange={handleChange}
+          required
+          className="custom-input text-center"
+        />
+
+        <label className="text-white p-2">Ubicación:</label>
+        <input
+          type="text"
+          name="ubicacion"
+          value={formData.ubicacion}
+          onChange={handleChange}
+          required
+          className="custom-input text-center"
+        />
+
+        <label className="text-white p-2">Orden:</label>
+        <input
+          type="number"
+          name="orden"
+          value={formData.orden}
+          onChange={handleChange}
+          required
+          className="custom-input text-center"
+        />
+
+        <div className="modal-botones">
+          <button type="submit" className="boton-guardar" disabled={loading}>
+            Guardar
+          </button>
+          <button type="button" onClick={onRequestClose} className="boton-cancelar">
+            Cancelar
+          </button>
+        </div>
+      </form>
+    </Modal>
+  );
+};
+
+export default EditParadaModal;
+
+
+==================================================================
+FILE: src/components/admin-components/EditHorariosModal.jsx
+==================================================================
+import React, { useEffect, useState } from 'react';
+import { Row, Col, Modal, Button, Form, Spinner, Alert } from 'react-bootstrap';
+import pruebaApi from '../../api/pruebaApi';
+import '../../pages/styles/editHorariosModal.css'
+import Swal from 'sweetalert2';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import { use } from 'react';
+
+const EditarHorariosModal = ({ parada, onClose }) => {
+    const [loading, setLoading] = useState(true);
+    const [mensaje, setMensaje] = useState(null);
+    const [error, setError] = useState(null);
+
+    const [dia, setDia] = useState('habil');
+    const [horario, setHorario] = useState('mañana');
+
+    //const [horarioNuevo, setHorarioNuevo] = useState('');
+
+    const [horariosOriginales, setHorariosOriginales] = useState([]);
+    const [horariosEditados, setHorariosEditados] = useState([]);
+
+
+    const fetchHorarios = async (d, turno) => {
+        try {
+            const res = await pruebaApi.get(`api/obtenerHorarios?id_ruta=${parada.id_ruta}&id_parada=${parada._id}`);
+            const todos = res.data.allHorarios;
+            const horarios = todos.map(h => ({
+                ...h,
+                hora: h.hora,
+            }));
+            //console.log(d, turno);
+            const horarioFiltrado = horarios.filter(h => h.tipo_dia === d && h.turno === turno);
+            setHorariosOriginales(horarioFiltrado);
+            setHorariosEditados(horarioFiltrado.map(h => ({ ...h })));
+            setDia(dia);
+            setHorario(horario);
+        } catch (err) {
+            console.error('Error al obtener horarios:', err);
+            setError('Error al obtener los horarios');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        if (parada && parada._id && parada.id_ruta) {
+            fetchHorarios(dia, horario);
+        }
+    }, [parada, dia, horario]);
+
+
+
+    const handleHorarioChange = (index, nuevoValor) => {
+        const actualizados = [...horariosEditados];
+        actualizados[index].horario = nuevoValor;
+        setHorariosEditados(actualizados);
+    };
+
+
+    const guardarCambios = async () => {
+        try {
+
+            const horariosConShown = horariosEditados.map(h => ({
+                ...h,
+                shown: true
+            }));
+
+            await pruebaApi.put(`admin/editarHorario`, {
+                id_ruta: parada.id_ruta,
+                id_parada: parada._id,
+                horarios: horariosConShown
+            });
+            setMensaje('Horarios actualizados correctamente');
+            setTimeout(() => {
+                setMensaje(null);
+                onClose();
+            }, 1500);
+        } catch (err) {
+            console.error('Error al guardar horarios:', err);
+            setError('Error al guardar los horarios');
+        }
+    };
+
+    const eliminarHorario = async (idHorario) => {
+        try {
+            // NOTA: AL USAR SWEETALERT2 EN UN MODAL, NOS ARROJA UNA ADVERTENCIA DE ARIA-HIDEN (PROBLEMAS CON EL FOCO) (NO ROMPE LA APP PERO INTENTAR ARREGLAR) 
+            const result = await Swal.fire({
+                title: '¿Estás seguro?',
+                text: 'Esta acción eliminará el horario permanentemente.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar',
+            });
+
+            if (result.isConfirmed) {
+                await pruebaApi.delete(`/admin/eliminarHorario/${idHorario}`);
+
+                await Swal.fire({
+                    icon: 'success',
+                    title: 'Horario eliminado',
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+
+                fetchHorarios(dia, horario);
+            }
+        } catch (error) {
+            console.error('Error al eliminar el horario:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'No se pudo eliminar el horario.'
+            });
+        }
+    };
+
+    const guardarHorario = async () => {
+        try {
+            const nuevoHorario = {
+                id_parada: parada._id,
+                horario: 'hh:mm',
+                tipo_dia: dia,
+                nro_orden: '0',
+                turno: horario
+            };
+
+            const resp = await pruebaApi.post('/admin/nuevoHorario', nuevoHorario);
+
+            if (resp.status === 200 || resp.status === 201) {
+                console.log('Horario guardado correctamente:', resp.data);
+                fetchHorarios(dia, horario);
+            } else {
+                console.warn('Algo salió mal al guardar el horario:', resp.status);
+            }
+        } catch (error) {
+            console.error('Error al guardar el horario:', error);
+        }
+    };
+
+    const handleClose = () => {
+        const hayCambios = JSON.stringify(horariosOriginales) !== JSON.stringify(horariosEditados);
+        if (hayCambios) {
+            Swal.fire({
+                title: 'Cambios sin guardar',
+                text: 'Si cierras ahora, los cambios se perderán. ¿Quieres continuar?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Sí, salir',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    onClose();
+                }
+            });
+        } else {
+            onClose();
+        }
+    };
+
+    return (
+        parada && (
+            <Modal show={!!parada} onHide={handleClose} centered enforceFocus>
+                <Modal.Header closeButton>
+                    <Modal.Title>Editar horarios de: {parada.nombre}</Modal.Title>
+                </Modal.Header>
+
+                <Row>
+                    <Col xs={6} md={6}>
+                        <Form.Group controlId="selectDia">
+                            <div className="custom-select m-3">
+                                <Form.Label>Día</Form.Label>
+                                <Form.Select
+                                    className='p-1'
+                                    id="selectDia"
+                                    value={dia}
+                                    onChange={e => {
+                                        setDia(e.target.value);
+                                    }}
+                                >
+                                    <option value="habil">Hábil</option>
+                                    <option value="sabado">Sábado</option>
+                                    <option value="domingo">Domingo</option>
+                                </Form.Select>
+                            </div>
+                        </Form.Group>
+                    </Col>
+
+                    <Col xs={6} md={6}>
+                        <Form.Group controlId="selectHorario">
+                            <div className="custom-select m-3">
+                                <Form.Label>Horarios</Form.Label>
+                                <Form.Select
+                                    className='p-1'
+                                    id="selectHorario"
+                                    value={horario}
+                                    onChange={e => setHorario(e.target.value)}
+                                >
+                                    <option value="mañana">Mañana</option>
+                                    <option value="tarde">Tarde</option>
+                                </Form.Select>
+                            </div>
+                        </Form.Group>
+                    </Col>
+                </Row>
+
+
+                <Modal.Body>
+                    {loading ? (
+                        <div className="text-center">
+                            <Spinner animation="border" />
+                            <p className="mt-2">Cargando horarios...</p>
+                        </div>
+                    ) : (
+                        <>
+                            {horariosOriginales.length > 0 ? (
+                                <Form>
+                                    <div className="row gx-4">
+                                        {/* Columna de horarios actuales */}
+                                        <div className="col-6">
+                                            <h6 className="text-white mb-3 text-nowrap">Horarios actuales</h6>
+                                            <ul className="list-group list-group-flush">
+                                                {horariosOriginales.map((horario, index) => (
+                                                    <li
+                                                        key={`actual-${horario._id || index}`}
+                                                        className="list-group-item bg-dark text-white rounded mb-3 margen border border-secondary d-flex align-items-center justify-content-between"
+                                                    >
+                                                        <div className="d-flex align-items-center gap-2">
+                                                            <button
+                                                                type='button'
+                                                                onClick={() => eliminarHorario(horario._id)}
+                                                                title="Eliminar horario"
+                                                                className="btn btn-link p-0"
+                                                            >
+                                                                <i className="fa-solid fa-trash fa-sm" style={{ color: '#c43131' }}></i>
+                                                            </button>
+                                                            <span className="ms-2">{horario.horario}</span>
+                                                        </div>
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        </div>
+
+                                        {/* Columna de horarios editados */}
+                                        <div className="col-6">
+                                            <h6 className="text-white mb-3 text-nowrap">Horarios editados</h6>
+                                            {horariosEditados.map((horario, index) => (
+                                                <Form.Group key={`editado-${horario._id || index}`} className="mb-3 position-relative pos">
+                                                    <Form.Control
+                                                        type="time"
+                                                        value={horario.horario}
+                                                        onChange={(e) => handleHorarioChange(index, e.target.value)}
+                                                        className="text-center bg-white border border-secondary shadow-sm"
+                                                    />
+                                                    <span className="position-absolute top-50 end-0 translate-middle-y pe-3 text-muted">
+                                                        <i className="bi bi-clock" />
+                                                    </span>
+                                                </Form.Group>
+                                            ))}
+                                        </div>
+                                    </div>
+                                </Form>
+
+                            ) : (
+                                <p className='text-white'>No hay horarios cargados para esta parada.</p>
+                            )}
+
+                            <button type='button' className='agregarHorario' onClick={() => guardarHorario()}>Agregar</button>
+
+                            {error && <Alert className='alert-error'>{error}</Alert>}
+                            {mensaje && <Alert className='alert-guardar'>{mensaje}</Alert>}
+
+                        </>
+                    )}
+                </Modal.Body>
+
+                <Modal.Footer>
+                    <Button className='botonGuardar' onClick={guardarCambios} disabled={loading}>
+                        Guardar cambios
+                    </Button>
+                    <Button className='botonCancelar' onClick={handleClose}>
+                        Cancelar
+                    </Button>
+                </Modal.Footer>
+            </Modal>
+        )
+    );
+};
+
+export default EditarHorariosModal;
+
+
+==================================================================
+FILE: src/components/admin-components/AddUserModal.jsx
+==================================================================
+/* eslint-disable react/prop-types */
+// AddMenuModal.js
+import React from 'react';
+import Modal from 'react-modal';
+import Form from 'react-bootstrap/Form';
+import Button from 'react-bootstrap/Button';
+// eslint-disable-next-line react/prop-types
+const AddUserModal = ({ isOpen, setIsOpen, onRequestClose, handleChangeFormUser, handleSubmitFormUser, formDateUser }) => {
+    const customStyles = {
+        overlay: {
+            backgroundColor: 'rgba(0, 0, 0, 0.7)' ,
+            backdropFilter: 'blur(3px)',
+        },
+    };
+    return (
+        <Modal isOpen={isOpen} ariaHideApp={false} style={customStyles}  className="custom-modal" onRequestClose={onRequestClose}>
+            <div className="modal-content">
+                <div className="modal-header">
+                    <h2 className="modal-title">Agregar un usuario</h2>
+                    <button type="button" className="btn-close m-3 bg-info p-1" onClick={() => setIsOpen(false)}></button>
+                </div>
+                <div className="modal-body justify-content-center">
+                    <Form onSubmit={handleSubmitFormUser}>
+                        <div className="row justify-content-center">
+                            <Form.Group className="mb-3 ctm-form-group" controlId="formBasicName">
+                                <Form.Label>Nombre</Form.Label>
+                                <Form.Control
+                                    type="text"
+                                    name="username"
+                                    onChange={(e) => handleChangeFormUser(e)}
+                                    minLength="3"
+                                    maxLength="40"
+                                    pattern="[A-Za-z\s]+"
+                                    placeholder="Ingrese el nombre completo"
+                                    required
+                                />
+                            </Form.Group>
+
+                            <Form.Group className="mb-3 ctm-form-group" controlId="formBasicEmail">
+                                <Form.Label>Email</Form.Label>
+                                <Form.Control
+                                    type="email"
+                                    name="email"
+                                    onChange={(e) => handleChangeFormUser(e)}
+                                    placeholder="Ingrese el email"
+                                    required
+                                />
+                            </Form.Group>
+                            <Form.Group className="mb-3 ctm-form-group" controlId="formBasicPassword">
+                                <Form.Label>Contraseña</Form.Label>
+                                <Form.Control
+                                    type="password"
+                                    name="password"
+                                    minLength="8"
+                                    maxLength="12"
+                                    placeholder="Ingrese la contraseña"
+                                    onChange={(e) => handleChangeFormUser(e)}
+                                    required
+                                />
+                            </Form.Group>
+                            <Form.Group className="mb-3 ctm-form-group" controlId="formBasicRol">
+                                <Form.Label></Form.Label>
+                                <Form.Select
+                                    name="role"
+                                    onChange={(e) => handleChangeFormUser(e)}
+                                    style={{ width: '100%' }}
+                                >
+                                    <option value="">Seleccionar Rol</option>
+                                    <option value="admin">Administrador</option>
+                                    <option value="user" >Usuario</option>
+                                </Form.Select>
+                            </Form.Group>
+                            <Form.Group className="mb-3 ctm-form-group" controlId="formBasicEstado">
+                                <Form.Check
+                                    type="checkbox"
+                                    name="status"
+                                    label="Activo"
+                                    checked={formDateUser.status === "active"}
+                                    onChange={(e) => handleChangeFormUser(e)}
+                                />
+                            </Form.Group>
+                        </div>
+
+                        <div className="d-flex justify-content-end">
+                            <Button type="submit" variant="success" className="custom-button" >
+                                Dar de alta
+                            </Button>
+
+                        </div>
+                    </Form>
+                </div>
+            </div >
+        </Modal >
+    );
+};
+
+export default AddUserModal;
+
+
+==================================================================
+FILE: src/components/admin-components/EditUserModal.jsx
+==================================================================
+/* eslint-disable react/prop-types */
+// EditMenuModal.js
+import React from 'react';
+import Modal from 'react-modal';
+import Form from 'react-bootstrap/Form';
+import Button from 'react-bootstrap/Button';
+import '../../pages/styles/adminscreen.css';
+const EditUserModal = ({ isOpen, setIsOpen, handleChangeFormUserEditar, handleSubmitFormUserEditar, formDateUserEditar }) => {
+    const customStyles = {
+        overlay: {
+            backgroundColor: 'rgba(0, 0, 0, 0.7)',
+            backdropFilter: 'blur(3px)',
+        },
+    };
+    return (
+        <Modal isOpen={isOpen} ariaHideApp={false} style={customStyles} className="custom-modal" onRequestClose={() => setIsOpen(false)}>
+            <div className="modal-content">
+           
+                <div className="modal-header">
+                    <h2 className="modal-title">Editar Usuario</h2>
+                    <button type="button" className="btn-close m-3 bg-info p-1" onClick={() => setIsOpen(false)}></button>
+               
+                    </div>
+                <div className="modal-body">
+                    <Form onSubmit={handleSubmitFormUserEditar}>
+                        <Form.Group className="mb-3 ctm-form-group" controlId="formBasicName">
+                            <Form.Label>Nombre</Form.Label>
+                            <Form.Control
+                                type="text"
+                                name="username"
+                                value={formDateUserEditar.username}
+                                onChange={(e) => handleChangeFormUserEditar(e)}
+                                placeholder="Ingrese el nombre del producto"
+                                minLength="3"
+                                maxLength="40"
+                                pattern="[A-Za-z\s]+"
+                                required
+                            />
+                        </Form.Group>
+                        <Form.Group className="mb-3 ctm-form-group" controlId="formBasicEmail">
+                            <Form.Label>Email</Form.Label>
+                            <Form.Control
+                                type="email"
+                                name="email"
+                                value={formDateUserEditar.email}
+                                onChange={(e) => handleChangeFormUserEditar(e)}
+                                placeholder="Ingrese el email"
+                                required
+                            />
+                        </Form.Group>
+                        <Form.Group className="mb-3 ctm-form-group" controlId="formBasicRol">
+                            <Form.Label>Rol</Form.Label>
+                            <Form.Select
+                                name="role"
+                                value={formDateUserEditar.role}
+                                onChange={(e) => handleChangeFormUserEditar(e)}
+                                style={{ width: '100%' }}
+                            >
+                                <option value="">Seleccionar</option>
+                                <option value="admin">Administrador</option>
+                                <option value="user" >Usuario</option>
+                            </Form.Select>
+                        </Form.Group>
+
+                        <Form.Group className="mb-3" controlId="formBasicEstado">
+
+                            <Form.Check
+                                type="checkbox"
+                                name="status"
+                                label="Activo"
+                                checked={formDateUserEditar.status === "active"||formDateUserEditar.status===true}
+                                onChange={(e) => handleChangeFormUserEditar(e)}
+
+                            />
+                        </Form.Group>
+                        <div className="d-flex justify-content-end">
+                            <Button type="submit" variant="success" className="custom-button" >
+                                Editar Usuario
+                            </Button>
+
+                        </div>
+                    </Form>
+                </div>
+            </div >
+        </Modal >
+    );
+};
+
+export default EditUserModal;
+
+
+==================================================================
+FILE: src/components/admin-components/AddHorarioModal.jsx
+==================================================================
+import React, { useState } from 'react';
+import Modal from 'react-modal';
+import '../../pages/styles/modalAgregarHorario.css'
+
+const ModalCargarHorario = ({ isOpen, onRequestClose, paradaId, onSubmit }) => {
+    const [horario, setHorario] = useState('');
+    const [tipoDia, setTipoDia] = useState('habil');
+    const [turno, setTurno] = useState('mañana');
+    const [orden, setOrden] = useState(1);
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        onSubmit(paradaId, horario, tipoDia, orden, turno);
+        setHorario('');
+        setTipoDia('habil');
+        setTurno('mañana');
+        setOrden(1);
+    };
+
+    return (
+        <Modal
+            isOpen={isOpen}
+            ariaHideApp={false}
+            className="modal-overlay"
+            overlayClassName="modal-backdrop"
+            onRequestClose={onRequestClose}
+        >
+            <div className="modal-box">
+                <h2 className="modal-title">Cargar horario</h2>
+                <form onSubmit={handleSubmit} className="modal-form">
+                    <label htmlFor="horario">Horario:</label>
+                    <input
+                        type="time"
+                        id="horario"
+                        className='text-center'
+                        value={horario}
+                        onChange={(e) => setHorario(e.target.value)}
+                        required
+                    />
+
+                    <label htmlFor="tipoDia">Tipo de día:</label>
+                    <select
+                        id="tipoDia"
+                        value={tipoDia}
+                        className='text-center'
+                        onChange={(e) => setTipoDia(e.target.value)}
+                        required
+                    >
+                        <option value="habil">Hábil</option>
+                        <option value="sabado">Sábado</option>
+                        <option value="domingo">Domingo</option>
+                    </select>
+
+                    <label htmlFor="turno">Turno:</label>
+                    <select
+                        id="turno"
+                        className='text-center'
+                        value={turno}
+                        onChange={(e) => setTurno(e.target.value)}
+                        required
+                    >
+                        <option value="mañana">Mañana</option>
+                        <option value="tarde">Tarde</option>
+                        <option value="noche">Noche</option>
+                    </select>
+
+                    <label htmlFor="orden">Orden:</label>
+                    <input
+                        type="number"
+                        id="orden"
+                        className='text-center'
+                        value={orden}
+                        min="1"
+                        onChange={(e) => setOrden(Number(e.target.value))}
+                        required
+                    />
+
+                    <div className="modal-actions">
+                        <button type="submit" className="modal-button primary">Guardar</button>
+                        <button type="button" className="modal-button secondary" onClick={onRequestClose}>Cancelar</button>
+                    </div>
+                </form>
+            </div>
+        </Modal>
+    );
+};
+
+export default ModalCargarHorario;
+
+
+==================================================================
+FILE: src/pages/styles/adminscreen.css
+==================================================================
+/* =========================================
+   Admin Dashboard Professional Styles
+   Theme: Dark & Premium Blue (#004aad)
+   ========================================= */
+
+:root {
+    --primary-blue: #004aad;
+    --primary-blue-hover: #003680;
+    --bg-dark: #121212;
+    --surface-dark: #1e1e1e;
+    --surface-border: #333;
+    --text-primary: #ffffff;
+    --text-secondary: #aaaaaa;
+    --danger: #c43131;
+    --success: #3f9240;
+    --sidebar-width: 260px;
+}
+
+/* --- Layout Wrapper --- */
+.admin-layout-wrapper {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: var(--bg-dark);
+    color: var(--text-primary);
+}
+
+.admin-dashboard-container {
+    display: flex;
+    flex: 1;
+    position: relative;
+    margin-top: 100px;
+    /* Space for the fixed header */
+}
+
+/* --- Sidebar --- */
+.admin-sidebar {
+    width: var(--sidebar-width);
+    background-color: var(--surface-dark);
+    border-right: 1px solid var(--surface-border);
+    display: flex;
+    flex-direction: column;
+    padding: 1.5rem;
+    min-height: calc(100vh - 80px);
+    /* Adjust based on header */
+}
+
+.sidebar-header h3 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 2rem;
+    color: var(--primary-blue);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.sidebar-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    flex: 1;
+}
+
+.sidebar-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.8rem 1rem;
+    border: none;
+    background: transparent;
+    color: var(--text-secondary);
+    font-size: 1rem;
+    font-weight: 500;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: left;
+    width: 100%;
+}
+
+.sidebar-item:hover {
+    background-color: rgba(0, 74, 173, 0.1);
+    color: var(--text-primary);
+}
+
+.sidebar-item.active {
+    background-color: var(--primary-blue);
+    color: white;
+    box-shadow: 0 4px 15px rgba(0, 74, 173, 0.4);
+}
+
+.sidebar-icon {
+    font-size: 1.2rem;
+}
+
+/* --- Main Content Area --- */
+.admin-main-content {
+    flex: 1;
+    padding: 2rem;
+    background-color: var(--bg-dark);
+    overflow-x: hidden;
+}
+
+/* --- Common Containers --- */
+.table-container,
+.section-container {
+    background-color: var(--surface-dark);
+    border-radius: 12px;
+    padding: 2rem;
+    border: 1px solid var(--surface-border);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    margin: 0;
+}
+
+.header-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    border-bottom: 1px solid var(--surface-border);
+    padding-bottom: 1rem;
+}
+
+/* Buttons */
+.btn-add-user,
+.btn-add-parada {
+    background-color: var(--primary-blue);
+    color: white;
+    border: none;
+    padding: 0.6rem 1.2rem;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+    transition: background 0.3s ease;
+    cursor: pointer;
+}
+
+.btn-add-user:hover,
+.btn-add-parada:hover {
+    background-color: var(--primary-blue-hover);
+    transform: translateY(-2px);
+}
+
+/* --- Tables --- */
+.custom-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 0.5rem;
+    /* Gap between rows */
+    margin-top: 1rem;
+}
+
+.custom-table thead th {
+    background-color: transparent;
+    color: var(--text-secondary);
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    border: none;
+    padding: 1rem;
+    text-align: left;
+}
+
+.custom-table tbody tr {
+    background-color: #252525;
+    transition: transform 0.2s ease, background 0.2s;
+}
+
+.custom-table tbody tr:hover {
+    background-color: #2a2a2a;
+    transform: scale(1.005);
+}
+
+.custom-table td {
+    padding: 1rem;
+    vertical-align: middle;
+    border: none;
+    color: var(--text-primary);
+}
+
+.custom-table tbody tr td:first-child {
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 8px;
+}
+
+.custom-table tbody tr td:last-child {
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+}
+
+/* Badges & Text */
+.badge-role {
+    padding: 0.25rem 0.6rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.badge-status {
+    padding: 0.25rem 0.6rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    display: inline-block;
+}
+
+.status-active,
+.badge-status.active {
+    color: #4caf50;
+    border: 1px solid #4caf50;
+    background: rgba(76, 175, 80, 0.1);
+}
+
+.status-inactive,
+.badge-status.inactive {
+    color: #f44336;
+    border: 1px solid #f44336;
+    background: rgba(244, 67, 54, 0.1);
+}
+
+/* --- Schedule Cards (New) --- */
+.routes-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.route-card {
+    background-color: var(--surface-dark);
+    border-radius: 12px;
+    border: 1px solid var(--surface-border);
+    padding: 1.5rem;
+    position: relative;
+    /* margin-bottom replaced by grid gap */
+}
+
+.route-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--surface-border);
+    padding-bottom: 1rem;
+    margin-bottom: 1rem;
+}
+
+.route-header h3 {
+    margin: 0;
+    font-size: 1.2rem;
+    color: var(--text-primary);
+}
+
+/* Timeline / Stops List */
+.paradas-lista {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.parada-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    /* Space out content and buttons */
+    padding: 0.8rem;
+    background-color: rgba(255, 255, 255, 0.03);
+    border-radius: 8px;
+    border: 1px solid transparent;
+    transition: all 0.2s;
+}
+
+.parada-item:hover {
+    background-color: rgba(255, 255, 255, 0.06);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+.parada-info {
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.parada-botones {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.boton-icon {
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-size: 1rem;
+    padding: 5px;
+    transition: color 0.2s;
+}
+
+.boton-icon:hover {
+    color: white;
+}
+
+.boton-icon.edit:hover {
+    color: #64b5f6;
+}
+
+.boton-icon.delete:hover {
+    color: #e57373;
+}
+
+.boton-icon.clock:hover {
+    color: #81c784;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .admin-dashboard-container {
+        flex-direction: column;
+    }
+
+    .admin-sidebar {
+        width: 100%;
+        min-height: auto;
+        flex-direction: row;
+        overflow-x: auto;
+        padding: 1rem;
+        border-bottom: 1px solid var(--surface-border);
+        border-right: none;
+    }
+
+    .sidebar-header {
+        display: none;
+    }
+
+    .sidebar-item span {
+        display: none;
+    }
+
+    /* Show only icons on mobile maybe? or keep small text */
+    .section-container {
+        padding: 1rem;
+    }
+}
+
+==================================================================
+FILE: src/pages/styles/adminHorarios.css
+==================================================================
+.paradas-lista {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.parada-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  border-bottom: 1px solid #ccc;
+}
+
+.parada-info {
+  flex-grow: 1;
+}
+
+.parada-botones {
+  display: flex;
+  gap: 10px;
+}
+
+.boton-editar i {
+  color: #cdcdcd;
+}
+
+.boton-eliminar i {
+  color: #ffffff;
+}
+
+.boton-horarios i {
+  color: #ffffff;
+}
+
+.boton-editar,
+.boton-eliminar,
+.boton-horarios {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.1rem;
+}
+
+.parada-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  border-bottom: 1px solid #ccc;
+  background-color: rgb(20, 91, 172);
+  backdrop-filter: blur(8px); 
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+
+.boton-agregar-parada {
+  background: linear-gradient(135deg, #009d05, #056400);
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  font-size: 16px;
+  font-weight: bold;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.boton-agregar-parada:hover {
+  background: linear-gradient(135deg, #009d05, #056400);
+  transform: scale(1.05);
+}
+
+.boton-cargar-horario {
+  background-color: #28a745; /* Verde */
+  color: white;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.boton-cargar-horario:hover {
+  background-color: #218838;
+}
+
+.boton-editar,
+.boton-eliminar,
+.boton-horarios {
+  background-color: #ffffff;
+  color: white;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.boton-editar {
+  background-color: #6c757d;
+}
+
+.boton-editar:hover {
+  background-color: #5a6268;
+}
+
+.boton-eliminar {
+  background-color: #dc3545;
+}
+
+.boton-eliminar:hover {
+  background-color: #c82333;
+}
+
+.boton-horarios {
+  background-color: #28a745;
+}
+
+.boton-horarios:hover {
+  background-color: #218838;
+}
+
+.modal-editar-horarios {
+  margin-top: 10px;
+  background-color: #ffffff;
+  padding: 10px;
+  border: 1px solid #ffffff;
+  border-radius: 8px;
+}
+
+.modal-editar-horarios {
+  margin-top: 10px;
+  background-color: #efefef;
+  padding: 15px;
+  border: 1px solid #ffffff;
+  border-radius: 10px;
+}
+.modal-editar-horarios ul {
+  list-style: none;
+  padding: 0;
+}
+.modal-editar-horarios li {
+  margin-bottom: 10px;
+}
+.modal-editar-horarios input[type="time"] {
+  padding: 5px;
+  margin-left: 10px;
+}
+.modal-editar-horarios button {
+  margin-top: 10px;
+  margin-right: 5px;
+}
+
+.icono-boton {
+  margin-left: 5px; 
+}
+
+@media (max-width: 768px) {
+  .parada-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 12px;
+  }
+
+  .parada-info {
+    width: 100%;
+    font-size: 0.95rem;
+  }
+
+  .parada-botones {
+    width: 100%;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .parada-botones button {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .boton-agregar-parada {
+    width: 100%;
+    justify-content: center;
+    font-size: 0.95rem;
+    padding: 10px;
+  }
+
+  .modal-editar-horarios {
+    padding: 10px;
+    font-size: 0.95rem;
+  }
+
+  .modal-editar-horarios input[type="time"] {
+    width: 100%;
+    margin-left: 0;
+    margin-top: 5px;
+  }
+
+  .modal-editar-horarios button {
+    width: 100%;
+    margin-top: 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  .parada-info {
+    font-size: 0.9rem;
+  }
+
+  .boton-agregar-parada {
+    font-size: 0.9rem;
+  }
+
+  .parada-botones button i {
+    font-size: 0.9rem;
+    padding: auto;
+  }
+}
+
+
+==================================================================
+FILE: src/pages/styles/modalParadas.css
+==================================================================
+.modal-backdrop {
+  background-color: rgba(0, 0, 0, 0.6);
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+}
+
+.modal-overlay {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  inset: 0;
+  z-index: 1001;
+  padding: 1rem;
+}
+
+.modal-box {
+  background-color: #000;
+  border: 2px solid #004aad;
+  border-radius: 12px;
+  padding: 2rem;
+  width: 100%;
+  max-width: 500px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+  animation: fadeIn 0.3s ease;
+}
+
+.modal-header {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.modal-title {
+  color: white;
+  text-align: center;
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.modal-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-form label {
+  color: white;
+  margin-bottom: 0.3rem;
+  font-weight: 500;
+}
+
+.modal-form input {
+  padding: 0.6rem 0.8rem;
+  margin-bottom: 1rem;
+  border: 1px solid #004aad;
+  border-radius: 6px;
+  background-color: #1a1a1a;
+  color: white;
+  font-size: 1rem;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.modal-button {
+  padding: 0.5rem 1.2rem;
+  font-size: 1rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.modal-button.primary {
+  background-color: #004aad;
+  color: white;
+}
+
+.modal-button.primary:hover {
+  background-color: #006eff;
+}
+
+.modal-button.secondary {
+  background-color: #444;
+  color: white;
+}
+
+.modal-button.secondary:hover {
+  background-color: #666;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+==================================================================
+FILE: src/pages/styles/modalEditarParada.css
+==================================================================
+.modal-backdrop {
+  background-color: rgba(0, 0, 0, 0.75);
+  position: fixed;
+  inset: 0;
+  /* atajo para top/left/right/bottom: 0 */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1050;
+}
+
+.modal-contenido {
+  background-color: #030303;
+  /* fondo más oscuro para mejor integración con UIs oscuras */
+  color: #f0f0f0;
+  padding: 2rem;
+  width: 100%;
+  max-width: 500px;
+  border-radius: 12px;
+  border: 1px solid #3000f2;
+  position: relative;
+}
+
+.modal-contenido h2 {
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+  font-size: 1.5rem;
+  text-align: center;
+  color: #ffffff;
+}
+
+.modal-form label {
+  display: block;
+  margin-bottom: 0.25rem;
+  color: #ccc;
+  font-weight: 500;
+}
+
+.modal-form input {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  margin-bottom: 1rem;
+  border: 1px solid #555;
+  border-radius: 6px;
+  background-color: #333;
+  color: #f0f0f0;
+  font-size: 1rem;
+  transition: border 0.2s ease;
+}
+
+.modal-form input:focus {
+  border-color: #66afe9;
+  outline: none;
+  background-color: #2f2f45;
+}
+
+.modal-botones {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.boton-guardar,
+.boton-cancelar {
+  padding: 0.5rem 1.25rem;
+  font-size: 1rem;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.boton-guardar {
+  background-color: #00bfff;
+  color: white;
+}
+
+.boton-guardar:hover {
+  background-color: #009fd1;
+}
+
+.boton-cancelar {
+  background-color: #dc3545;
+  color: white;
+}
+
+.boton-cancelar:hover {
+  background-color: #c82333;
+}
+
+.custom-input {
+  width: 50%;
+  padding: 0.5rem 0.75rem;
+  margin-bottom: 1rem;
+  border: 1px solid #555;
+  border-radius: 6px;
+  background-color: #333;
+  color: #f0f0f0;
+  font-size: 1rem;
+  transition: border 0.2s ease;
+}
+
+==================================================================
+FILE: src/pages/styles/editHorariosModal.css
+==================================================================
+.botonGuardar {
+    background-color: #00bfff;
+    color: #fff;
+    margin-right: 2.5rem;
+}
+
+.botonGuardar:hover {
+    background-color: #009fd1;
+}
+
+.botonCancelar {
+    margin-right: 3rem;
+    background-color: red;
+    color: #fff;
+}
+
+.botonCancelar:hover {
+    background-color: rgb(167, 0, 0);
+}
+
+.margen {
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.custom-select {
+    width: 150px;
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    border-radius: 0.5rem;
+    color: #212529;
+}
+
+.alert-guardar {
+  background-color: #28a745 !important; 
+  color: #fff; /* Letras blancas */
+  text-align: center;
+  font-weight: 600;
+  font-size: 1.1rem;
+  margin-top: 1rem;
+  padding: 12px 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: opacity 0.3s ease-in-out;
+}
+
+.alert-error {
+  background-color: #a72828 !important; 
+  color: #fff; /* Letras blancas */
+  text-align: center;
+  font-weight: 600;
+  font-size: 1.1rem;
+  margin-top: 1rem;
+  padding: 12px 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: opacity 0.3s ease-in-out;
+}
+
+.agregarHorario {
+    background-color: #00bfff;
+    color: #fff;
+    border-radius: 10%;
+    padding: 0.4rem;
+    margin-left: 2rem;
+}
+
+.agregarHorario:hover {
+    background-color: #009fd1;
+}
+
+==================================================================
+FILE: src/pages/styles/modalAgregarHorario.css
+==================================================================
+/* Fondo desenfocado del modal */
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5); /* fondo oscuro con opacidad */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+/* Caja del modal */
+
+
+/* Título */
+.modal-title {
+  margin-top: 0;
+  font-size: 1.6rem;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+/* Formulario */
+.modal-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* Inputs y selects */
+.modal-form input,
+.modal-form select {
+  width: 100%;
+  max-width: 250px;
+  padding: 8px;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #555;
+  border-radius: 6px;
+  font-size: 1rem;
+  background-color: #333;
+  color: #fff;
+  outline: none;
+}
+
+.modal-form input:focus,
+.modal-form select:focus {
+  border-color: #00bfff;
+}
+
+/* Botones */
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.8rem;
+  margin-top: 1rem;
+}
+
+.modal-button {
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-size: 1rem;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.modal-button.primary {
+  background-color: #00bfff;
+  color: #fff;
+}
+
+.modal-button.primary:hover {
+  background-color: #009fd1;
+}
+
+.modal-button.secondary {
+  background-color: #555;
+  color: #fff;
+}
+
+.modal-button.secondary:hover {
+  background-color: #444;
+}
+
+/* Ícono blanco para "ver horarios" */
+.boton-horarios i {
+  color: white;
+  margin-left: 6px;
+}
+
+/* Animación de entrada */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+
