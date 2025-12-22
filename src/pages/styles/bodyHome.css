@@ -392,28 +392,48 @@ body::before {
 		left: auto;
 		bottom: auto;
 		width: 90%;
-		border-radius: 15px;
-		background-color: rgba(0, 0, 0, 0.6);
-		/* Slightly more transparent */
-		backdrop-filter: blur(8px) !important;
-		padding: 20px;
-		margin-bottom: 20px;
+		max-width: 400px;
+		/* Prevent being too wide on larger phones */
+		margin: 0 auto;
+		/* Center perfectly */
+		border-radius: 25px;
+		/* Darker, more elegant background */
+		background: rgba(15, 23, 42, 0.65);
+		/* Strong blur for glass effect */
+		backdrop-filter: blur(12px) !important;
+		-webkit-backdrop-filter: blur(12px);
+		padding: 2.5rem 1.5rem;
+		margin-bottom: 30px;
 		z-index: 10;
 		text-align: center;
+		/* Subtle border and shadow */
+		border: 1px solid rgba(255, 255, 255, 0.15);
+		box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
 	}
 
 	.banner-text1 {
-		font-size: 1.8rem;
-		margin-bottom: 10px;
-		text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
-		text-align: center;
+		font-family: 'Poppins', sans-serif;
+		font-size: 2.2rem;
+		/* Slightly smaller */
+		font-weight: 700;
+		margin-bottom: 0px;
+		color: #ffffff;
+		text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+		line-height: 1.1;
+		letter-spacing: -0.5px;
+		text-align: center !important;
+		/* Override global p justify */
 	}
 
 	.banner-text2 {
 		display: block;
-		/* Show subtitle on mobile too */
-		font-size: 1rem;
+		font-family: 'Raleway', sans-serif;
+		font-size: 1.1rem;
+		font-weight: 500;
+		color: rgba(255, 255, 255, 0.9);
 		text-align: center;
+		margin-top: 10px;
+		text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
 	}
 
 	.button-container-banner {
