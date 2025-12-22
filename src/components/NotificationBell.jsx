@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { collection, query, orderBy, limit, onSnapshot, doc, updateDoc, deleteDoc } from 'firebase/firestore';
 import { db } from '../firebase/config';
 import { useAuth } from '../context/AuthContext';
-import { FaBell, FaTrash, FaCheck, FaExclamationCircle, FaInfoCircle } from 'react-icons/fa';
+import { FaBell, FaTrash, FaCheck, FaExclamationCircle, FaInfoCircle, FaEnvelope } from 'react-icons/fa';
 import { Badge, Button, Offcanvas, ListGroup } from 'react-bootstrap';
 
 const NotificationBell = () => {
@@ -143,7 +143,20 @@ const NotificationBell = () => {
                         </div>
                     )}
                 </Offcanvas.Body>
-            </Offcanvas>
+
+                {/* Footer with Mis Consultas Link */}
+                <div className="p-3 border-top border-secondary bg-dark">
+                    <Button
+                        as="a"
+                        href="/mis-consultas"
+                        variant="outline-primary"
+                        className="w-100 d-flex justify-content-center align-items-center"
+                        onClick={handleClose}
+                    >
+                        <FaEnvelope className="me-2" /> Ir a Mis Consultas
+                    </Button>
+                </div>
+            </Offcanvas >
 
             <style>{`
                 .notification-item:hover {

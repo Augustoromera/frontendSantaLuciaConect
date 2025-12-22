@@ -102,14 +102,14 @@ function Header({ navBarClass }) {
           />
         </Navbar.Brand>
 
-        {/* NOTIFICATION BELL - MOBILE (Visible only on lg and below, outside collapse) */}
+        {/* MOBILE CONTROLS (Bell + Toggle) */}
+        {/* MOBILE CONTROLS (Bell + Toggle) */}
         {isAuthenticated && (
-          <div className="d-lg-none me-3">
+          <div className="d-lg-none ms-auto me-2">
             <NotificationBell />
           </div>
         )}
-
-        <Navbar.Toggle aria-controls="basic-navbar-nav" />
+        <Navbar.Toggle aria-controls="basic-navbar-nav" className={isAuthenticated ? "ms-0" : "ms-auto"} />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="ms-auto align-items-center">
 
@@ -127,7 +127,7 @@ function Header({ navBarClass }) {
             {isAuthenticated && user.role === 'admin' && (
               <>
                 <Nav.Link as={Link} to="/admin" >Administración</Nav.Link>
-                <Nav.Link as={Link} to="/mis-consultas" >Mis Consultas (Vista User)</Nav.Link>
+                <Nav.Link as={Link} to="/mis-consultas" >Mis Consultas</Nav.Link>
               </>
             )}
 
