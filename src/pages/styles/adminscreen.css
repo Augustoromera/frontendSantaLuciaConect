@@ -419,34 +419,84 @@
 }
 
 /* Responsive */
+/* Responsive Sidebar */
 @media (max-width: 768px) {
     .admin-dashboard-container {
         flex-direction: column;
     }
 
+    /* Hide Sidebar by default on mobile */
     .admin-sidebar {
-        width: 100%;
-        min-height: auto;
-        height: auto;
-        /* Reset sticky height on mobile */
-        position: static;
-        /* Or sticky top: 100px if header is fixed */
-        flex-direction: row;
-        overflow-x: auto;
-        padding: 1rem;
-        border-bottom: 1px solid var(--surface-border);
-        border-right: none;
+        position: fixed;
+        left: -280px;
+        /* Hidden off-canvas */
+        top: 0;
+        bottom: 0;
+        height: 100vh;
+        width: 260px;
+        z-index: 2000;
+        transition: left 0.3s ease-in-out;
+        box-shadow: 2px 0 15px rgba(0, 0, 0, 0.5);
+        border-right: 1px solid var(--surface-border);
     }
 
+    /* Show Sidebar when open */
+    .admin-sidebar.open {
+        left: 0;
+    }
+
+    .admin-main-content {
+        padding: 1rem;
+        width: 100%;
+    }
+
+    /* Mobile Toggle Button */
+    .mobile-menu-toggle {
+        display: block;
+        /* Visible only on mobile */
+        position: fixed;
+        top: 105px;
+        /* Just below header (assuming header ~100px) */
+        left: 10px;
+        background-color: var(--primary-blue);
+        color: white;
+        border: none;
+        width: 40px;
+        height: 40px;
+        border-radius: 8px;
+        /* Square with rounded corners */
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        z-index: 2001;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+        cursor: pointer;
+        transition: left 0.3s ease;
+        /* Animate with sidebar */
+    }
+
+    /* Move button when sidebar is open */
+    .mobile-menu-toggle.open {
+        left: 220px;
+        /* Inside the sidebar (width 260px) but near the edge */
+        background-color: transparent;
+        color: var(--primary-blue);
+        box-shadow: none;
+    }
+
+    /* Ensure Header text is visible in sidebar */
     .sidebar-header {
-        display: none;
+        display: block;
     }
 
     .sidebar-item span {
-        display: none;
+        display: block;
     }
+}
 
-    .section-container {
-        padding: 1rem;
+@media (min-width: 769px) {
+    .mobile-menu-toggle {
+        display: none;
     }
 }

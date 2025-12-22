@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Table from 'react-bootstrap/Table';
-import { FaPlus, FaUsers, FaBus, FaClock, FaEnvelope, FaMoneyBillWave } from 'react-icons/fa';
+import { FaPlus, FaUsers, FaBus, FaClock, FaEnvelope, FaMoneyBillWave, FaBars, FaTimes, FaChevronRight, FaChevronLeft } from 'react-icons/fa';
 import Header from '../../components/Header';
 import '../styles/adminscreen.css';
 import Swal from 'sweetalert2';
@@ -27,6 +27,7 @@ import AddRouteModal from '../../components/admin-components/AddRouteModal';
 export const AdminScreen = () => {
     const { user } = useAuth();
     const [isAddRouteModalOpen, setIsAddRouteModalOpen] = useState(false);
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [activeSection, setActiveSection] = useState('usuarios');
     const [cargarUsuarios, setCargarUsuarios] = useState([]);
 
@@ -430,43 +431,51 @@ export const AdminScreen = () => {
             <Header /> {/* Header Global */}
 
             <div className="admin-dashboard-container">
+                {/* Mobile Toggle Button */}
+                <button
+                    className={`mobile-menu-toggle ${isMobileMenuOpen ? 'open' : ''}`}
+                    onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                >
+                    {isMobileMenuOpen ? <FaChevronLeft /> : <FaChevronRight />}
+                </button>
+
                 {/* Sidebar Navigation */}
-                <aside className="admin-sidebar">
+                <aside className={`admin-sidebar ${isMobileMenuOpen ? 'open' : ''}`}>
                     <div className="sidebar-header">
                         <h3>Admin Panel</h3>
                     </div>
                     <div className="sidebar-menu">
                         <button
                             className={`sidebar-item ${activeSection === 'usuarios' ? 'active' : ''}`}
-                            onClick={() => setActiveSection('usuarios')}
+                            onClick={() => { setActiveSection('usuarios'); setIsMobileMenuOpen(false); }}
                         >
                             <FaUsers className="sidebar-icon" />
                             <span>Usuarios</span>
                         </button>
                         <button
                             className={`sidebar-item ${activeSection === 'horarios' ? 'active' : ''}`}
-                            onClick={() => setActiveSection('horarios')}
+                            onClick={() => { setActiveSection('horarios'); setIsMobileMenuOpen(false); }}
                         >
                             <FaClock className="sidebar-icon" />
                             <span>Horarios</span>
                         </button>
                         <button
                             className={`sidebar-item ${activeSection === 'unidades' ? 'active' : ''}`}
-                            onClick={() => setActiveSection('unidades')}
+                            onClick={() => { setActiveSection('unidades'); setIsMobileMenuOpen(false); }}
                         >
                             <FaBus className="sidebar-icon" />
                             <span>Unidades</span>
                         </button>
                         <button
                             className={`sidebar-item ${activeSection === 'tarifas' ? 'active' : ''}`}
-                            onClick={() => setActiveSection('tarifas')}
+                            onClick={() => { setActiveSection('tarifas'); setIsMobileMenuOpen(false); }}
                         >
                             <FaMoneyBillWave className="sidebar-icon" />
                             <span>Tarifas</span>
                         </button>
                         <button
                             className={`sidebar-item ${activeSection === 'contacto' ? 'active' : ''}`}
-                            onClick={() => setActiveSection('contacto')}
+                            onClick={() => { setActiveSection('contacto'); setIsMobileMenuOpen(false); }}
                         >
                             <FaEnvelope className="sidebar-icon" />
                             <span>Contacto</span>
