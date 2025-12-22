@@ -17,7 +17,7 @@ import bannerMobile2 from '../assets/banner/bannerMobile2.jpg';
 import bannerMobile3 from '../assets/banner/bannerMobile3.jpeg';
 import transporteRapido from '../assets/images/nosotros/transporteRapido.png';
 import imgMonteros from '../assets/images/nosotros/monterosHD.png'
-import TripFormContainer from '../components/bodyhome-components/TripFormContainer';
+
 
 export const BodyHome = () => {
   const navigate = useNavigate();
@@ -27,13 +27,8 @@ export const BodyHome = () => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 720);
 
-  const textTextBanner = isMobile
-    ? 'Tu viaje ideal a un clic de distancia!'
-    : 'Tu comodidad es nuestra prioridad. Viaja con confianza';
-  const textButtonBanner = isMobile ? 'VER MAS' : 'SABER MAS';
-
   const bannerImages = [Bannerrapiburguerjpeg, bannerPsh1, bannerPsh2, bannerPsh3];
-  const bannerImagesMini = [bannerMobile2,bannerMobile1, bannerMobile3];
+  const bannerImagesMini = [bannerMobile2, bannerMobile1, bannerMobile3];
 
   const currentBannerImage = isMobile
     ? bannerImagesMini[currentImageIndex]
@@ -112,13 +107,18 @@ export const BodyHome = () => {
       <div className={bannerClass} style={{ backgroundImage: `url(${currentBannerImage})` }}>
         <div className="banner-body">
           <div className="banner-container-text">
-            <p className='banner-text1'>{`${textTextBanner}`}</p>
-            <p className='banner-text2'>en cada instante.</p>
+            <p className='banner-text1'>¿A dónde vas?</p>
+            <p className='banner-text2'>Consultá horarios y tarifas al instante.</p>
           </div>
         </div>
         <div className='button-container-banner'>
-          <button className="btn btn-azul btn-lg my-button-buy button-banner" onClick={user ? handleSolicitarPedido : iniciarSesionRedirect}>
-            {`${textButtonBanner}`}
+          <button
+            className="btn btn-primary btn-lg rounded-pill shadow fw-bold animate__animated animate__pulse animate__infinite"
+            style={{ fontSize: '1.5rem', backgroundColor: '#004aad', borderColor: '#004aad', padding: '15px 40px' }}
+            onClick={() => navigate('/paneldehorarios')}
+          >
+            <FontAwesomeIcon icon={faTruckFast} className="me-2" />
+            CONSULTAR VIAJE
           </button>
         </div>
         <button className="btn btn-link banner-control" onClick={handlePrevImage}>
@@ -130,8 +130,6 @@ export const BodyHome = () => {
       </div>
       <hr />
 
-      <TripFormContainer/>
-      
 
       {/* <hr /> */}
       {/* ----------------servicios---------------- */}

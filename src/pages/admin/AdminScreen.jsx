@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Table from 'react-bootstrap/Table';
-import { FaPlus, FaUsers, FaBus, FaClock, FaEnvelope } from 'react-icons/fa';
+import { FaPlus, FaUsers, FaBus, FaClock, FaEnvelope, FaMoneyBillWave } from 'react-icons/fa';
 import Header from '../../components/Header';
 import '../styles/adminscreen.css';
 import Swal from 'sweetalert2';
@@ -17,6 +17,7 @@ import '../styles/adminHorarios.css';
 import EditParadaModal from '../../components/admin-components/EditParadasModal';
 import AdminContactScreen from './AdminContactScreen';
 import { ScheduleMatrix } from './components/ScheduleMatrix';
+import { TariffMatrix } from './components/TariffMatrix';
 import { seedDatabase } from '../../utils/seedFirestore';
 import { getRutas } from '../../services/scheduleService';
 import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc, query, where } from 'firebase/firestore';
@@ -457,6 +458,13 @@ export const AdminScreen = () => {
                             <span>Unidades</span>
                         </button>
                         <button
+                            className={`sidebar-item ${activeSection === 'tarifas' ? 'active' : ''}`}
+                            onClick={() => setActiveSection('tarifas')}
+                        >
+                            <FaMoneyBillWave className="sidebar-icon" />
+                            <span>Tarifas</span>
+                        </button>
+                        <button
                             className={`sidebar-item ${activeSection === 'contacto' ? 'active' : ''}`}
                             onClick={() => setActiveSection('contacto')}
                         >
@@ -586,6 +594,21 @@ export const AdminScreen = () => {
                         <div className="section-container">
                             <h3>Gestión de Unidades y Choferes</h3>
                             <p>Funcionalidad en desarrollo...</p>
+                        </div>
+                    )}
+
+                    {activeSection === 'tarifas' && (
+                        <div className="section-container">
+                            <div className="header-actions">
+                                <h3>Gestión de Tarifas</h3>
+                            </div>
+                            <p style={{ color: '#aaa', marginBottom: '2rem' }}>
+                                Define los precios de los viajes entre paradas. Solo se permite cargar tarifa hacia adelante (Origen &lt; Destino).
+                            </p>
+                            <TariffMatrix
+                                initialRutaId={rutas[0]?.id}
+                                rutas={rutas}
+                            />
                         </div>
                     )}
 

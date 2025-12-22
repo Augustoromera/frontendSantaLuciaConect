@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { fetchScheduleData, getRutas } from '../services/scheduleService';
+import { getTarifasByRuta } from '../services/tariffService';
 import './styles/panel-horarios.css';
 import { Row, Col, Form, Button } from 'react-bootstrap';
 import Header from '../components/Header';
@@ -21,6 +22,10 @@ export const PanelDeHorarios = () => {
     const [mostrarFiltrado, setMostrarFiltrado] = useState(false);
     const [horariosFiltrados, setHorariosFiltrados] = useState([]);
     const [destinosDisponibles, setDestinosDisponibles] = useState([]);
+
+    // Tariffs
+    const [tarifas, setTarifas] = useState([]);
+    const [precioActual, setPrecioActual] = useState(null);
 
     // Data stores
     const [paradasPorRuta, setParadasPorRuta] = useState({});
@@ -49,6 +54,34 @@ export const PanelDeHorarios = () => {
         loadAllData();
     }, []);
 
+    // Load Tariffs when route changes
+    useEffect(() => {
+        if (!selectedRutaId) return;
+        const loadTariffs = async () => {
+            // Import dynamically or assume it's imported at top? 
+            // Better to add import at top, but for now assuming it's available or I'll add it in next step if missing.
+            // Actually I need to add the import statement in the file top first if I haven't.
+            // I'll assume I will add it.
+            try {
+                const t = await getTarifasByRuta(selectedRutaId);
+                setTarifas(t);
+            } catch (e) {
+                console.error(e);
+            }
+        };
+        loadTariffs();
+    }, [selectedRutaId]);
+
+    // Calculate Price when Origin/Dest changes
+    useEffect(() => {
+        if (!origen || !destino || tarifas.length === 0) {
+            setPrecioActual(null);
+            return;
+        }
+        const tarifa = tarifas.find(t => t.origen === origen && t.destino === destino);
+        setPrecioActual(tarifa ? tarifa.precio : null);
+    }, [origen, destino, tarifas]);
+
     // Helper to get current ruta object
     const currentRuta = rutas.find(r => r.id === selectedRutaId);
 
@@ -57,7 +90,8 @@ export const PanelDeHorarios = () => {
         if (!origen || !selectedRutaId || !paradasPorRuta[selectedRutaId]) return;
 
         const paradas = paradasPorRuta[selectedRutaId];
-        const indexOrigen = paradas.findIndex(p => p.nombre === origen);
+        // Now origen is ID
+        const indexOrigen = paradas.findIndex(p => p._id === origen);
 
         if (indexOrigen >= 0) {
             setDestinosDisponibles(paradas.slice(indexOrigen + 1));
@@ -72,8 +106,9 @@ export const PanelDeHorarios = () => {
         const paradas = paradasPorRuta[selectedRutaId] || [];
         const trips = tripsPorRuta[selectedRutaId] || [];
 
-        const pOrigen = paradas.find(p => p.nombre === origen);
-        const pDestino = paradas.find(p => p.nombre === destino);
+        // Now origen/destino are IDs
+        const pOrigen = paradas.find(p => p._id === origen);
+        const pDestino = paradas.find(p => p._id === destino);
 
         if (!pOrigen || !pDestino) return;
 
@@ -192,6 +227,7 @@ export const PanelDeHorarios = () => {
                                         setOrigen('');
                                         setDestino('');
                                         setMostrarFiltrado(false);
+                                        setPrecioActual(null);
                                     }}
                                 >
                                     {rutas.map(r => (
@@ -200,9 +236,6 @@ export const PanelDeHorarios = () => {
                                 </Form.Select>
                             </Form.Group>
                         </Col>
-                        {/* 
-                            Original logic had 'tipo' select. Now we select specific Route.
-                        */}
 
                         <Col md={2}>
                             <Form.Group>
@@ -212,7 +245,7 @@ export const PanelDeHorarios = () => {
                                 }}>
                                     <option value="">Seleccionar origen</option>
                                     {(paradasPorRuta[selectedRutaId] || []).map(p => (
-                                        <option key={p._id} value={p.nombre}>{p.nombre}</option>
+                                        <option key={p._id} value={p._id}>{p.nombre}</option>
                                     ))}
                                 </Form.Select>
                             </Form.Group>
@@ -224,7 +257,7 @@ export const PanelDeHorarios = () => {
                                 <Form.Select value={destino} onChange={e => setDestino(e.target.value)} disabled={!origen}>
                                     <option value="">Seleccionar destino</option>
                                     {destinosDisponibles.map(p => (
-                                        <option key={p._id} value={p.nombre}>{p.nombre}</option>
+                                        <option key={p._id} value={p._id}>{p.nombre}</option>
                                     ))}
                                 </Form.Select>
                             </Form.Group>
@@ -257,13 +290,24 @@ export const PanelDeHorarios = () => {
                             </Button>
                         </Col>
                     </Row>
+
+                    {/* Precio Section */}
+                    {origen && destino && (
+                        <div className="mt-3 p-3 bg-dark text-white rounded text-center animate__animated animate__fadeIn">
+                            <h4 className="m-0">
+                                Valor del Pasaje: <span className="text-warning fw-bold">{precioActual ? `$${precioActual}` : 'Consultar'}</span>
+                            </h4>
+                        </div>
+                    )}
                 </div>
 
                 {/* Resultados filtrados */}
                 {mostrarFiltrado ? (
                     <div className="resultado-filtrado">
                         <div className="d-flex justify-content-between align-items-center mb-3">
-                            <h3 className="subtitle">Horarios {origen} → {destino} ({tipo_dia} - {horario})</h3>
+                            <h3 className="subtitle">
+                                Horarios {paradasPorRuta[selectedRutaId]?.find(p => p._id === origen)?.nombre} → {paradasPorRuta[selectedRutaId]?.find(p => p._id === destino)?.nombre} ({tipo_dia} - {horario})
+                            </h3>
                             <Button variant="outline-secondary" onClick={() => setMostrarFiltrado(false)}>Ver todos</Button>
                         </div>
                         <div className="table-responsive">
