@@ -41,3 +41,52 @@ export const saveTarifasBatch = async (rutaId, tarifasToSave) => {
         throw error;
     }
 };
+
+// Batch save tariffs AND sync reverse (return trip) prices
+export const saveTarifasAndSyncReverse = async (rutaId, tarifasToSave) => {
+    try {
+        const batch = writeBatch(db);
+        const tarifasRef = collection(db, "tarifas");
+
+        // Use Promise.all to handle async lookups for reverse trips
+        await Promise.all(tarifasToSave.map(async (t) => {
+            // 1. Update/Create Primary Tariff
+            const docRef = t.id ? doc(db, "tarifas", t.id) : doc(tarifasRef);
+            const data = {
+                id_ruta: rutaId,
+                origen: t.origen,
+                destino: t.destino,
+                precio: Number(t.precio)
+            };
+
+            if (t.id) {
+                batch.update(docRef, data);
+            } else {
+                batch.set(docRef, data);
+            }
+
+            // 2. Find and Update Reverse Tariffs (Any route)
+            // Look for tariffs where Origin = CurrentDest AND Dest = CurrentOrigin
+            // This assumes price symmetry (A->B Price == B->A Price)
+            const reverseQuery = query(
+                tarifasRef,
+                where("origen", "==", t.destino),
+                where("destino", "==", t.origen)
+            );
+
+            const reverseSnapshot = await getDocs(reverseQuery);
+
+            reverseSnapshot.forEach((reverseDoc) => {
+                // Determine if we should update. 
+                // We update REGARDLESS of route, assuming distance/price is constant.
+                batch.update(reverseDoc.ref, { precio: Number(t.precio) });
+            });
+        }));
+
+        await batch.commit();
+        return true;
+    } catch (error) {
+        console.error("Error saving and syncing tarifas:", error);
+        throw error;
+    }
+};

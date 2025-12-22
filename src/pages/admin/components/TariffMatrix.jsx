@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Table, Button, Form, Spinner } from 'react-bootstrap';
-import { getTarifasByRuta, saveTarifasBatch } from '../../../services/tariffService';
+import { getTarifasByRuta, saveTarifasBatch, saveTarifasAndSyncReverse } from '../../../services/tariffService';
 import { getParadasByRuta } from '../../../services/scheduleService';
 import Swal from 'sweetalert2';
 import { FaSave } from 'react-icons/fa';
@@ -80,8 +80,8 @@ export const TariffMatrix = ({ initialRutaId, rutas }) => {
                 return;
             }
 
-            await saveTarifasBatch(selectedRutaId, toSave);
-            Swal.fire('Guardado', 'Tarifas actualizadas correctamente', 'success');
+            await saveTarifasAndSyncReverse(selectedRutaId, toSave);
+            Swal.fire('Guardado', 'Tarifas actualizadas correctamente (incluyendo ruta inversa)', 'success');
             loadData(); // Refresh to get clean state and IDs
         } catch (e) {
             Swal.fire('Error', 'Error al guardar', 'error');

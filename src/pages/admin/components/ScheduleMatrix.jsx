@@ -10,6 +10,7 @@ import { db } from '../../../firebase/config';
 export const ScheduleMatrix = ({ initialRutaId, rutas, onAddStop, onEditStop, onDeleteStop, lastUpdate }) => {
     // State management
     const [selectedRutaId, setSelectedRutaId] = useState(initialRutaId || '');
+    const [selectedDayType, setSelectedDayType] = useState('habil'); // New State
     const [paradas, setParadas] = useState([]);
     const [matrix, setMatrix] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -32,21 +33,22 @@ export const ScheduleMatrix = ({ initialRutaId, rutas, onAddStop, onEditStop, on
     const fetchData = async () => {
         if (!selectedRutaId) return;
         setLoading(true);
-        console.log("Fetching schedule data for ruta:", selectedRutaId);
+        console.log("Fetching schedule data for ruta:", selectedRutaId, "Day:", selectedDayType);
         try {
             // 1. Fetch Paradas
             const paradasData = await getParadasByRuta(selectedRutaId);
             setParadas(paradasData);
-            console.log("Paradas loaded:", paradasData.length);
 
-            // 2. Fetch All Horarios (Single Query)
+            // 2. Fetch All Horarios
             const allHorarios = await getHorariosByRuta(selectedRutaId);
-            console.log("Horarios loaded:", allHorarios.length);
 
-            // 3. Group by Trip ID (nro_orden)
+            // 3. Group by Trip ID (nro_orden) AND Filter by Day Type
             const tripsMap = new Map();
 
             allHorarios.forEach(h => {
+                // Filter by Day Type
+                if (h.tipo_dia !== selectedDayType) return;
+
                 const tripId = h.nro_orden;
                 // Strict check: Must have valid nro_orden
                 if (tripId && tripId !== 0 && tripId !== '0') {
@@ -113,10 +115,10 @@ export const ScheduleMatrix = ({ initialRutaId, rutas, onAddStop, onEditStop, on
         return time;
     };
 
-    // Auto-refresh when ruta checks
+    // Auto-refresh when ruta OR day type checks
     useEffect(() => {
         fetchData();
-    }, [selectedRutaId, lastUpdate]);
+    }, [selectedRutaId, selectedDayType, lastUpdate]);
 
     // Handlers
     const handleCellChange = (rowIndex, paradaId, newValue) => {
@@ -219,9 +221,9 @@ export const ScheduleMatrix = ({ initialRutaId, rutas, onAddStop, onEditStop, on
                     const data = {
                         id_parada: p._id,
                         horario: value,
-                        tipo_dia: 'habil', // Future: Selector in Row header?
+                        tipo_dia: selectedDayType, // Uses selected Day Type
                         nro_orden: tripId,
-                        turno: 'mañana',
+                        turno: 'mañana', // Default shift. In future, allow specifying shift per trip.
                         shown: true,
                         id_ruta: selectedRutaId
                     };
@@ -264,6 +266,16 @@ export const ScheduleMatrix = ({ initialRutaId, rutas, onAddStop, onEditStop, on
                         style={{ maxWidth: '300px', backgroundColor: '#1e1e1e', color: 'white', border: '1px solid #333' }}
                     >
                         {rutas.map(r => <option key={r.id} value={r.id}>{r.nombre}</option>)}
+                    </Form.Select>
+
+                    <Form.Select
+                        value={selectedDayType}
+                        onChange={e => setSelectedDayType(e.target.value)}
+                        style={{ maxWidth: '200px', backgroundColor: '#2c2c2c', color: '#ffd700', border: '1px solid #ffd700', fontWeight: 'bold' }}
+                    >
+                        <option value="habil">Lunes a Viernes (Hábiles)</option>
+                        <option value="sabado">Sábados</option>
+                        <option value="domingo">Domingos/Feriados</option>
                     </Form.Select>
                 </div>
 

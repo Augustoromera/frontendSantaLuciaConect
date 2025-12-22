@@ -19,6 +19,8 @@ const AddRouteModal = ({ isOpen, onClose, onRouteAdded }) => {
         });
     };
 
+    const [createInverse, setCreateInverse] = useState(true);
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (!formData.nombre || !formData.origen || !formData.destino) {
@@ -28,11 +30,28 @@ const AddRouteModal = ({ isOpen, onClose, onRouteAdded }) => {
 
         setLoading(true);
         try {
+            // 1. Create Main Route
             await createRuta(formData);
-            Swal.fire('Éxito', 'Ruta creada correctamente', 'success');
+
+            // 2. Create Inverse Route if requested
+            if (createInverse) {
+                // Determine inverse values
+                const inverseType = formData.tipo === 'ida' ? 'vuelta' : (formData.tipo === 'vuelta' ? 'ida' : 'vuelta');
+                const inverseData = {
+                    nombre: `${formData.destino} - ${formData.origen}`, // Auto-generate name based on swapped locations
+                    origen: formData.destino,
+                    destino: formData.origen,
+                    tipo: inverseType
+                };
+
+                await createRuta(inverseData);
+            }
+
+            Swal.fire('Éxito', createInverse ? 'Rutas (Ida y Vuelta) creadas correctamente' : 'Ruta creada correctamente', 'success');
             onRouteAdded(); // Refresh parent
             onClose();
             setFormData({ nombre: '', origen: '', destino: '', tipo: 'ida' });
+            setCreateInverse(true); // Reset checkbox
         } catch (error) {
             console.error(error);
             Swal.fire('Error', 'No se pudo crear la ruta', 'error');
@@ -53,7 +72,7 @@ const AddRouteModal = ({ isOpen, onClose, onRouteAdded }) => {
                         <Form.Control
                             type="text"
                             name="nombre"
-                            placeholder="Ej: Monteros → Las Mesadas"
+                            placeholder="Ej: Monteros - Las Mesadas"
                             value={formData.nombre}
                             onChange={handleChange}
                             className="bg-dark text-white border-secondary"
@@ -94,6 +113,16 @@ const AddRouteModal = ({ isOpen, onClose, onRouteAdded }) => {
                             <option value="vuelta">Vuelta</option>
                             <option value="circular">Circular/Otro</option>
                         </Form.Select>
+                    </Form.Group>
+
+                    <Form.Group className="mb-3" controlId="formBasicCheckbox">
+                        <Form.Check
+                            type="checkbox"
+                            label="Crear automáticamente ruta inversa (Vuelta)"
+                            checked={createInverse}
+                            onChange={(e) => setCreateInverse(e.target.checked)}
+                            className="text-info fw-bold"
+                        />
                     </Form.Group>
 
                     <div className="d-flex justify-content-end gap-2 mt-4">
