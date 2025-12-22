@@ -245,7 +245,8 @@ export const ScheduleMatrix = ({ initialRutaId, rutas, onAddStop, onEditStop, on
             if (changesCount > 0) {
                 await batch.commit();
                 Swal.fire('Guardado', 'Cambios guardados correctamente', 'success');
-                fetchData(); // Refresh to get new IDs
+                await fetchData(); // Refresh to get new IDs and SORT
+                setSaving(false); // Fix: Turn off saving spinner
             } else {
                 setSaving(false);
             }
