@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import Table from 'react-bootstrap/Table';
-import { collection, onSnapshot, doc, updateDoc } from 'firebase/firestore';
+import { collection, onSnapshot, doc, updateDoc, deleteDoc } from 'firebase/firestore';
 import { db } from '../../firebase/config';
 import Swal from 'sweetalert2';
-import { FaReply, FaCheckDouble, FaHourglassHalf } from 'react-icons/fa';
+import { FaReply, FaCheckDouble, FaHourglassHalf, FaTrash } from 'react-icons/fa';
 
 export default function AdminContactScreen() {
 
@@ -76,6 +76,40 @@ export default function AdminContactScreen() {
     }
   };
 
+  const handleDelete = async (id) => {
+    Swal.fire({
+      title: '¿Estás seguro?',
+      text: "¡No podrás revertir esto!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar',
+      ...darkSwal
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          await deleteDoc(doc(db, "contacts", id));
+          Swal.fire({
+            title: '¡Eliminado!',
+            text: 'El mensaje ha sido eliminado.',
+            icon: 'success',
+            ...darkSwal
+          });
+        } catch (error) {
+          console.error("Error al eliminar:", error);
+          Swal.fire({
+            title: 'Error',
+            text: 'No se pudo eliminar el mensaje.',
+            icon: 'error',
+            ...darkSwal
+          });
+        }
+      }
+    })
+  };
+
   if (loading) return <div className="text-white p-3">Cargando mensajes...</div>;
 
   return (
@@ -123,13 +157,22 @@ export default function AdminContactScreen() {
                     )}
                   </td>
                   <td className="text-center">
-                    <button
-                      className="btn btn-sm btn-outline-primary"
-                      onClick={() => handleReply(mensaje)}
-                      title="Responder"
-                    >
-                      <FaReply /> Responder
-                    </button>
+                    <div className="d-flex justify-content-center gap-2">
+                      <button
+                        className="btn btn-sm btn-outline-primary"
+                        onClick={() => handleReply(mensaje)}
+                        title="Responder"
+                      >
+                        <FaReply />
+                      </button>
+                      <button
+                        className="btn btn-sm btn-outline-danger"
+                        onClick={() => handleDelete(mensaje._id)}
+                        title="Eliminar"
+                      >
+                        <FaTrash />
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))

@@ -88,17 +88,17 @@ const UserInbox = () => {
                                 <Accordion.Body className="bg-secondary bg-opacity-10 text-white">
                                     <div className="mb-3">
                                         <label className="text-white-50 small text-uppercase fw-bold">Tu Mensaje:</label>
-                                        <p className="border-start border-3 border-light ps-3 fst-italic">
+                                        <p className="border-start border-3 border-light ps-3 fst-italic text-break" style={{ wordBreak: 'break-word', whiteSpace: 'pre-wrap' }}>
                                             "{msg.mensaje}"
                                         </p>
                                     </div>
 
                                     {msg.reply && (
                                         <div className="mt-4 p-3 bg-dark rounded border border-success position-relative">
-                                            <div className="position-absolute top-0 start-0 translate-middle badge bg-success shadow-sm" style={{ marginLeft: '20px', marginTop: '-10px' }}>
+                                            <div className="position-absolute top-0 start-0 translate-middle-y ms-3 badge bg-success shadow-sm">
                                                 <FaReply className="me-1" /> Respuesta de Admin
                                             </div>
-                                            <p className="mb-0 mt-2 text-white">
+                                            <p className="mb-0 mt-2 text-white text-break" style={{ wordBreak: 'break-word', whiteSpace: 'pre-wrap' }}>
                                                 {msg.reply}
                                             </p>
                                             {msg.replyDate && (
