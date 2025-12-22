@@ -234,9 +234,9 @@ export const BodyHome = () => {
               <div className='mb-3'>
                 <h3>Nos encontramos en Belgrano 348 Monteros, Tucumán Argentina</h3>
                 <h5>Encuéntranos también por nuestros canales de comunicación!</h5>
-                <a href="https://www.facebook.com/" className="btn btn-primary btn-lg mx-2" target="_blank"><i className="fa-brands fa-facebook"></i></a>
+                <a href="https://www.facebook.com/share/1Bm2g81i2k/" className="btn btn-primary btn-lg mx-2" target="_blank"><i className="fa-brands fa-facebook"></i></a>
                 <a href="https://www.instagram.com/" className="btn btn-danger btn-lg mx-2" target="_blank"><i className="fa-brands fa-instagram"></i></a>
-                <a className="btn btn-success btn-lg mx-2" href='https://www.whatsapp.com/?lang=es_LA' target='_blank'><FontAwesomeIcon icon={faWhatsapp} /></a>
+
               </div>
             </div>
           </div>

@@ -36,7 +36,7 @@ export const Footer = () => {
                         <p><FaEnvelope className="icon-small" /> contacto@santalucia.com</p>
                     </div>
                     <div className="red-social">
-                        <a href="https://www.facebook.com/" className="social-icon" target='_blank' rel="noreferrer">
+                        <a href="https://www.facebook.com/share/1Bm2g81i2k/" className="social-icon" target='_blank' rel="noreferrer">
                             <FaFacebook />
                         </a>
                         <a href="https://www.instagram.com/" className="social-icon" target='_blank' rel="noreferrer">
