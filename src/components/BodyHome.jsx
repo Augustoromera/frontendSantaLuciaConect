@@ -111,7 +111,7 @@ export const BodyHome = () => {
             <p className='banner-text2'>Consultá horarios y tarifas al instante.</p>
           </div>
         </div>
-        <div className='button-container-banner'>
+        <div className='button-container-banner d-flex gap-3 justify-content-center flex-wrap d-flex gap-3 justify-content-center flex-wrap'>
           <button
             className="btn btn-primary btn-lg rounded-pill shadow fw-bold animate__animated animate__pulse animate__infinite"
             style={{ fontSize: '1.5rem', backgroundColor: '#004aad', borderColor: '#004aad', padding: '15px 40px' }}
@@ -119,6 +119,14 @@ export const BodyHome = () => {
           >
             <FontAwesomeIcon icon={faTruckFast} className="me-2" />
             CONSULTAR VIAJE
+          </button>
+
+          <button
+            className="btn btn-outline-light btn-lg rounded-pill shadow fw-bold"
+            style={{ fontSize: '1.2rem', padding: '15px 30px', borderWidth: '2px' }}
+            onClick={() => navigate('/aboutus')}
+          >
+            CONOCER MÁS
           </button>
         </div>
         <button className="btn btn-link banner-control" onClick={handlePrevImage}>

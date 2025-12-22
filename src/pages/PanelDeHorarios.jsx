@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { fetchScheduleData, getRutas } from '../services/scheduleService';
 import { getTarifasByRuta } from '../services/tariffService';
 import './styles/panel-horarios.css';
+import CustomSelect from '../components/CustomSelect';
 import { Row, Col, Form, Button } from 'react-bootstrap';
 import Header from '../components/Header';
 import { Footer } from '../components/Footer';
@@ -215,78 +216,76 @@ export const PanelDeHorarios = () => {
                 <h1 className="title">Horarios {currentRuta?.nombre || 'Santa Lucía'}</h1>
 
                 {/* Filtros */}
-                <div className="filtro-container">
+                <div className="filtro-horarios">
                     <Row>
                         <Col md={3}>
-                            <Form.Group>
-                                <Form.Label>Ruta</Form.Label>
-                                <Form.Select
-                                    value={selectedRutaId}
-                                    onChange={e => {
-                                        setSelectedRutaId(e.target.value);
-                                        setOrigen('');
-                                        setDestino('');
-                                        setMostrarFiltrado(false);
-                                        setPrecioActual(null);
-                                    }}
-                                >
-                                    {rutas.map(r => (
-                                        <option key={r.id} value={r.id}>{r.nombre}</option>
-                                    ))}
-                                </Form.Select>
-                            </Form.Group>
+                            <CustomSelect
+                                label="Ruta"
+                                placeholder="Seleccionar ruta"
+                                value={selectedRutaId}
+                                options={rutas.map(r => ({ value: r.id, label: r.nombre }))}
+                                onChange={(val) => {
+                                    setSelectedRutaId(val);
+                                    setOrigen('');
+                                    setDestino('');
+                                    setMostrarFiltrado(false);
+                                    setPrecioActual(null);
+                                }}
+                            />
                         </Col>
 
                         <Col md={2}>
-                            <Form.Group>
-                                <Form.Label>Origen</Form.Label>
-                                <Form.Select value={origen} onChange={e => {
-                                    setOrigen(e.target.value);
-                                }}>
-                                    <option value="">Seleccionar origen</option>
-                                    {(paradasPorRuta[selectedRutaId] || []).map(p => (
-                                        <option key={p._id} value={p._id}>{p.nombre}</option>
-                                    ))}
-                                </Form.Select>
-                            </Form.Group>
+                            <CustomSelect
+                                label="Origen"
+                                placeholder="Seleccionar origen"
+                                value={origen}
+                                options={(paradasPorRuta[selectedRutaId] || []).map(p => ({ value: p._id, label: p.nombre }))}
+                                onChange={(val) => setOrigen(val)}
+                            />
                         </Col>
 
                         <Col md={2}>
-                            <Form.Group>
-                                <Form.Label>Destino</Form.Label>
-                                <Form.Select value={destino} onChange={e => setDestino(e.target.value)} disabled={!origen}>
-                                    <option value="">Seleccionar destino</option>
-                                    {destinosDisponibles.map(p => (
-                                        <option key={p._id} value={p._id}>{p.nombre}</option>
-                                    ))}
-                                </Form.Select>
-                            </Form.Group>
+                            <CustomSelect
+                                label="Destino"
+                                placeholder="Seleccionar destino"
+                                value={destino}
+                                disabled={!origen}
+                                options={destinosDisponibles.map(p => ({ value: p._id, label: p.nombre }))}
+                                onChange={(val) => setDestino(val)}
+                            />
                         </Col>
 
                         <Col md={2}>
-                            <Form.Group>
-                                <Form.Label>Día</Form.Label>
-                                <Form.Select value={tipo_dia} onChange={e => setDia(e.target.value)}>
-                                    <option value="habil">Día hábil</option>
-                                    <option value="sabado">Sábado</option>
-                                    <option value="domingo">Domingo</option>
-                                </Form.Select>
-                            </Form.Group>
+                            <CustomSelect
+                                label="Día"
+                                placeholder="Seleccionar día"
+                                value={tipo_dia}
+                                options={[
+                                    { value: 'habil', label: 'Día hábil' },
+                                    { value: 'sabado', label: 'Sábado' },
+                                    { value: 'domingo', label: 'Domingo' }
+                                ]}
+                                onChange={(val) => setDia(val)}
+                            />
                         </Col>
 
                         <Col md={2}>
-                            <Form.Group>
-                                <Form.Label>Horario</Form.Label>
-                                <Form.Select value={horario} onChange={e => setHorario(e.target.value)}>
-                                    <option value="mañana">Mañana</option>
-                                    <option value="tarde">Tarde</option>
-                                </Form.Select>
-                            </Form.Group>
+                            <CustomSelect
+                                label="Horario"
+                                placeholder="Seleccionar horario"
+                                value={horario}
+                                options={[
+                                    { value: 'mañana', label: 'Mañana' },
+                                    { value: 'tarde', label: 'Tarde' }
+                                ]}
+                                onChange={(val) => setHorario(val)}
+                            />
                         </Col>
 
-                        <Col md={1} className="d-flex align-items-end">
-                            <Button className="w-100" onClick={filtrarHorarios} disabled={!origen || !destino}>
-                                Filtrar
+                        <Col md={1} className="d-flex align-items-end mb-2">
+                            {/* mb-2 to align with inputs visually */}
+                            <Button className="w-100" onClick={filtrarHorarios} disabled={!origen || !destino} style={{ height: '50px', borderRadius: '8px', fontWeight: 'bold' }}>
+                                FILTRAR
                             </Button>
                         </Col>
                     </Row>
