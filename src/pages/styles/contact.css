@@ -54,33 +54,42 @@
 
 /* Custom Input Fields */
 .custom-input {
-    background-color: rgba(0, 0, 0, 0.3) !important;
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    background-color: rgba(0, 0, 0, 0.4) !important;
+    /* Slightly darker */
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
     color: #ffffff !important;
-    border-radius: 10px !important;
-    padding: 0.8rem 1rem !important;
-    font-size: 1rem !important;
+    border-radius: 12px !important;
+    /* More rounded */
+    padding: 1rem 1.2rem !important;
+    /* Larger touch target */
+    font-size: 1.05rem !important;
     transition: all 0.3s ease !important;
+    width: 100%;
 }
 
 .custom-input:focus {
-    background-color: rgba(0, 0, 0, 0.5) !important;
+    background-color: rgba(0, 0, 0, 0.6) !important;
     border-color: #004aad !important;
-    box-shadow: 0 0 0 4px rgba(0, 74, 173, 0.2) !important;
+    box-shadow: 0 0 0 4px rgba(0, 74, 173, 0.25) !important;
     outline: none !important;
+    transform: scale(1.01);
+    /* Subtle pop */
 }
 
 .custom-input::placeholder {
-    color: rgba(255, 255, 255, 0.4) !important;
+    color: rgba(255, 255, 255, 0.5) !important;
 }
 
 /* Labels */
 .form-label-custom {
-    color: #bbbbbb !important;
-    font-weight: 500;
-    font-size: 0.9rem;
-    margin-bottom: 0.5rem;
+    color: #e0e0e0 !important;
+    font-weight: 600;
+    font-size: 1rem;
+    margin-bottom: 0.8rem;
     display: block;
+    text-align: center;
+    /* Center alignment as requested */
+    letter-spacing: 0.5px;
 }
 
 /* Submit Button */

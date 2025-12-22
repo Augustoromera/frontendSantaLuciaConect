@@ -11,7 +11,11 @@ import imgMonteros from '../assets/images/nosotros/monterosHD.png';
 import { collection, addDoc } from 'firebase/firestore';
 import { db } from '../firebase/config';
 
+import { useAuth } from '../context/AuthContext';
+import { Link } from 'react-router-dom';
+
 export const ContactScreen = () => {
+  const { user } = useAuth();
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -20,6 +24,17 @@ export const ContactScreen = () => {
     subject: '',
     message: ''
   });
+
+  // Pre-fill user data
+  React.useEffect(() => {
+    if (user) {
+      setFormData(prev => ({
+        ...prev,
+        firstName: user.username || user.displayName || '',
+        email: user.email || '',
+      }));
+    }
+  }, [user]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -196,109 +211,122 @@ export const ContactScreen = () => {
                 <h2 className="contact-title text-center">Contáctanos</h2>
                 <p className="contact-subtitle text-center">Completa el formulario con tus datos</p>
 
-                <Form onSubmit={handleSubmit}>
-                  <div className="row">
-                    <div className="col-12 col-md-6">
-                      <Form.Group className="mb-4" controlId="firstName">
-                        <Form.Label className="form-label-custom">Nombre</Form.Label>
-                        <Form.Control
-                          className="custom-input"
-                          type="text"
-                          name="firstName"
-                          required
-                          minLength={2}
-                          maxLength={50}
-                          placeholder="Ingresa tu nombre"
-                          value={formData.firstName}
-                          onChange={(e) => handleChange(e)}
-                        />
-                      </Form.Group>
-                    </div>
-                    <div className="col-12 col-md-6">
-                      <Form.Group className="mb-4" controlId="lastName">
-                        <Form.Label className="form-label-custom">Apellido</Form.Label>
-                        <Form.Control
-                          className="custom-input"
-                          type="text"
-                          name="lastName"
-                          required
-                          minLength={2}
-                          maxLength={50}
-                          placeholder="Ingresa tu apellido"
-                          value={formData.lastName}
-                          onChange={(e) => handleChange(e)}
-                        />
-                      </Form.Group>
-                    </div>
-                    <div className="col-12 col-md-6">
-                      <Form.Group className="mb-4" controlId="email">
-                        <Form.Label className="form-label-custom">Email</Form.Label>
-                        <Form.Control
-                          className="custom-input"
-                          type="email"
-                          name="email"
-                          required
-                          minLength={2}
-                          maxLength={50}
-                          placeholder="Ingresa tu email"
-                          value={formData.email}
-                          onChange={(e) => handleChange(e)}
-                        />
-                      </Form.Group>
-                    </div>
-                    <div className="col-12 col-md-6">
-                      <Form.Group className="mb-4" controlId="phone">
-                        <Form.Label className="form-label-custom">Teléfono (opcional)</Form.Label>
-                        <Form.Control
-                          className="custom-input"
-                          type="tel"
-                          name="phone"
-                          minLength={5}
-                          maxLength={12}
-                          placeholder="Ingresa tu teléfono"
-                          value={formData.phone}
-                          onChange={(e) => handleChange(e)}
-                        />
-                      </Form.Group>
-                    </div>
+                {!user ? (
+                  <div className="text-center py-5">
+                    <h4 className="mb-4 text-white">Debes iniciar sesión para enviarnos un mensaje</h4>
+                    <Link to="/login" className="btn btn-submit-contact w-auto px-5">
+                      Iniciar Sesión
+                    </Link>
                   </div>
-                  <div className="col-12">
-                    <Form.Group className="mb-4" controlId="subject">
-                      <Form.Label className="form-label-custom">Asunto</Form.Label>
-                      <Form.Control
-                        className="custom-input"
-                        type="text"
-                        name="subject"
-                        minLength={4}
-                        maxLength={50}
-                        required
-                        placeholder="Ingresa un asunto"
-                        value={formData.subject}
-                        onChange={(e) => handleChange(e)}
-                      />
-                    </Form.Group>
+                ) : (
+                  <Form onSubmit={handleSubmit}>
+                    <div className="row">
+                      <div className="col-12">
+                        <Form.Group className="mb-4" controlId="firstName">
+                          <Form.Label className="form-label-custom">Nombre</Form.Label>
+                          <Form.Control
+                            className="custom-input text-center"
+                            type="text"
+                            name="firstName"
+                            required
+                            minLength={2}
+                            maxLength={50}
+                            placeholder="Ingresa tu nombre"
+                            value={formData.firstName}
+                            onChange={(e) => handleChange(e)}
+                            readOnly={!!user}
+                            style={user ? { opacity: 0.7, cursor: 'not-allowed' } : {}}
+                          />
+                        </Form.Group>
+                      </div>
+                      <div className="col-12">
+                        <Form.Group className="mb-4" controlId="lastName">
+                          <Form.Label className="form-label-custom">Apellido</Form.Label>
+                          <Form.Control
+                            className="custom-input text-center"
+                            type="text"
+                            name="lastName"
+                            required
+                            minLength={2}
+                            maxLength={50}
+                            placeholder="Ingresa tu apellido"
+                            value={formData.lastName}
+                            onChange={(e) => handleChange(e)}
+                          />
+                        </Form.Group>
+                      </div>
+                      <div className="col-12">
+                        <Form.Group className="mb-4" controlId="email">
+                          <Form.Label className="form-label-custom">Email</Form.Label>
+                          <Form.Control
+                            className="custom-input text-center"
+                            type="email"
+                            name="email"
+                            required
+                            minLength={2}
+                            maxLength={50}
+                            placeholder="Ingresa tu email"
+                            value={formData.email}
+                            onChange={(e) => handleChange(e)}
+                            readOnly={!!user}
+                            style={user ? { opacity: 0.7, cursor: 'not-allowed' } : {}}
+                          />
+                        </Form.Group>
+                      </div>
+                      <div className="col-12">
+                        <Form.Group className="mb-4" controlId="phone">
+                          <Form.Label className="form-label-custom">Teléfono (opcional)</Form.Label>
+                          <Form.Control
+                            className="custom-input text-center"
+                            type="tel"
+                            name="phone"
+                            minLength={5}
+                            maxLength={12}
+                            placeholder="Ingresa tu teléfono"
+                            value={formData.phone}
+                            onChange={(e) => handleChange(e)}
+                          />
+                        </Form.Group>
+                      </div>
+                      <div className="col-12">
+                        <Form.Group className="mb-4" controlId="subject">
+                          <Form.Label className="form-label-custom">Asunto</Form.Label>
+                          <Form.Control
+                            className="custom-input text-center"
+                            type="text"
+                            name="subject"
+                            minLength={4}
+                            maxLength={50}
+                            required
+                            placeholder="Ingresa un asunto"
+                            value={formData.subject}
+                            onChange={(e) => handleChange(e)}
+                          />
+                        </Form.Group>
 
-                    <Form.Group className="mb-4" controlId="message">
-                      <Form.Label className="form-label-custom">Mensaje</Form.Label>
-                      <Form.Control
-                        className="custom-input"
-                        as="textarea"
-                        rows={4}
-                        name="message"
-                        required
-                        minLength={5}
-                        maxLength={200}
-                        placeholder="Escribe un mensaje"
-                        value={formData.message}
-                        onChange={(e) => handleChange(e)}
-                      />
-                    </Form.Group>
-                  </div>
+                        <Form.Group className="mb-4" controlId="message">
+                          <Form.Label className="form-label-custom">Mensaje</Form.Label>
+                          <Form.Control
+                            className="custom-input"
+                            as="textarea"
+                            rows={6}
+                            name="message"
+                            required
+                            minLength={5}
+                            maxLength={500}
+                            placeholder="Escribe tu mensaje aquí..."
+                            value={formData.message}
+                            onChange={(e) => handleChange(e)}
+                          />
+                        </Form.Group>
+                      </div>
+                    </div>
 
-                  <Button variant="primary" type="submit" className="btn-submit-contact mb-2">
-                    Enviar Mensaje
-                  </Button>
-                </Form>
+                    <Button variant="primary" type="submit" className="btn-submit-contact mb-2">
+                      Enviar Mensaje
+                    </Button>
+                  </Form>
+                )}
               </div>
             </div>
           </div>
