@@ -16,7 +16,7 @@
     color: #ffffff !important;
 }
 
-/* Form labels on the contact page should also be white if the background is dark */
+/* Form labels on the contact page should be dark for readability on white backgrounds */
 .principal form label {
-    color: #ffffff !important;
+    color: #000000 !important;
 }

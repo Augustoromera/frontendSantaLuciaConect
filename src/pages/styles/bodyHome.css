@@ -62,7 +62,7 @@ hr {
 	align-items: center;
 	flex-direction: column;
 	height: 100%;
-	color: #fff;
+	color: #fff !important;
 	font-family: "poppinsregular";
 	text-align: center;
 }
@@ -86,7 +86,7 @@ hr {
 }
 
 .service-item p {
-	color: #e0e0e0;
+	color: #ffffff !important;
 	/* Slightly off-white for description */
 }
 
@@ -484,7 +484,7 @@ h3,
 h4,
 h5,
 h6 {
-	color: #ffffff;
+	color: #ffffff !important;
 	text-align: center;
 }
 
