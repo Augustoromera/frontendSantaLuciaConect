@@ -15,6 +15,8 @@ import bannerPsh3 from '../assets/banner/bannerPsh3.jpg';
 import bannerMobile1 from '../assets/banner/bannerMobile1.jpg';
 import bannerMobile2 from '../assets/banner/bannerMobile2.jpg';
 import bannerMobile3 from '../assets/banner/bannerMobile3.jpeg';
+// import bus1 from '../assets/images/carrusel-home/bus1.jpg';
+// import bus2 from '../assets/images/carrusel-home/bus2.png';
 import transporteRapido from '../assets/images/nosotros/transporteRapido.png';
 import imgMonteros from '../assets/images/nosotros/monterosHD.png'
 

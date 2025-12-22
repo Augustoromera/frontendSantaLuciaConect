@@ -8,6 +8,8 @@ import { faFacebook, faInstagram, faWhatsapp } from '@fortawesome/free-brands-sv
 import { Footer } from '../components/Footer';
 import Swal from 'sweetalert2';
 import imgMonteros from '../assets/images/nosotros/monterosHD.png';
+// import contactImage from '../assets/images/contacto/contact_image.jpg';
+import contactImage from '../assets/banner/bannerPsh1.jpg';
 import { collection, addDoc } from 'firebase/firestore';
 import { db } from '../firebase/config';
 
@@ -199,7 +201,7 @@ export const ContactScreen = () => {
           <div className="col-12 col-lg-6 mb-4">
             <div>
               <img
-                src="https://www.lanacion.com.ar/resizer/v2/tres-lineas-de-colectivos-suspenden-su-servicio-5EMY37GMKJCLNOOCYNVOVPWEAM.jpg?auth=edf2867420928ebf2f352f4965dcde89f91a2ef02222c66d4ed7cfb931aebe87&width=880&height=586&quality=70&smart=true"
+                src={contactImage}
                 className="img-fluid w-100 contact-image"
                 alt="colectivos"
               />

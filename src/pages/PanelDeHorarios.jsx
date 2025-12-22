@@ -19,7 +19,7 @@ export const PanelDeHorarios = () => {
     const [origen, setOrigen] = useState('');
     const [destino, setDestino] = useState('');
     const [tipo_dia, setDia] = useState('habil');
-    const [horario, setHorario] = useState('mañana');
+    const [horario, setHorario] = useState('todos'); // Default to 'todos'
     const [mostrarFiltrado, setMostrarFiltrado] = useState(false);
     const [horariosFiltrados, setHorariosFiltrados] = useState([]);
     const [destinosDisponibles, setDestinosDisponibles] = useState([]);
@@ -59,10 +59,6 @@ export const PanelDeHorarios = () => {
     useEffect(() => {
         if (!selectedRutaId) return;
         const loadTariffs = async () => {
-            // Import dynamically or assume it's imported at top? 
-            // Better to add import at top, but for now assuming it's available or I'll add it in next step if missing.
-            // Actually I need to add the import statement in the file top first if I haven't.
-            // I'll assume I will add it.
             try {
                 const t = await getTarifasByRuta(selectedRutaId);
                 setTarifas(t);
@@ -121,7 +117,10 @@ export const PanelDeHorarios = () => {
             if (!start || !end) return false;
 
             // Check filters (Day/Turn)
-            return start.tipo_dia === tipo_dia && start.turno === horario;
+            const diaMatch = start.tipo_dia === tipo_dia;
+            const turnoMatch = horario === 'todos' ? true : start.turno === horario;
+
+            return diaMatch && turnoMatch;
         });
 
         const resultados = validTrips.map(trip => {
@@ -146,7 +145,9 @@ export const PanelDeHorarios = () => {
             // Check first available stop matches criteria
             for (const p of paradas) {
                 if (trip[p._id]) {
-                    return trip[p._id].tipo_dia === tipo_dia && trip[p._id].turno === horario;
+                    const diaMatch = trip[p._id].tipo_dia === tipo_dia;
+                    const turnoMatch = horario === 'todos' ? true : trip[p._id].turno === horario;
+                    return diaMatch && turnoMatch;
                 }
             }
             return false;
@@ -275,6 +276,7 @@ export const PanelDeHorarios = () => {
                                 placeholder="Seleccionar horario"
                                 value={horario}
                                 options={[
+                                    { value: 'todos', label: 'Todos' },
                                     { value: 'mañana', label: 'Mañana' },
                                     { value: 'tarde', label: 'Tarde' }
                                 ]}

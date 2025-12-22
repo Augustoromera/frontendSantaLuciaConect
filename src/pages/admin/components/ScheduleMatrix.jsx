@@ -7,7 +7,7 @@ import '../../styles/adminscreen.css';
 import { getParadasByRuta, getHorariosByRuta } from '../../../services/scheduleService';
 import { collection, addDoc, updateDoc, deleteDoc, doc, writeBatch } from 'firebase/firestore';
 import { db } from '../../../firebase/config';
-export const ScheduleMatrix = ({ initialRutaId, rutas, onAddStop, onEditStop, onDeleteStop, lastUpdate }) => {
+export const ScheduleMatrix = ({ initialRutaId, rutas, onAddStop, onEditStop, onDeleteStop, onDeleteRoute, lastUpdate }) => {
     // State management
     const [selectedRutaId, setSelectedRutaId] = useState(initialRutaId || '');
     const [selectedDayType, setSelectedDayType] = useState('habil'); // New State
@@ -277,6 +277,15 @@ export const ScheduleMatrix = ({ initialRutaId, rutas, onAddStop, onEditStop, on
                         <option value="sabado">Sábados</option>
                         <option value="domingo">Domingos/Feriados</option>
                     </Form.Select>
+
+                    <Button
+                        variant="outline-danger"
+                        size="sm"
+                        onClick={() => onDeleteRoute && onDeleteRoute(selectedRutaId)}
+                        title="Eliminar Ruta seleccionada"
+                    >
+                        <FaTrash />
+                    </Button>
                 </div>
 
                 <div className="d-flex gap-2">

@@ -433,6 +433,30 @@ export const AdminScreen = () => {
     }, [])
 
     // Renderizado
+    // Delete Route Handler
+    const handleEliminarRuta = async (rutaId) => {
+        const result = await Swal.fire({
+            title: '¿Eliminar Ruta?',
+            text: 'Esta acción eliminará la ruta. Si tiene paradas u horarios, estos quedarán huérfanos o debes borrarlos manualmente.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'Cancelar',
+            confirmButtonColor: '#d33',
+        });
+
+        if (result.isConfirmed) {
+            try {
+                await deleteDoc(doc(db, "rutas", rutaId));
+                Swal.fire('Eliminada', 'La ruta ha sido eliminada.', 'success');
+                setLastUpdate(Date.now()); // Trigger reload
+            } catch (error) {
+                console.error("Error deleting route:", error);
+                Swal.fire('Error', 'No se pudo eliminar la ruta.', 'error');
+            }
+        }
+    };
+
     return (
         <div className="admin-layout-wrapper">
             <Header /> {/* Header Global */}
@@ -449,7 +473,7 @@ export const AdminScreen = () => {
                 {/* Sidebar Navigation */}
                 <aside className={`admin-sidebar ${isMobileMenuOpen ? 'open' : ''}`}>
                     <div className="sidebar-header">
-                        <h3>Admin Panel</h3>
+                        <h3>Panel Admin</h3>
                     </div>
                     <div className="sidebar-menu">
                         <button
@@ -601,6 +625,7 @@ export const AdminScreen = () => {
                                 }}
                                 onEditStop={editarParada}
                                 onDeleteStop={eliminarParadaClick}
+                                onDeleteRoute={handleEliminarRuta}
                                 lastUpdate={lastUpdate}
                             />
                         </div>
