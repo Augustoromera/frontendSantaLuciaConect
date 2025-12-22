@@ -7,7 +7,7 @@ import { useAuth } from '../context/AuthContext';
 import "../pages/styles/header.css";
 import logoTipo from '../assets/images/logo/logo.png.png'
 import swal from 'sweetalert2';
-import { width } from '@fortawesome/free-brands-svg-icons/fa42Group';
+import NotificationBell from './NotificationBell';
 
 // eslint-disable-next-line react/prop-types
 function Header({ navBarClass }) {
@@ -57,6 +57,7 @@ function Header({ navBarClass }) {
 
   const dinamicNav = location.pathname === '/' ? (scrolled ? 'navbarhome scrolled' : 'navbarhome') : 'navbarmain';
 
+  // LOGOUT HEADER
   if (user === null) {
     return (
       <Navbar expand="lg" data-bs-theme="dark" className={`${dinamicNav}`} >
@@ -87,6 +88,8 @@ function Header({ navBarClass }) {
       </Navbar>
     );
   }
+
+  // LOGGED IN HEADER
   return (
     <Navbar expand="lg" data-bs-theme="dark" className={`${dinamicNav}`} >
       <Container>
@@ -95,46 +98,48 @@ function Header({ navBarClass }) {
             src={logoTipo}
             className="d-inline-block navbar-image"
             alt="Logo"
-            onClick={
-              user === null
-                ? () => {
-                  window.location.href = "/login";
-                }
-                : () => {
-                  window.location.href === "/";
-                }
-            }
+            onClick={() => window.location.href = "/"}
           />
         </Navbar.Brand>
 
+        {/* NOTIFICATION BELL - MOBILE (Visible only on lg and below, outside collapse) */}
+        {isAuthenticated && (
+          <div className="d-lg-none me-3">
+            <NotificationBell />
+          </div>
+        )}
+
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
-          <Nav className="ms-auto">
+          <Nav className="ms-auto align-items-center">
 
-            {/*Mostrar enlace de administrador solo si el usuario es un administrador */}
+            {/* Links Common to All Auth Users */}
+            <Nav.Link as={Link} to="/"  >Inicio</Nav.Link>
+
+            {/* NOTIFICATION BELL - DESKTOP (Visible only on lg and above) */}
+            {isAuthenticated && (
+              <div className="d-none d-lg-flex align-items-center mx-2">
+                <NotificationBell />
+              </div>
+            )}
+
+            {/* Admin Specific Links */}
             {isAuthenticated && user.role === 'admin' && (
               <>
-
-                <Nav.Link as={Link} to="/"  >Inicio</Nav.Link>
-                <Nav.Link as={Link} to="/admin" >
-                  Administración
-                </Nav.Link>
-                <Nav.Link as={Link} to="/paneldehorarios" >Panel de Horarios</Nav.Link>
-                <Nav.Link as={Link} to="/aboutus" >Sobre Nosotros</Nav.Link>
-                <Nav.Link as={Link} to="/contact" >Contacto</Nav.Link>
-                <Nav.Link as={Link} to="/" onClick={handleLogout}>Cerrar sesión</Nav.Link>
+                <Nav.Link as={Link} to="/admin" >Administración</Nav.Link>
+                <Nav.Link as={Link} to="/mis-consultas" >Mis Consultas (Vista User)</Nav.Link>
               </>
             )}
-            {/* Mostrar elementos de usuario normal */}
-            {(isAuthenticated && !(user.role === 'admin')) ? (
-              <>
-                <Nav.Link as={Link} to="/"  >Inicio</Nav.Link>
-                <Nav.Link as={Link} to="/paneldehorarios" >Panel de Horarios</Nav.Link>
-                <Nav.Link as={Link} to="/aboutus" >Sobre Nosotros</Nav.Link>
-                <Nav.Link as={Link} to="/contact" >Contacto</Nav.Link>
-                <Nav.Link as={Link} to="/" onClick={handleLogout}>Cerrar sesión</Nav.Link>
-              </>
-            ) : ("")}
+
+            {/* User Specific Links */}
+            {isAuthenticated && user.role !== 'admin' && (
+              <Nav.Link as={Link} to="/mis-consultas" >Mis Consultas</Nav.Link>
+            )}
+
+            <Nav.Link as={Link} to="/paneldehorarios" >Panel de Horarios</Nav.Link>
+            <Nav.Link as={Link} to="/aboutus" >Sobre Nosotros</Nav.Link>
+            <Nav.Link as={Link} to="/contact" >Contacto</Nav.Link>
+            <Nav.Link as={Link} to="/" onClick={handleLogout}>Cerrar sesión</Nav.Link>
 
           </Nav>
         </Navbar.Collapse>

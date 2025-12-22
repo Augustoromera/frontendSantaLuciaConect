@@ -19,6 +19,7 @@ import AdminContactScreen from './AdminContactScreen';
 import { ScheduleMatrix } from './components/ScheduleMatrix';
 import { TariffMatrix } from './components/TariffMatrix';
 import UnitsAndDrivers from './components/UnitsAndDrivers';
+import AdminNotifications from './components/AdminNotifications';
 
 import { seedDatabase } from '../../utils/seedFirestore';
 import { getRutas } from '../../services/scheduleService';
@@ -30,7 +31,7 @@ export const AdminScreen = () => {
     const { user } = useAuth();
     const [isAddRouteModalOpen, setIsAddRouteModalOpen] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-    const [activeSection, setActiveSection] = useState('usuarios');
+    const [activeSection, setActiveSection] = useState('avisos'); // Default to avisos for visibility during dev, or back to usuarios
     const [cargarUsuarios, setCargarUsuarios] = useState([]);
 
     const [paradasPorRuta, setParadasPorRuta] = useState({});
@@ -500,6 +501,13 @@ export const AdminScreen = () => {
                             <span>Unidades</span>
                         </button>
                         <button
+                            className={`sidebar-item ${activeSection === 'avisos' ? 'active' : ''}`}
+                            onClick={() => { setActiveSection('avisos'); setIsMobileMenuOpen(false); }}
+                        >
+                            <FaEnvelope className="sidebar-icon" />
+                            <span>Avisos</span>
+                        </button>
+                        <button
                             className={`sidebar-item ${activeSection === 'tarifas' ? 'active' : ''}`}
                             onClick={() => { setActiveSection('tarifas'); setIsMobileMenuOpen(false); }}
                         >
@@ -636,6 +644,12 @@ export const AdminScreen = () => {
                     {activeSection === 'unidades' && (
                         <div className="section-container">
                             <UnitsAndDrivers />
+                        </div>
+                    )}
+
+                    {activeSection === 'avisos' && (
+                        <div className="section-container">
+                            <AdminNotifications />
                         </div>
                     )}
 
