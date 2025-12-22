@@ -143,7 +143,7 @@ export const AdminScreen = () => {
     };
 
     // Funciones de envío de formularios
-    const handleSubmitFormUser = (e) => {
+    const handleSubmitFormUser = async (e) => {
         e.preventDefault();
         var { username, email, status, password, role } = formDateUser;
         const regexPass = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/;
@@ -165,10 +165,13 @@ export const AdminScreen = () => {
             return;
         }
 
-        showSuccessAlert('Usuario agregado!', 'El Usuario ha sido agregado exitosamente.');
-        setFormDateUser({ username: '', email: '', status: '', password: '', role: '' });
-        guardarUsuarioDb(username, email, status, password, role);
-        recargarPagina();
+        const success = await guardarUsuarioDb(username, email, status, password, role);
+        if (success) {
+            showSuccessAlert('Usuario agregado!', 'El Usuario ha sido agregado exitosamente.');
+            setFormDateUser({ username: '', email: '', status: '', password: '', role: '' });
+            setIsModalOpenUser(false);
+            cargarUserDB(); // Refresh list instead of reload
+        }
     };
 
     const handleSubmitFormUserEditar = async (e) => {
@@ -192,10 +195,12 @@ export const AdminScreen = () => {
             return;
         }
 
-        showSuccessAlert('Usuario editado!', 'El Usuario ha sido editado exitosamente.');
-        setFormDateUser({ username: '', email: '', status: '', password: '', role: '' });
-        editarUsuarioDb(_id, username, email, statusModif, role);
-        recargarPagina();
+        const success = await editarUsuarioDb(_id, username, email, statusModif, role);
+        if (success) {
+            showSuccessAlert('Usuario editado!', 'El Usuario ha sido editado exitosamente.');
+            setIsModalOpenUserEditar(false);
+            cargarUserDB(); // Refresh list
+        }
     };
 
     const fetchParadasYHorarios = async () => {
@@ -231,9 +236,11 @@ export const AdminScreen = () => {
             await updateDoc(userRef, {
                 username, email, status, role
             });
+            return true;
         } catch (error) {
             console.log(error);
             showErrorAlert('Error', 'No se pudo actualizar el usuario');
+            return false;
         }
     };
 
@@ -249,8 +256,11 @@ export const AdminScreen = () => {
                 // Password no se guarda en Firestore por seguridad
             });
             showSuccessAlert('Usuario registrado en DB', 'El usuario debe registrarse en Login para tener acceso real o usar Cloud Functions.');
+            return true;
         } catch (error) {
             console.log(error);
+            showErrorAlert('Error', 'No se pudo registrar el usuario');
+            return false;
         }
     };
 
@@ -293,7 +303,7 @@ export const AdminScreen = () => {
                 try {
                     await deleteDoc(doc(db, "users", id));
                     showSuccessAlert('¡Usuario Eliminado!', 'El usuario ha sido eliminado exitosamente.');
-                    recargarPagina();
+                    cargarUserDB(); // Refresh list
                 } catch (error) {
                     console.log(error);
                     showErrorAlert('Error', 'No se pudo eliminar el usuario');
@@ -355,23 +365,20 @@ export const AdminScreen = () => {
                 confirmButton: 'custom-swal-confirm-button',
                 cancelButton: 'custom-swal-cancel-button',
             },
-        }).then((result) => {
+        }).then(async (result) => {
             if (result.isConfirmed) {
                 setFormDateUser({
                     username: '', email: '', status: '', password: '', role: ''
                 });
-                editarUsuarioDb(_id, username, email, newstatus, lowerCaserole);
-                recargarPagina();
+                const success = await editarUsuarioDb(_id, username, email, newstatus, lowerCaserole);
+                if (success) {
+                    cargarUserDB(); // Refresh list
+                }
             }
         });
     };
 
     // Helpers
-    const recargarPagina = () => {
-        setTimeout(() => {
-            window.location.reload();
-        }, 2000);
-    };
 
     const capitalizeFirstLetter = (str) => {
         return str.charAt(0).toUpperCase() + str.slice(1);

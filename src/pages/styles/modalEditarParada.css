@@ -1,102 +1,197 @@
 .modal-backdrop {
-  background-color: rgba(0, 0, 0, 0.75);
+  background-color: rgba(0, 0, 0, 0.85);
+  /* Darker backdrop to make glass pop */
   position: fixed;
   inset: 0;
-  /* atajo para top/left/right/bottom: 0 */
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 1050;
+  backdrop-filter: blur(5px);
+  /* Blur the extensive background slightly */
 }
 
 .modal-contenido {
-  background-color: #030303;
-  /* fondo más oscuro para mejor integración con UIs oscuras */
+  background: rgba(20, 20, 20, 0.65);
+  /* Semi-transparent dark base */
+  backdrop-filter: blur(16px);
+  /* Strong blur for glass effect */
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.7);
+  /* Deep shadow */
   color: #f0f0f0;
-  padding: 2rem;
+  padding: 2.5rem;
   width: 100%;
   max-width: 500px;
-  border-radius: 12px;
-  border: 1px solid #3000f2;
+  border-radius: 16px;
+  /* Smooth corners */
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  /* Subtle white border */
   position: relative;
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .modal-contenido h2 {
   margin-top: 0;
-  margin-bottom: 1.5rem;
-  font-size: 1.5rem;
+  margin-bottom: 2rem;
+  font-size: 1.8rem;
   text-align: center;
   color: #ffffff;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
 }
 
 .modal-form label {
   display: block;
-  margin-bottom: 0.25rem;
-  color: #ccc;
-  font-weight: 500;
+  margin-bottom: 0.5rem;
+  color: #ddd;
+  font-weight: 600;
+  letter-spacing: 0.3px;
 }
 
-.modal-form input {
+.modal-form input,
+.custom-input {
   width: 100%;
-  padding: 0.5rem 0.75rem;
-  margin-bottom: 1rem;
-  border: 1px solid #555;
-  border-radius: 6px;
-  background-color: #333;
-  color: #f0f0f0;
+  /* Ensure full width layout */
+  padding: 0.8rem 1rem;
+  margin-bottom: 1.2rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  background-color: rgba(0, 0, 0, 0.3);
+  /* Dark glass input */
+  color: #fff;
   font-size: 1rem;
-  transition: border 0.2s ease;
+  transition: all 0.3s ease;
 }
 
-.modal-form input:focus {
-  border-color: #66afe9;
+.modal-form input:focus,
+.custom-input:focus {
+  border-color: #007bff;
   outline: none;
-  background-color: #2f2f45;
+  background-color: rgba(0, 0, 0, 0.5);
+  box-shadow: 0 0 0 4px rgba(0, 123, 255, 0.1);
 }
 
 .modal-botones {
   display: flex;
-  justify-content: flex-end;
-  gap: 1rem;
-  margin-top: 1rem;
+  justify-content: center;
+  /* Center buttons for modern look? Or keep right. User likes "Professional" -> usually right-aligned or full width blocks. Kept flex for now */
+  gap: 1.5rem;
+  margin-top: 2rem;
 }
 
 .boton-guardar,
 .boton-cancelar {
-  padding: 0.5rem 1.25rem;
+  padding: 0.7rem 1.5rem;
   font-size: 1rem;
-  border-radius: 6px;
+  border-radius: 8px;
   border: none;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: all 0.3s ease;
+  font-weight: 600;
+  letter-spacing: 0.5px;
 }
 
 .boton-guardar {
-  background-color: #00bfff;
+  background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
   color: white;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
 }
 
 .boton-guardar:hover {
-  background-color: #009fd1;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 123, 255, 0.3);
 }
 
 .boton-cancelar {
-  background-color: #dc3545;
-  color: white;
+  background: transparent;
+  color: #ff6b6b;
+  border: 1px solid rgba(255, 107, 107, 0.3);
 }
 
 .boton-cancelar:hover {
-  background-color: #c82333;
+  background: rgba(255, 107, 107, 0.1);
+  border-color: #ff6b6b;
+  color: #ff4c4c;
 }
 
-.custom-input {
-  width: 50%;
-  padding: 0.5rem 0.75rem;
-  margin-bottom: 1rem;
-  border: 1px solid #555;
-  border-radius: 6px;
-  background-color: #333;
-  color: #f0f0f0;
+/* Toggle Switch Styles */
+.switch-container {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  padding: 0.5rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  justify-content: center;
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 26px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #555;
+  transition: .4s;
+  border-radius: 34px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  transition: .4s;
+  border-radius: 50%;
+}
+
+input:checked+.slider {
+  background-color: #28a745;
+}
+
+input:focus+.slider {
+  box-shadow: 0 0 1px #28a745;
+}
+
+input:checked+.slider:before {
+  transform: translateX(24px);
+}
+
+.switch-label {
+  color: #fff;
+  font-weight: 600;
   font-size: 1rem;
-  transition: border 0.2s ease;
+  margin: 0;
 }
