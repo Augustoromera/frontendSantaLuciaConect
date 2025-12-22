@@ -24,9 +24,9 @@ export const Footer = () => {
                     <h2>NAVEGACIÓN</h2>
                     <nav className="footer-nav">
                         <Link to="/" className="footer-link">Inicio</Link>
-                        <Link to="/horarios" className="footer-link">Horarios</Link>
-                        <Link to="/contacto" className="footer-link">Contacto</Link>
-                        <Link to="/login" className="footer-link">Portal Admin</Link>
+                        <Link to="/paneldehorarios" className="footer-link">Horarios</Link>
+                        <Link to="/contact" className="footer-link">Contacto</Link>
+                        <Link to="/viajes-especiales" className="footer-link">Viajes Especiales</Link>
                     </nav>
                 </div>
                 <div className="box">

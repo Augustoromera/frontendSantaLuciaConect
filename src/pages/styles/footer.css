@@ -1,12 +1,12 @@
-@import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap");
 
 .pie-pagina {
     width: 100%;
-    background: linear-gradient(to top, #000000, #101010);
-    color: #efefef;
-    font-family: "Open Sans", sans-serif;
-    padding-top: 2rem;
-    box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.5);
+    background-color: #0d0d0d;
+    color: #e0e0e0;
+    font-family: "Outfit", sans-serif;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.6);
+    border-top: 1px solid #222;
 }
 
 .pie-pagina .grupo-1 {
@@ -14,81 +14,79 @@
     max-width: 1200px;
     margin: auto;
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    grid-gap: 50px;
-    padding: 45px 20px;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 40px;
+    padding: 40px 20px;
 }
 
-/* Column 1: Logo & Description */
+/* Box Styling */
+.pie-pagina .box {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Logo Section */
 .pie-pagina .box figure {
     width: 100%;
+    margin: 0 0 15px 0;
     display: flex;
     justify-content: flex-start;
-    /* Align logo left */
-    margin-bottom: 1rem;
 }
 
 .pie-pagina .box .footer-logo {
-    width: 150px;
+    width: 140px;
     height: auto;
-    transition: transform 0.3s ease;
+    transition: opacity 0.3s ease;
 }
 
 .pie-pagina .box .footer-logo:hover {
-    transform: scale(1.05);
+    opacity: 0.9;
 }
 
 .footer-description {
-    color: #bbbbbb;
+    color: #a0a0a0;
     font-size: 0.9rem;
     line-height: 1.6;
+    max-width: 300px;
 }
 
 /* Headers */
 .pie-pagina .box h2 {
-    color: #ffffff;
-    margin-bottom: 25px;
+    color: #fff;
+    margin-bottom: 20px;
     font-size: 1.1rem;
-    font-weight: 700;
-    letter-spacing: 1px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
     position: relative;
-    padding-bottom: 10px;
+    display: inline-block;
+    text-transform: uppercase;
 }
 
-.pie-pagina .box h2::after {
-    content: '';
-    position: absolute;
-    left: 0;
-    bottom: 0;
-    width: 40px;
-    height: 3px;
-    background-color: #004aad;
-}
-
-/* Navigation Links */
+/* Navigation */
 .footer-nav {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 8px;
 }
 
 .footer-link {
-    color: #bbbbbb;
+    color: #a0a0a0;
     text-decoration: none;
     font-size: 0.95rem;
-    transition: color 0.3s ease, padding-left 0.3s ease;
+    transition: all 0.2s ease;
+    display: inline-block;
 }
 
 .footer-link:hover {
     color: #004aad;
-    padding-left: 5px;
-    /* Slight movement on hover */
+    /* Blue Accent */
+    transform: translateX(5px);
 }
 
 /* Contact Info */
 .contact-info p {
-    color: #bbbbbb;
-    margin-bottom: 10px;
+    color: #a0a0a0;
+    margin-bottom: 12px;
     font-size: 0.9rem;
     display: flex;
     align-items: center;
@@ -97,96 +95,111 @@
 
 .icon-small {
     color: #004aad;
+    /* Blue Accent */
+    font-size: 1.1rem;
 }
 
 /* Social Icons */
 .pie-pagina .red-social {
     display: flex;
     gap: 15px;
-    margin-top: 1rem;
+    margin-top: 15px;
 }
 
 .pie-pagina .red-social .social-icon {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 45px;
-    height: 45px;
+    width: 40px;
+    height: 40px;
     text-decoration: none;
-    color: #ffffff;
-    background-color: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    background-color: #222;
     border-radius: 50%;
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     transition: all 0.3s ease;
+    border: 1px solid #333;
 }
 
 .pie-pagina .red-social .social-icon:hover {
     background-color: #004aad;
-    color: #ffffff;
+    /* Blue Accent */
+    color: #fff;
+    border-color: #004aad;
+    /* Blue Accent */
     transform: translateY(-3px);
-    box-shadow: 0 5px 15px rgba(0, 74, 173, 0.4);
 }
 
-/* Copyright Bar */
+/* Copyright Section */
 .pie-pagina .grupo-2 {
     background-color: #050505;
-    padding: 20px 10px;
+    padding: 20px;
     text-align: center;
-    color: #888888;
-    border-top: 1px solid #222;
+    border-top: 1px solid #1a1a1a;
 }
 
 .pie-pagina .grupo-2 small {
     font-size: 0.85rem;
+    color: #666;
+    line-height: 1.5;
+    display: block;
 }
 
 .pie-pagina .grupo-2 b {
-    color: #ffffff;
+    color: #e0e0e0;
 }
 
 .developer-link {
-    color: #004aad;
-    font-weight: 600;
+    color: #888;
     text-decoration: none;
-    transition: color 0.3s ease;
+    font-weight: 500;
+    transition: color 0.3s;
 }
 
 .developer-link:hover {
-    color: #ffffff;
-    text-decoration: underline;
+    color: #004aad;
+    /* Blue Accent */
 }
 
-/* Resets - Ensure no global pollution but clean footer box sizing */
-.pie-pagina * {
-    box-sizing: border-box;
-}
-
-/* Responsive */
+/* Responsive Design */
 @media screen and (max-width: 800px) {
     .pie-pagina .grupo-1 {
         grid-template-columns: 1fr;
-        grid-gap: 30px;
+        gap: 35px;
         padding: 30px 20px;
         text-align: center;
     }
 
-    .pie-pagina .box figure,
-    .pie-pagina .red-social,
-    .pie-pagina .box h2::after {
-        justify-content: center;
-        /* Center content on mobile */
-        margin: 0 auto 1rem auto;
-        left: 50%;
-        transform: translateX(-50%);
-    }
-
-    /* Override transform on hover for centered element to avoid conflict */
-    .pie-pagina .box h2::after {
-        transform: translateX(-50%);
-    }
-
-    .footer-nav {
+    .pie-pagina .box {
         align-items: center;
+        /* Centers flex children */
+    }
+
+    /* Center the logo container */
+    .pie-pagina .box figure {
+        justify-content: center;
+        margin-bottom: 15px;
+    }
+
+    /* Ensure description is centered */
+    .footer-description {
+        margin: 0 auto;
+    }
+
+    /* Make links touch-friendly */
+    .footer-link {
+        padding: 5px 0;
+    }
+
+    /* Reset hover translation for touch */
+    .footer-link:hover {
+        transform: none;
+        color: #004aad;
+        /* Blue Accent */
+    }
+
+    .pie-pagina .red-social {
+        justify-content: center;
     }
 
     .contact-info p {
