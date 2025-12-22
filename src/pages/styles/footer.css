@@ -37,6 +37,8 @@
     width: 140px;
     height: auto;
     transition: opacity 0.3s ease;
+    border-radius: 50%;
+    /* Trims potential white corners */
 }
 
 .pie-pagina .box .footer-logo:hover {

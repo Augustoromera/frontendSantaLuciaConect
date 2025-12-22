@@ -7,7 +7,7 @@ import '../styles/LoginRegistro.css';
 import { Footer } from '../../components/Footer';
 import Header from '../../components/Header';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
-import logo from '../../assets/images/logo/logoFooter.png';
+import logo from '../../assets/images/nuevo-logo/logo.png';
 
 function LoginPage() {
     const { register, handleSubmit, formState: { errors } } = useForm();

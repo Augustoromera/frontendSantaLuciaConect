@@ -2,7 +2,7 @@ import React from 'react'
 import { Link } from 'react-router-dom';
 import { FaFacebook, FaInstagram, FaMapMarkerAlt, FaEnvelope } from 'react-icons/fa';
 import "../pages/styles/footer.css"
-import logofooter from "../assets/images/logo/logoFooter.png"
+import logofooter from "../assets/images/nuevo-logo/logo.png"
 
 export const Footer = () => {
     const currentYear = new Date().getFullYear();

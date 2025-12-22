@@ -9,7 +9,7 @@ import { Footer } from '../../components/Footer';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import { doc, setDoc } from 'firebase/firestore';
 import { db } from '../../firebase/config';
-import logo from '../../assets/images/logo/logoFooter.png';
+import logo from '../../assets/images/nuevo-logo/logo.png';
 
 function RegisterPage() {
   const { register, handleSubmit, setError, formState: { errors } } = useForm();
