@@ -6,8 +6,8 @@ import Swal from 'sweetalert2';
 import '../styles/LoginRegistro.css';
 import { Footer } from '../../components/Footer';
 import Header from '../../components/Header';
-import ojoAbierto from '../../img/ojo.jpg';
-import ojoCerrado from '../../img/ojoCerrado.jpg';
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
+import logo from '../../assets/images/logo/logoFooter.png';
 
 function LoginPage() {
     const { register, handleSubmit, formState: { errors } } = useForm();
@@ -27,15 +27,8 @@ function LoginPage() {
                 icon: 'error',
                 title: 'Login incorrecto',
                 text: 'El correo electrónico no es válido',
-                background: 'black',
-                color: 'white',
-                customClass: {
-                    container: 'custom-swal-container',
-                    title: 'custom-swal-title',
-                    content: 'custom-swal-content',
-                    confirmButton: 'custom-swal-confirm-button',
-                    cancelButton: 'custom-swal-cancel-button',
-                },
+                background: '#1e1e1e', // Professional dark
+                color: 'white'
             });
             return;
         }
@@ -49,7 +42,7 @@ function LoginPage() {
                 icon: 'error',
                 title: 'Error',
                 text: 'Credenciales inválidas o error de conexión.',
-                background: 'black',
+                background: '#1e1e1e',
                 color: 'white'
             });
         }
@@ -70,63 +63,69 @@ function LoginPage() {
             <Header />
 
             <div className='contenedor1'>
-                <div>
-                    {authError && (
-                        <div className='error-usuario'>
-                            {authError}
-                        </div>
-                    )}
+                {/* Left Side - Branding (Desktop Only) */}
+                <div className='login-branding'>
+                    <img src={logo} alt="Transporte Santa Lucia" className='branding-logo' />
+                    <h2 className='branding-title'>Transporte Santa Lucía</h2>
+                    <p className='branding-subtitle'>Únete a nuestra comunidad de viajeros.</p>
+                </div>
 
-                    <h1 className='titulo-lr'>Login</h1>
-
-                    <form onSubmit={onSubmit}>
-                        <label htmlFor="email" className='labels'>Correo electrónico ↓</label>
-                        <input
-                            type="email"
-                            {...register("email", { required: true })}
-                            className='inputs'
-                            placeholder='Ej: John@gmail.com'
-                            id='email'
-                            maxLength={60}
-                            onChange={(event) => setEmail(event.target.value)}
-                        />
-                        {errors.email && (
-                            <p className='texto-validacion'>El email es obligatorio</p>
+                {/* Right Side - Form */}
+                <div className='login-form-container'>
+                    <div>
+                        {authError && (
+                            <div className='error-usuario'>
+                                {authError}
+                            </div>
                         )}
 
-                        <label htmlFor="password" className='labels'>Contraseña ↓</label>
-                        <div className='password-input-container'>
+                        <h1 className='titulo-lr'>Login</h1>
+
+                        <form onSubmit={onSubmit}>
+                            <label htmlFor="email" className='labels'>Correo electrónico</label>
                             <input
-                                type={showPassword ? "text" : "password"}
-                                {...register("password", { required: true, minLength: 4 })}
+                                type="email"
+                                {...register("email", { required: true })}
                                 className='inputs'
-                                placeholder='Contraseña'
-                                id='password'
-                                maxLength={30}
+                                placeholder='ejemplo@correo.com'
+                                id='email'
+                                maxLength={60}
+                                onChange={(event) => setEmail(event.target.value)}
                             />
-                            <img
-                                src={showPassword ? ojoAbierto : ojoCerrado}
-                                alt={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
-                                className='password-toggle-icon'
-                                onClick={() => setShowPassword(!showPassword)}
-                            />
-                        </div>
-                        {errors.password && (
-                            <p className='texto-validacion'>La contraseña debe ser mayor a 4 caracteres</p>
-                        )}
+                            {errors.email && (
+                                <p className='texto-validacion'>El email es obligatorio</p>
+                            )}
 
-                        <button type="submit" className='boton-login'>
-                            <span></span>
-                            <span></span>
-                            <span></span>
-                            <span></span>
-                            Ingresar
-                        </button>
-                    </form>
+                            <label htmlFor="password" className='labels'>Contraseña</label>
+                            <div className='password-input-container'>
+                                <input
+                                    type={showPassword ? "text" : "password"}
+                                    {...register("password", { required: true, minLength: 4 })}
+                                    className='inputs'
+                                    placeholder='••••••••'
+                                    id='password'
+                                    maxLength={30}
+                                />
+                                <div
+                                    className='react-icon-password'
+                                    onClick={() => setShowPassword(!showPassword)}
+                                >
+                                    {showPassword ? <FaEyeSlash /> : <FaEye />}
+                                </div>
+                            </div>
+                            {errors.password && (
+                                <p className='texto-validacion'>La contraseña debe ser mayor a 4 caracteres</p>
+                            )}
 
-                    <p className='texto-loginR'>
-                        No tienes una cuenta para ingresar? <Link to="/register" className='link-login'>Regístrate aquí</Link>
-                    </p>
+                            <button type="submit" className='boton-login'>
+                                Ingresar
+                            </button>
+                        </form>
+
+                        <p className='texto-loginR'>
+                            No tienes una cuenta para ingresar? <Link to="/register" className='link-login'>Regístrate aquí</Link>
+                        </p>
+                    </div>
                 </div>
             </div>
             <Footer />

@@ -1,220 +1,306 @@
+/* Preserving body and body::before exactly as requested */
+
 body {
-  
   background-image: url('/src/assets/images/fondos/burguer.jpg') !important;
 }
 
 body::before {
-	content: "";
-	position: fixed;
-	top: 0;
-	left: 0;
-	width: 100%;
-	height: 100%;
-	background-color: #004aad; /* Negro al 50% de opacidad = reduce brillo */
-	z-index: -1;
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #004aad;
+  z-index: -1;
 }
 
-
+/* Glassmorphism Container */
 .contenedor1 {
-  background-color: rgb(27, 27, 27); /* Negro se mantiene igual */
+  background-color: rgba(20, 20, 25, 0.85);
+  /* Semi-transparent dark */
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   display: flex;
+  flex-direction: column;
+  /* Default mobile: vertical */
+  align-items: center;
   justify-content: center;
   margin: 0 auto;
-  padding: 2.5em;
-  border-radius: 1em;
+  padding: 0;
+  /* Reset padding, inner containers handle it */
+  border-radius: 1.5em;
+  /* Smoother corners */
   margin-top: 1.5em;
   margin-bottom: 3em;
   color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+  /* Important for split view borders */
 }
 
+/* Branding Section (Left Side) - Hidden on Mobile by default */
+.login-branding {
+  display: none;
+  flex: 1;
+  background: linear-gradient(135deg, rgba(0, 74, 173, 0.4) 0%, rgba(0, 30, 80, 0.6) 100%);
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 40px;
+  text-align: center;
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.branding-logo {
+  width: 120px;
+  margin-bottom: 20px;
+  filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.3));
+}
+
+.branding-title {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+  color: #fff;
+}
+
+.branding-subtitle {
+  font-size: 1rem;
+  color: #ccc;
+  max-width: 80%;
+}
+
+/* Form Container (Right Side) */
+.login-form-container {
+  flex: 1;
+  padding: 3em;
+  width: 100%;
+  /* Full width on mobile */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* Modern Inputs */
 .inputs {
   width: 100%;
-  padding: 10px 0;
+  padding: 12px 15px;
   font-size: 16px;
   color: #fff;
-  margin-bottom: 30px;
-  border: none;
-  border-bottom: 1px solid #fff;
+  margin-bottom: 25px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
   outline: none;
-  background: transparent;
+  background: rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
 }
 
+.inputs:focus {
+  border-color: #004aad;
+  background: rgba(0, 0, 0, 0.4);
+  box-shadow: 0 0 0 2px rgba(0, 74, 173, 0.2);
+}
+
+/* Links */
 .link-login {
-  color: #004aad; /* Cambiado de orange a azul */
+  color: #004aad;
   font-size: 15px;
-  transition: 0.6s;
+  font-weight: 600;
+  transition: 0.3s;
+  text-decoration: none;
+}
+
+.link-login:hover {
+  color: #4da6ff;
+  text-decoration: underline;
 }
 
 .texto-loginR {
-  color: #fff; /* Cambiado de yellow a azul */
-  font-size: 12px;
+  color: #ccc;
+  font-size: 14px;
   text-align: center;
-  justify-content: center;
-  align-items: center;
+  margin-top: 20px;
 }
 
 .titulo-lr {
   text-align: center;
-  margin-bottom: 1.5em;
-  font-size: 40px;
-}
-
-.link-login:hover {
-  color: #003366; /* Azul más oscuro para hover */
-}
-
-.labels {
+  margin-bottom: 1em;
+  font-size: 2.5rem;
+  font-weight: 700;
   color: #fff;
-  font-size: 18px;
-  text-align: center;
+  letter-spacing: 1px;
+}
+
+/* Labels */
+.labels {
+  color: #bbb;
+  font-size: 0.9rem;
+  text-align: left;
+  /* Better readability */
+  display: block;
+  width: 100%;
+  margin-bottom: 8px;
+  font-weight: 500;
 }
 
 .texto-validacion {
-  color: red;
-  font-size: 15px;
-  text-align: center;
-}
-
-.error-usuario {
-  background-color: red;
-  padding: 1.5em;
-  font-size: 16px;
-  color: #ffffff !important;
-  text-align: center;
-}
-
-.nav-lr {
-  background-color: rgb(32, 32, 34); /* Negro se mantiene igual */
-  display: flex;
-  margin-bottom: 3em;
-  justify-content: space-around;
-}
-
-.ul-lr {
-  display: flex;
-  list-style-type: none;
-  text-align: center;
-  margin-top: 2em;
-}
-
-.titulo-nav {
-  color: white;
-  font-size: 2em;
-  margin-left: 1em;
-}
-
-.link-nav {
-  color: white;
-  margin: 1em;
-  text-decoration: none;
-  background-color: #004aad; /* Cambiado de rgb(32,171,32) a azul */
-  padding: 1em;
-  border-radius: .5em;
-  font-size: 15px;
-  transition: 0.6s;
-}
-
-.link-nav:hover {
-  background-color: #003366; /* Azul más oscuro para hover */
-}
-
-.inputsR {
-  width: 100%;
-  padding: 10px 0;
-  font-size: 16px;
-  color: #fff;
-  margin-bottom: 30px;
-  border: none;
-  border-bottom: 1px solid #fff;
-  outline: none;
-  background: transparent;
-}
-
-.contenedor2 {
-  margin-left: -1em;
-}
-
-/* Media queries se mantienen igual */
-@media (max-width:800px) {
-  .contenedor1 {
-    
-  margin-top: 30vw;
-    width: 90vw;
-  }
-}
-
-
-@media all and (min-width:800px) and (max-width:1400px) {
-  .contenedor1 {
-    margin-top: 15vw;
-    width: 50vw;
-  }
-}
-
-@media all and (min-width:1400px) and (max-width:2000px) {
-  .contenedor1 {
-    margin-top: 15vw;
-    width: 30vw;
-  }
-}
-
-.boton-login {
-  position: relative;
-  display: inline-block;
-  padding: 10px 20px;
-  color: #fff; /* Cambiado de #ffc107 a azul */
-  font-size: 16px;
-  text-decoration: none;
-  text-transform: uppercase;
-  overflow: hidden;
-  transition: .5s;
-  margin-top: 40px;
-  letter-spacing: 4px;
-  background-color: #000; /* Negro se mantiene igual */
-  border: none;
-}
-
-.boton-login:hover {
-  background: #004aad;
-  color: #fff;
-  border-radius: 5px;
-  box-shadow: 0 0 5px #004aad,
-    0 0 25px #004aad,
-    0 0 50px #004aad,
-    0 0 100px #004aad;
-}
-
-.boton-login span {
-  position: absolute;
+  color: #ff6b6b;
+  font-size: 0.85rem;
+  text-align: left;
+  margin-top: -20px;
+  /* Pull up closer to input */
+  margin-bottom: 20px;
   display: block;
 }
 
-.boton-login span:nth-child(1) {
-  background: linear-gradient(90deg, transparent, #004aad); /* Cambiado a azul */
+.error-usuario {
+  background-color: rgba(255, 0, 0, 0.1);
+  border: 1px solid #ff0000;
+  padding: 1em;
+  font-size: 14px;
+  color: #ffcccc !important;
+  text-align: center;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  width: 100%;
 }
 
-.boton-login span:nth-child(2) {
-  background: linear-gradient(180deg, transparent, #004aad); /* Cambiado a azul */
+/* Register page inputs same as login */
+.inputsR {
+  width: 100%;
+  padding: 12px 15px;
+  font-size: 16px;
+  color: #fff;
+  margin-bottom: 25px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  outline: none;
+  background: rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
 }
 
-.boton-login span:nth-child(3) {
-  background: linear-gradient(270deg, transparent, #004aad); /* Cambiado a azul */
+.inputsR:focus {
+  border-color: #004aad;
+  background: rgba(0, 0, 0, 0.4);
 }
 
-.boton-login span:nth-child(4) {
-  background: linear-gradient(360deg, transparent, #004aad); /* Cambiado a azul */
+.contenedor2 {
+  width: 100%;
+  /* Ensure full width inside container */
 }
 
+/* Responsive Styles */
+
+/* Mobile (Default) - Handled above by flex-direction: column */
+@media (max-width:899px) {
+  .contenedor1 {
+    margin-top: 150px;
+    width: 90%;
+  }
+}
+
+/* Desktop Split Layout (Min width 900px) */
+@media (min-width: 900px) {
+  .contenedor1 {
+    flex-direction: row;
+    width: 60%;
+    max-width: 1100px;
+    margin-top: 200px;
+  }
+
+  .login-branding {
+    display: flex;
+    /* Show branding */
+  }
+
+  /* Make sure both sides take equal height if needed, flex handles vertical stretch by default */
+}
+
+/* Extra Large Screens */
+@media (min-width: 1600px) {
+  .contenedor1 {
+    width: 60%;
+    max-width: 1200px;
+  }
+}
+
+/* Professional Button */
+.boton-login {
+  display: block;
+  width: 100%;
+  padding: 14px;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  background-color: #004aad;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 20px;
+  box-shadow: 0 4px 15px rgba(0, 74, 173, 0.3);
+  text-align: center;
+}
+
+.boton-login:hover {
+  background-color: #003380;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 74, 173, 0.4);
+  color: white;
+  /* Ensure text stays white */
+}
+
+/* Hide the old animation spans if they exist in HTML */
+.boton-login span {
+  display: none;
+}
+
+/* Password Toggle */
 .password-input-container {
   display: flex;
   align-items: center;
+  position: relative;
 }
 
 .password-toggle-icon {
-  width: 50px;
-  height: 40px;
+  width: 24px;
+  /* Smaller icon size */
+  height: 24px;
   cursor: pointer;
-  margin-left: 20px;
-  margin-top: -20px;
-  border-radius: 20px;
+  position: absolute;
+  right: 15px;
+  top: 38%;
+  /* Center vertically tailored for input height */
+  transform: translateY(-50%);
+  border-radius: 50%;
+  /* Circular hover if bg added */
+  filter: invert(1);
+  /* Invert if using black icons on dark, or simpler: adjust opacity */
+  opacity: 0.7;
+  transition: opacity 0.3s;
+  margin: 0;
+  /* Reset margins */
+}
+
+.password-toggle-icon:hover {
+  opacity: 1;
+}
+
+/* React Icons customization if switched */
+.react-icon-password {
+  color: #aaa;
+  position: absolute;
+  right: 15px;
+  top: 38%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  font-size: 1.2rem;
+}
+
+.react-icon-password:hover {
+  color: #fff;
 }

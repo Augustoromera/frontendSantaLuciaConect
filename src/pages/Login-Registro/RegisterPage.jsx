@@ -6,10 +6,10 @@ import Swal from 'sweetalert2';
 import '../styles/LoginRegistro.css';
 import Header from '../../components/Header';
 import { Footer } from '../../components/Footer';
-import ojoAbierto from '../../img/ojo.jpg';
-import ojoCerrado from '../../img/ojoCerrado.jpg';
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import { doc, setDoc } from 'firebase/firestore';
 import { db } from '../../firebase/config';
+import logo from '../../assets/images/logo/logoFooter.png';
 
 function RegisterPage() {
   const { register, handleSubmit, setError, formState: { errors } } = useForm();
@@ -40,14 +40,8 @@ function RegisterPage() {
         icon: 'error',
         title: 'Registro incorrecto',
         text: 'El correo electrónico no es válido',
-        background: 'black',
-        customClass: {
-          container: 'custom-swal-container',
-          title: 'custom-swal-title',
-          content: 'custom-swal-content',
-          confirmButton: 'custom-swal-confirm-button',
-          cancelButton: 'custom-swal-cancel-button',
-        },
+        background: '#1e1e1e', // Professional dark
+        color: 'white'
       });
       return;
     }
@@ -71,7 +65,7 @@ function RegisterPage() {
       Swal.fire({
         icon: 'success',
         title: 'Registro exitoso',
-        background: 'black',
+        background: '#1e1e1e',
         color: 'white'
       });
 
@@ -82,7 +76,7 @@ function RegisterPage() {
         icon: 'error',
         title: 'Error al registrarse',
         text: error.message,
-        background: 'black',
+        background: '#1e1e1e',
         color: 'white'
       });
     }
@@ -92,91 +86,100 @@ function RegisterPage() {
     <div className='contenedorTodo'>
       <Header />
       <div className='contenedor1'>
-        <div className='contenedor2'>
-          {authError && (
-            <div className='error-usuario'>{authError}</div>
-          )}
+        {/* Left Side - Branding (Desktop Only) */}
+        <div className='login-branding'>
+          <img src={logo} alt="Transporte Santa Lucia" className='branding-logo' />
+          <h2 className='branding-title'>Transporte Santa Lucía</h2>
+          <p className='branding-subtitle'>Únete a nuestra comunidad de viajeros.</p>
+        </div>
 
-          <h1 className='titulo-lr'>Registro</h1>
-
-          <form onSubmit={onSubmit}>
-            <label htmlFor="username" className='labels'>Nombre de usuario ↓</label>
-            <input
-              type='text'
-              {...register("username", { required: true, minLength: 3 })}
-              className='inputsR'
-              placeholder='Ej: John 10'
-              id='username'
-              maxLength={20}
-            />
-            {errors.username && (
-              <p className='texto-validacion'>El nombre de usuario es obligatorio</p>
+        {/* Right Side - Form */}
+        <div className='login-form-container'>
+          <div className='contenedor2'>
+            {authError && (
+              <div className='error-usuario'>{authError}</div>
             )}
 
-            <label htmlFor="email" className='labels'>Correo eletrónico ↓</label>
-            <input
-              type='email'
-              {...register("email", { required: true })}
-              className='inputsR'
-              placeholder='Ej: John@gmail.com'
-              id='email'
-              maxLength={60}
-            />
-            {errors.email && (
-              <p className='texto-validacion'>El email es obligatorio</p>
-            )}
+            <h1 className='titulo-lr'>Registro</h1>
 
-            <label htmlFor="password" className='labels'>Contraseña ↓</label>
-            <div className='password-input-container'>
+            <form onSubmit={onSubmit}>
+              <label htmlFor="username" className='labels'>Nombre de usuario</label>
               <input
-                type={showPassword ? "text" : "password"}
-                {...register("password", { required: true, minLength: 4 })}
+                type='text'
+                {...register("username", { required: true, minLength: 3 })}
                 className='inputsR'
-                placeholder='Contraseña'
-                id='password'
-                maxLength={30}
+                placeholder='Ej: John 10'
+                id='username'
+                maxLength={20}
               />
-              <img
-                src={showPassword ? ojoAbierto : ojoCerrado}
-                alt={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
-                className='password-toggle-icon'
-                onClick={() => setShowPassword(!showPassword)}
-              />
-            </div>
-            {errors.password && (
-              <p className='texto-validacion'>La contraseña debe ser mayor a 4 caracteres</p>
-            )}
+              {errors.username && (
+                <p className='texto-validacion'>El nombre de usuario es obligatorio</p>
+              )}
 
-            <label htmlFor="confirmPassword" className='labels'>Confirmar contraseña ↓</label>
-            <div className='password-input-container'>
+              <label htmlFor="email" className='labels'>Correo eletrónico</label>
               <input
-                type={showConfirmPassword ? "text" : "password"}
-                {...register("passwordConfirmation", { required: true })}
+                type='email'
+                {...register("email", { required: true })}
                 className='inputsR'
-                placeholder='Confirmar contraseña'
-                id='confirmPassword'
-                maxLength={30}
+                placeholder='ejemplo@correo.com'
+                id='email'
+                maxLength={60}
               />
-              <img
-                src={showConfirmPassword ? ojoAbierto : ojoCerrado}
-                alt={showConfirmPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
-                className='password-toggle-icon'
-                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-              />
-            </div>
-            {errors.passwordConfirmation && (
-              <p className='texto-validacion'>{errors.passwordConfirmation.message}</p>
-            )}
+              {errors.email && (
+                <p className='texto-validacion'>El email es obligatorio</p>
+              )}
 
-            <button type='submit' className='boton-login'>
-              <span></span><span></span><span></span><span></span>
-              Registrarme
-            </button>
-          </form>
+              <label htmlFor="password" className='labels'>Contraseña</label>
+              <div className='password-input-container'>
+                <input
+                  type={showPassword ? "text" : "password"}
+                  {...register("password", { required: true, minLength: 4 })}
+                  className='inputsR'
+                  placeholder='••••••••'
+                  id='password'
+                  maxLength={30}
+                />
+                <div
+                  className='react-icon-password'
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? <FaEyeSlash /> : <FaEye />}
+                </div>
+              </div>
+              {errors.password && (
+                <p className='texto-validacion'>La contraseña debe ser mayor a 4 caracteres</p>
+              )}
 
-          <p className='texto-loginR'>
-            Ya tienes una cuenta? <Link to='/login' className='link-login'>Ingresa aquí</Link>
-          </p>
+              <label htmlFor="confirmPassword" className='labels'>Confirmar contraseña</label>
+              <div className='password-input-container'>
+                <input
+                  type={showConfirmPassword ? "text" : "password"}
+                  {...register("passwordConfirmation", { required: true })}
+                  className='inputsR'
+                  placeholder='••••••••'
+                  id='confirmPassword'
+                  maxLength={30}
+                />
+                <div
+                  className='react-icon-password'
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                >
+                  {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
+                </div>
+              </div>
+              {errors.passwordConfirmation && (
+                <p className='texto-validacion'>{errors.passwordConfirmation.message}</p>
+              )}
+
+              <button type='submit' className='boton-login'>
+                Registrarme
+              </button>
+            </form>
+
+            <p className='texto-loginR'>
+              Ya tienes una cuenta? <Link to='/login' className='link-login'>Ingresa aquí</Link>
+            </p>
+          </div>
         </div>
       </div>
       <Footer />
