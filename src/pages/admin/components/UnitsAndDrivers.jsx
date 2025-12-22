@@ -94,7 +94,6 @@ const UnitsAndDrivers = () => {
     };
 
     const handleEditDriver = async (driver) => {
-        // Generate options for units
         const unitOptions = unidades.map(u => `<option value="${u.interno}" ${driver.unidad_asignada === u.interno ? 'selected' : ''}>Int. ${u.interno} - ${u.modelo}</option>`).join('');
 
         const { value: formValues } = await Swal.fire({
@@ -141,8 +140,44 @@ const UnitsAndDrivers = () => {
         }
     };
 
+    const handleEditUnit = async (unit) => {
+        const { value: formValues } = await Swal.fire({
+            title: `Editar Unidad Interno #${unit.interno}`,
+            html: `
+                <div class="text-start">
+                    <label class="form-label text-white-50 small text-uppercase fw-bold">Estado</label>
+                    <select id="swal-unit-status" class="form-select bg-dark text-white border-secondary">
+                        <option value="activo" ${unit.status === 'activo' || !unit.status ? 'selected' : ''}>Activo</option>
+                        <option value="inactivo" ${unit.status === 'inactivo' ? 'selected' : ''}>Inactivo</option>
+                    </select>
+                </div>
+            `,
+            focusConfirm: false,
+            showCancelButton: true,
+            confirmButtonText: 'Guardar Cambios',
+            cancelButtonText: 'Cancelar',
+            ...darkSwal,
+            preConfirm: () => {
+                return {
+                    status: document.getElementById('swal-unit-status').value
+                };
+            }
+        });
+
+        if (formValues) {
+            try {
+                await updateDoc(doc(db, 'unidades', unit.id), {
+                    status: formValues.status
+                });
+                Swal.fire({ title: 'Guardado', text: 'Estado de la unidad actualizado.', icon: 'success', ...darkSwal });
+            } catch (error) {
+                console.error("Error updating unit:", error);
+                Swal.fire({ title: 'Error', text: 'No se pudieron guardar los cambios.', icon: 'error', ...darkSwal });
+            }
+        }
+    };
+
     const handleAddUnit = () => Swal.fire({ title: 'Información', text: 'Funcionalidad de agregar unidad en desarrollo', icon: 'info', ...darkSwal });
-    const handleEditUnit = (unit) => Swal.fire({ title: 'Información', text: 'Funcionalidad de editar unidad en desarrollo', icon: 'info', ...darkSwal });
     const handleAddDriver = () => Swal.fire({ title: 'Información', text: 'Funcionalidad de agregar chofer en desarrollo', icon: 'info', ...darkSwal });
 
     if (error) {
@@ -203,6 +238,7 @@ const UnitsAndDrivers = () => {
                                             <th>Seguro Comp.</th>
                                             <th>Póliza</th>
                                             <th>Vigencia</th>
+                                            <th>Estado</th>
                                             <th className="text-center">Acciones</th>
                                         </tr>
                                     </thead>
@@ -219,8 +255,15 @@ const UnitsAndDrivers = () => {
                                                 <td className="text-white-50 small">{unit.seguro?.poliza}</td>
                                                 <td>{unit.seguro?.vigencia}</td>
                                                 <td className="text-center">
+                                                    {unit.status === 'inactivo' ? (
+                                                        <span className="badge bg-danger">Inactivo</span>
+                                                    ) : (
+                                                        <span className="badge bg-success">Activo</span>
+                                                    )}
+                                                </td>
+                                                <td className="text-center">
                                                     <div className="d-flex justify-content-center gap-2">
-                                                        <button className="btn btn-sm btn-outline-primary" onClick={() => handleEditUnit(unit)} title="Editar">
+                                                        <button className="btn btn-sm btn-outline-primary" onClick={() => handleEditUnit(unit)} title="Editar Estado">
                                                             <FaEdit />
                                                         </button>
                                                         <button className="btn btn-sm btn-outline-danger" onClick={() => handleDeleteUnit(unit.id, unit.interno)} title="Eliminar">
@@ -232,7 +275,7 @@ const UnitsAndDrivers = () => {
                                         ))}
                                         {unidades.length === 0 && (
                                             <tr>
-                                                <td colSpan="10" className="text-center py-5 text-white">
+                                                <td colSpan="11" className="text-center py-5 text-white">
                                                     <h5 className="text-white">No hay unidades registradas.</h5>
                                                     <p className="text-white-50">Use el botón "Nueva Unidad" para agregar.</p>
                                                 </td>
