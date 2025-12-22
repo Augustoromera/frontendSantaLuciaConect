@@ -18,6 +18,8 @@ import EditParadaModal from '../../components/admin-components/EditParadasModal'
 import AdminContactScreen from './AdminContactScreen';
 import { ScheduleMatrix } from './components/ScheduleMatrix';
 import { TariffMatrix } from './components/TariffMatrix';
+import UnitsAndDrivers from './components/UnitsAndDrivers';
+
 import { seedDatabase } from '../../utils/seedFirestore';
 import { getRutas } from '../../services/scheduleService';
 import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc, query, where } from 'firebase/firestore';
@@ -633,8 +635,7 @@ export const AdminScreen = () => {
 
                     {activeSection === 'unidades' && (
                         <div className="section-container">
-                            <h3>Gestión de Unidades y Choferes</h3>
-                            <p>Funcionalidad en desarrollo...</p>
+                            <UnitsAndDrivers />
                         </div>
                     )}
 
