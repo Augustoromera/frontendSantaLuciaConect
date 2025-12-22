@@ -1,10 +1,11 @@
+import { useState, useEffect } from 'react';
 import { NavDropdown, Nav } from 'react-bootstrap';
 import Container from 'react-bootstrap/Container';
 import Navbar from 'react-bootstrap/Navbar';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import "../pages/styles/header.css";
-import logoTipo from '../assets/images/logo/logo2.png'
+import logoTipo from '../assets/images/logo/logo.png.png'
 import swal from 'sweetalert2';
 import { width } from '@fortawesome/free-brands-svg-icons/fa42Group';
 
@@ -37,11 +38,28 @@ function Header({ navBarClass }) {
   };
   const navLinkClass = navBarClass;
 
-  const dinamicNav = location.pathname === '/' ? 'navbarhome' : 'navbarmain';
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const isScrolled = window.scrollY > 50;
+      if (isScrolled !== scrolled) {
+        setScrolled(isScrolled);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, [scrolled]);
+
+  const dinamicNav = location.pathname === '/' ? (scrolled ? 'navbarhome scrolled' : 'navbarhome') : 'navbarmain';
 
   if (user === null) {
     return (
-      <Navbar expand="lg" data-bs-theme="dark" className={`navbarhome ${dinamicNav} ${navLinkClass}`} >
+      <Navbar expand="lg" data-bs-theme="dark" className={`${dinamicNav}`} >
 
         <Container>
           <Navbar.Brand >
@@ -70,7 +88,7 @@ function Header({ navBarClass }) {
     );
   }
   return (
-    <Navbar expand="lg" data-bs-theme="dark" className={`navbarhome ${dinamicNav} ${navLinkClass}`} >
+    <Navbar expand="lg" data-bs-theme="dark" className={`${dinamicNav}`} >
       <Container>
         <Navbar.Brand as={Link} to="/">
           <img

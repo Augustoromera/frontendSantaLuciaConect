@@ -1,10 +1,11 @@
 @import url("https://fonts.googleapis.com/css2?family=Just+Another+Hand&family=Kanit:wght@500&family=Open+Sans:ital,wght@0,400;1,300&family=Poppins&family=Raleway:wght@700&display=swap");
+
 img {
 	object-fit: cover !important;
 }
 
-body {
-}
+body {}
+
 hr {
 	border: 2px solid #004aad;
 	margin: 20px 0;
@@ -38,18 +39,22 @@ hr {
 .banner {
 	height: 100vh;
 	position: relative;
-	background-position: center bottom; /* Ahora también enfocado abajo */
+	background-position: center bottom;
+	/* Ahora también enfocado abajo */
 	background-size: cover;
 	background-repeat: no-repeat;
 	/* background-attachment: fixed; */
 	background-size: cover;
 }
+
 .banner-1 {
 	background-position: top center;
 }
+
 .banner-3.mobile {
 	background-position: center;
 }
+
 .banner-body {
 	position: relative;
 	display: flex;
@@ -61,9 +66,11 @@ hr {
 	font-family: "poppinsregular";
 	text-align: center;
 }
+
 .mobile {
 	background-position: top center;
 }
+
 .container-web-page {
 	padding-top: 50px;
 	padding-bottom: 30px;
@@ -74,22 +81,35 @@ hr {
 	flex-direction: column;
 	align-items: center;
 	text-align: center;
+	color: #ffffff;
+	/* Ensure text is white */
+}
+
+.service-item p {
+	color: #e0e0e0;
+	/* Slightly off-white for description */
 }
 
 .service-icon {
 	width: 150px;
 	height: 150px;
+	color: #ffffff;
+	/* Icon color white */
+	filter: drop-shadow(0 0 5px rgba(0, 0, 0, 0.5));
+	/* Better visibility */
 }
 
 .home-menus {
 	margin-top: 1rem;
 	padding: 1rem;
 }
+
 .home-menus-tituloMenu {
 	font-weight: 300;
 	font-size: 2rem;
 	margin-left: 0;
 }
+
 .home-contenedor-cards-menus {
 	display: flex;
 	flex-wrap: wrap;
@@ -103,11 +123,13 @@ hr {
 	border-radius: 15px;
 	box-shadow: 0px 0px 13px 0px rgba(0, 0, 0, 0.23);
 }
+
 .home-imagen-menus {
 	width: 100%;
 	aspect-ratio: 1/1;
 	object-fit: cover;
 }
+
 .home-contenedor-info-menus {
 	padding: 0.3rem;
 	display: flex;
@@ -115,6 +137,7 @@ hr {
 	justify-content: space-between;
 	align-items: center;
 }
+
 .home-nombre-menus {
 	margin: 0;
 	font-size: 1.5rem;
@@ -178,6 +201,7 @@ hr {
 		width: 100%;
 		height: 440px;
 	}
+
 	.home-nombre-menus {
 		margin: 0;
 		font-size: 1.2rem;
@@ -193,6 +217,7 @@ hr {
 		width: 100%;
 		height: 400px;
 	}
+
 	.home-nombre-menus {
 		margin: 0;
 		font-size: 0.9rem;
@@ -208,6 +233,7 @@ hr {
 		width: 100%;
 		height: 465px;
 	}
+
 	.home-nombre-menus {
 		margin: 0;
 		font-size: 1.5rem;
@@ -217,11 +243,13 @@ hr {
 		margin-top: 0.2rem;
 	}
 }
+
 .my-img {
 	object-fit: cover;
 	object-position: right;
 	height: 100%;
 }
+
 .my-button-buy {
 	background-color: #004aad;
 	cursor: pointer;
@@ -257,13 +285,16 @@ hr {
 	0% {
 		background-position: 0 0;
 	}
+
 	50% {
 		background-position: 400% 0;
 	}
+
 	100% {
 		background-position: 0 0;
 	}
 }
+
 .banner-control .fa-solid {
 	font-size: 44px;
 	color: #fff;
@@ -274,6 +305,7 @@ hr {
 .banner-control .fa-solid:hover {
 	color: #004aad;
 }
+
 .banner-container-text {
 	display: none;
 	position: absolute;
@@ -281,6 +313,7 @@ hr {
 	bottom: 15%;
 	text-align: center;
 }
+
 .banner-text1,
 .banner-text2 {
 	font-size: 24px;
@@ -303,6 +336,7 @@ hr {
 	bottom: 8%;
 	z-index: 1;
 }
+
 body::before {
 	content: "";
 	position: fixed;
@@ -310,111 +344,131 @@ body::before {
 	left: 0;
 	width: 100%;
 	height: 100%;
-	background-color: #091a44b3; /* Negro al 50% de opacidad = reduce brillo */
+	background-color: #091a44b3;
+	/* Negro al 50% de opacidad = reduce brillo */
 	z-index: -1;
 }
+
 @media (min-width: 720px) and (max-width: 1920px) {
 	.button-container-banner {
 		display: block;
 	}
+
 	.banner-container-text {
 		display: block;
 	}
 }
 
-@media (max-width: 480px) {
-	.button-container-banner {
-		display: block;
-		position: absolute;
-		left: 47%;
-		transform: translateX(-50%);
-		bottom: 8%;
-	}
-}
-@media (min-width: 480px) and (max-width: 721px) {
-	.button-container-banner {
-		display: block;
-		position: absolute;
-		left: 50%;
-		transform: translateX(-50%);
-		bottom: 8%;
-	}
-}
-@media (max-width: 720px) {
-	body {
-		background-image: url("/src/assets/images/fondos/fondo1.jpg");
-		color: #fff;
-		min-height: 100vh !important;
-		margin: 0;
-		padding: 0;
-		background-attachment: fixed;
-	}
-	body::before {
-		content: "";
-		position: fixed;
-		top: 0;
-		left: 0;
-		width: 100%;
-		height: 100%;
-		background-color: rgba(0, 0, 0, 0.5);
-		z-index: -1;
+/* Mobile Refactor */
+@media (max-width: 768px) {
+	.banner {
+		display: flex;
+		flex-direction: column;
+		justify-content: flex-end;
+		/* Push content to bottom */
+		align-items: center;
+		padding-bottom: 80px;
+		/* Space for buttons */
+		background-attachment: scroll;
+		/* Fix mobile background scroll issue */
 	}
 
-	.banner-container-text {
-		border-radius: 10px;
-		background-color: rgb(0, 0, 0, 0.8);
-		backdrop-filter: blur(4px) !important;
-		display: block !important;
-		right: 20%;
-		left: 20%;
-		bottom: 24%;
-		z-index: 999;
-	}
-	.banner-text1 {
-		text-shadow: 0 0 10px rgba(0, 0, 0, 1);
-	}
-	.banner-text2 {
-		display: none;
-	}
-}
-@media (min-width: 721px) {
 	body {
-		background-image: url("/src/assets/images/fondos/fondo1.jpg");
-		background-position: center bottom; /* Ahora también enfocado abajo */
-		background-size: cover;
-		background-repeat: no-repeat;
-		background-attachment: fixed; /* Efecto parallax */
+		/* Remove conflicting body background on mobile */
+		background-image: none;
 		min-height: 100vh;
-		margin: 0;
-		padding: 0;
-		color: #fff;
+	}
+
+	/* Overlay fix */
+	body::before {
+		background-color: rgba(0, 0, 0, 0.3);
+	}
+
+	.banner-container-text {
+		position: relative;
+		/* No more absolute */
+		display: block !important;
+		right: auto;
+		left: auto;
+		bottom: auto;
+		width: 90%;
+		border-radius: 15px;
+		background-color: rgba(0, 0, 0, 0.6);
+		/* Slightly more transparent */
+		backdrop-filter: blur(8px) !important;
+		padding: 20px;
+		margin-bottom: 20px;
+		z-index: 10;
+		text-align: center;
+	}
+
+	.banner-text1 {
+		font-size: 1.8rem;
+		margin-bottom: 10px;
+		text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+		text-align: center;
+	}
+
+	.banner-text2 {
+		display: block;
+		/* Show subtitle on mobile too */
+		font-size: 1rem;
+		text-align: center;
+	}
+
+	.button-container-banner {
+		position: absolute;
+		/* Keep buttons fixed at bottom or relative? */
+		/* Let's make them relative to flow after text */
+		position: relative;
+		display: flex;
+		flex-direction: column;
+		gap: 15px;
+		right: auto;
+		left: auto;
+		bottom: auto;
+		transform: none;
+		width: 90%;
+		margin-bottom: 40px;
+	}
+
+	.button-container-banner button {
+		width: 100%;
 	}
 }
-@media (min-width: 1920px) {
-	.button-container-banner {
-		display: block;
-		position: absolute;
-		right: 25%;
-		bottom: 10%;
-		z-index: 1;
-	}
+
+@media (min-width: 769px) {
+
+	/* Desktop styles remain mostly same but ensured */
 	.banner-container-text {
 		display: block;
 		position: absolute;
 		right: 15%;
 		bottom: 15%;
-		text-align: center;
+		text-align: left;
+		/* Desktop aligned right usually */
+		max-width: 600px;
+	}
+
+	.button-container-banner {
+		position: absolute;
+		right: 15%;
+		bottom: 5%;
 	}
 }
+
 .banner-control {
 	text-shadow: 2px 2px 4px rgba(0, 0, 0, 1);
 }
+
 .car-cont {
 	cursor: pointer;
 }
+
 .button-banner {
 	font-family: "Kanit", sans-serif;
 }
+
 /* Estilos generales */
 .quienes-somos-container {
 	max-width: 1200px;
@@ -423,23 +477,33 @@ body::before {
 	font-family: "Arial", sans-serif;
 	color: #ffffff;
 }
-label {
-	color: #2c3e50;
-}
 
-h1 {
-	font-size: 2.5rem;
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
 	color: #ffffff;
-	margin-bottom: 1.5rem;
 	text-align: center;
 }
 
 h2 {
 	font-size: 2rem;
-	color: #ffffff;
 	margin: 2rem 0 1rem;
-	text-align: center;
 	text-transform: uppercase;
+}
+
+label {
+	color: #ffffff;
+	/* Default to white for dark backgrounds */
+}
+
+/* Ensure form labels stay dark on white background */
+.viaje-form label,
+.form-group label,
+.form-label {
+	color: #2c3e50;
 }
 
 p {
@@ -454,6 +518,7 @@ p {
 	background-color: #e0e0e0;
 	margin: 2rem 0;
 }
+
 /* Formulario de viaje - Versión mejorada */
 .viaje-form {
 	background-color: #ffffff;
@@ -488,9 +553,11 @@ p {
 .form-group:nth-child(1) {
 	animation-delay: 0.1s;
 }
+
 .form-group:nth-child(2) {
 	animation-delay: 0.2s;
 }
+
 .form-group:nth-child(3) {
 	animation-delay: 0.3s;
 }
@@ -604,12 +671,10 @@ p {
 	left: 0;
 	width: 100%;
 	height: 100%;
-	background: linear-gradient(
-		120deg,
-		rgba(255, 255, 255, 0) 20%,
-		rgba(255, 255, 255, 0.2) 50%,
-		rgba(255, 255, 255, 0) 80%
-	);
+	background: linear-gradient(120deg,
+			rgba(255, 255, 255, 0) 20%,
+			rgba(255, 255, 255, 0.2) 50%,
+			rgba(255, 255, 255, 0) 80%);
 	transform: translateX(-100%);
 	transition: transform 0.6s ease;
 }
@@ -630,6 +695,7 @@ label[name="etiquetahorario"] {
 		opacity: 0;
 		transform: translateY(-30px);
 	}
+
 	to {
 		opacity: 1;
 		transform: translateY(0);
@@ -641,6 +707,7 @@ label[name="etiquetahorario"] {
 		opacity: 0;
 		transform: translateY(15px);
 	}
+
 	to {
 		opacity: 1;
 		transform: translateY(0);
@@ -651,6 +718,7 @@ label[name="etiquetahorario"] {
 	from {
 		opacity: 0;
 	}
+
 	to {
 		opacity: 1;
 	}
@@ -661,6 +729,7 @@ label[name="etiquetahorario"] {
 	0% {
 		background-position: -200% 0;
 	}
+
 	100% {
 		background-position: 200% 0;
 	}
@@ -690,6 +759,7 @@ label[name="etiquetahorario"] {
 		font-size: 1.5rem;
 	}
 }
+
 /* Estilos generales del formulario */
 .viaje-form {
 	max-width: 800px;
@@ -753,11 +823,11 @@ label[name="etiquetahorario"] {
 	transition: transform 0.3s;
 }
 
-.toggle-input:checked + .toggle-slider {
+.toggle-input:checked+.toggle-slider {
 	background-color: #28a745;
 }
 
-.toggle-input:checked + .toggle-slider:before {
+.toggle-input:checked+.toggle-slider:before {
 	transform: translateX(26px);
 }
 
@@ -900,6 +970,7 @@ label[name="etiquetahorario"] {
 		padding: 12px;
 	}
 }
+
 .btn-azul {
 	background-color: #004aad;
 	border-color: #004aad;
@@ -911,6 +982,7 @@ label[name="etiquetahorario"] {
 	border-color: #003b8a;
 	color: white;
 }
+
 /* ===== Scrollbar Personalizada ===== */
 /* Funciona en Chrome, Edge, Safari */
 ::-webkit-scrollbar {
@@ -919,17 +991,20 @@ label[name="etiquetahorario"] {
 }
 
 ::-webkit-scrollbar-track {
-	background: #1a1a1a !important; /* Fondo de la pista */
+	background: #1a1a1a !important;
+	/* Fondo de la pista */
 }
 
 ::-webkit-scrollbar-thumb {
-	background: #004aad !important; /* Color del thumb (azul corporativo) */
+	background: #004aad !important;
+	/* Color del thumb (azul corporativo) */
 	border-radius: 5px !important;
 	border: 2px solid #1a1a1a !important;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-	background: #003b8a !important; /* Azul más oscuro al hover */
+	background: #003b8a !important;
+	/* Azul más oscuro al hover */
 }
 
 /* Para Firefox */

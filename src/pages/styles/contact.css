@@ -1,7 +1,22 @@
-.container-fluid.micontenedor.principal{
+.container-fluid.micontenedor.principal {
     padding-top: 106px !important;
 }
-.container-fluid.micontenedor{
+
+.container-fluid.micontenedor {
     padding-top: 10px !important;
     padding-bottom: 10px !important;
+}
+
+/* Force white text for Contact page content */
+.principal h1,
+.principal h2,
+.principal h3,
+.principal h5,
+.principal p {
+    color: #ffffff !important;
+}
+
+/* Form labels on the contact page should also be white if the background is dark */
+.principal form label {
+    color: #ffffff !important;
 }
