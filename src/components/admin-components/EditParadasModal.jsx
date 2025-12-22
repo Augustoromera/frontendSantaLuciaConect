@@ -2,11 +2,12 @@ import React, { useState, useEffect } from 'react';
 import Modal from 'react-modal';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../../pages/styles/modalEditarParada.css';
-import pruebaApi from '../../api/pruebaApi';
 import { Spinner, Alert } from 'react-bootstrap';
+import { doc, updateDoc } from 'firebase/firestore';
+import { db } from '../../firebase/config';
 
 const EditParadaModal = ({ isOpen, onRequestClose, parada, onRecargarParadas }) => {
-  const [formData, setFormData] = useState({ nombre: '', ubicacion: '', orden: 0 });
+  const [formData, setFormData] = useState({ nombre: '', orden: 0 });
   const [mensaje, setMensaje] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -15,7 +16,6 @@ const EditParadaModal = ({ isOpen, onRequestClose, parada, onRecargarParadas }) 
     if (parada) {
       setFormData({
         nombre: parada.nombre || '',
-        ubicacion: parada.ubicacion || '',
         orden: parada.orden || 0,
       });
     }
@@ -36,11 +36,14 @@ const EditParadaModal = ({ isOpen, onRequestClose, parada, onRecargarParadas }) 
     setError(null);
 
     try {
-      await pruebaApi.put('/admin/editarParada', {
-        _id: parada._id, 
+      if (!parada || !parada._id) {
+        throw new Error("ID de parada no encontrado");
+      }
+
+      const paradaRef = doc(db, "paradas", parada._id);
+      await updateDoc(paradaRef, {
         nombre: formData.nombre,
-        ubicacion: formData.ubicacion,
-        orden: formData.orden,
+        orden: formData.orden
       });
 
       setMensaje('Parada editada correctamente');
@@ -48,7 +51,7 @@ const EditParadaModal = ({ isOpen, onRequestClose, parada, onRecargarParadas }) 
         setMensaje(null);
         onRequestClose();
 
-        if(onRecargarParadas){
+        if (onRecargarParadas) {
           onRecargarParadas()
         }
       }, 1000);
@@ -86,17 +89,7 @@ const EditParadaModal = ({ isOpen, onRequestClose, parada, onRecargarParadas }) 
           value={formData.nombre}
           onChange={handleChange}
           required
-          className="custom-input text-center"
-        />
-
-        <label className="text-white p-2">Ubicación:</label>
-        <input
-          type="text"
-          name="ubicacion"
-          value={formData.ubicacion}
-          onChange={handleChange}
-          required
-          className="custom-input text-center"
+          className="custom-input text-center mb-3"
         />
 
         <label className="text-white p-2">Orden:</label>
@@ -106,7 +99,7 @@ const EditParadaModal = ({ isOpen, onRequestClose, parada, onRecargarParadas }) 
           value={formData.orden}
           onChange={handleChange}
           required
-          className="custom-input text-center"
+          className="custom-input text-center mb-4"
         />
 
         <div className="modal-botones">

@@ -1,16 +1,12 @@
-@import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&display=swap");
-
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: "Open Sans", sans-serif;
-}
+@import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap");
 
 .pie-pagina {
     width: 100%;
-    background-color: #000;
-    z-index: 1000;
+    background: linear-gradient(to top, #000000, #101010);
+    color: #efefef;
+    font-family: "Open Sans", sans-serif;
+    padding-top: 2rem;
+    box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.5);
 }
 
 .pie-pagina .grupo-1 {
@@ -19,85 +15,181 @@
     margin: auto;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    grid-gap: 20px;
-    padding: 25px 0px;
+    grid-gap: 50px;
+    padding: 45px 20px;
 }
 
-.pie-pagina .grupo-1 .box figure {
+/* Column 1: Logo & Description */
+.pie-pagina .box figure {
     width: 100%;
-    height: 100%;
     display: flex;
-    justify-content: center;
-    align-items: center;
+    justify-content: flex-start;
+    /* Align logo left */
+    margin-bottom: 1rem;
 }
 
-.pie-pagina .grupo-1 .box figure img {
-    width: 250px;
+.pie-pagina .box .footer-logo {
+    width: 150px;
+    height: auto;
+    transition: transform 0.3s ease;
 }
 
-.pie-pagina .grupo-1 .box h2 {
-    color: #fff;
+.pie-pagina .box .footer-logo:hover {
+    transform: scale(1.05);
+}
+
+.footer-description {
+    color: #bbbbbb;
+    font-size: 0.9rem;
+    line-height: 1.6;
+}
+
+/* Headers */
+.pie-pagina .box h2 {
+    color: #ffffff;
     margin-bottom: 25px;
-    font-size: 20px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    position: relative;
+    padding-bottom: 10px;
 }
 
-.pie-pagina .grupo-1 .box p {
-    color: #efefef;
-    margin-bottom: 10px;
+.pie-pagina .box h2::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 40px;
+    height: 3px;
+    background-color: #004aad;
 }
 
-.pie-pagina .grupo-1 .red-social a {
-    display: inline-block;
+/* Navigation Links */
+.footer-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.footer-link {
+    color: #bbbbbb;
     text-decoration: none;
+    font-size: 0.95rem;
+    transition: color 0.3s ease, padding-left 0.3s ease;
+}
+
+.footer-link:hover {
+    color: #004aad;
+    padding-left: 5px;
+    /* Slight movement on hover */
+}
+
+/* Contact Info */
+.contact-info p {
+    color: #bbbbbb;
+    margin-bottom: 10px;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.icon-small {
+    color: #004aad;
+}
+
+/* Social Icons */
+.pie-pagina .red-social {
+    display: flex;
+    gap: 15px;
+    margin-top: 1rem;
+}
+
+.pie-pagina .red-social .social-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     width: 45px;
     height: 45px;
-    line-height: 45px;
-    color: #004aad; /* Cambiado de #ffc107 a #004aad */
-    margin-right: 10px;
-    background-color: #000;
-    text-align: center;
-    border-radius: 50%;
-    transition: all 300ms ease;
-}
-
-.logosRedSocial {
-    margin-left: 5rem;
-}
-
-.pie-pagina .grupo-1 .red-social a:hover {
-    background-color: #004aad; /* Cambiado de #ffc107 a #004aad */
-    color: #000;
-    transition: all 300ms ease;
-}
-
-.pie-pagina .grupo-2 {
-    background-color: #000000;
-    padding: 15px 10px;
-    text-align: center;
+    text-decoration: none;
     color: #ffffff;
-    border-top: 3px solid #004aad; /* Cambiado de #ffc107 a #004aad */
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    font-size: 1.2rem;
+    transition: all 0.3s ease;
+}
+
+.pie-pagina .red-social .social-icon:hover {
+    background-color: #004aad;
+    color: #ffffff;
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0, 74, 173, 0.4);
+}
+
+/* Copyright Bar */
+.pie-pagina .grupo-2 {
+    background-color: #050505;
+    padding: 20px 10px;
+    text-align: center;
+    color: #888888;
+    border-top: 1px solid #222;
 }
 
 .pie-pagina .grupo-2 small {
-    font-size: 15px;
+    font-size: 0.85rem;
 }
 
-.pie-pagina .grupo-1 .box figure img {
-    width: 60px;
-    height: auto;
+.pie-pagina .grupo-2 b {
+    color: #ffffff;
 }
 
-.pie-pagina .grupo-1 .box figure img:hover {
-    transform: scale(1.3);
-    filter: brightness(1.5);
-    transition: all 300ms ease;
+.developer-link {
+    color: #004aad;
+    font-weight: 600;
+    text-decoration: none;
+    transition: color 0.3s ease;
 }
 
+.developer-link:hover {
+    color: #ffffff;
+    text-decoration: underline;
+}
+
+/* Resets - Ensure no global pollution but clean footer box sizing */
+.pie-pagina * {
+    box-sizing: border-box;
+}
+
+/* Responsive */
 @media screen and (max-width: 800px) {
     .pie-pagina .grupo-1 {
-        width: 90%;
-        grid-template-columns: repeat(1, 1fr);
+        grid-template-columns: 1fr;
         grid-gap: 30px;
-        padding: 35px 0px;
+        padding: 30px 20px;
+        text-align: center;
+    }
+
+    .pie-pagina .box figure,
+    .pie-pagina .red-social,
+    .pie-pagina .box h2::after {
+        justify-content: center;
+        /* Center content on mobile */
+        margin: 0 auto 1rem auto;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+
+    /* Override transform on hover for centered element to avoid conflict */
+    .pie-pagina .box h2::after {
+        transform: translateX(-50%);
+    }
+
+    .footer-nav {
+        align-items: center;
+    }
+
+    .contact-info p {
+        justify-content: center;
     }
 }
