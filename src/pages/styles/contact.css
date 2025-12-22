@@ -16,7 +16,125 @@
     color: #ffffff !important;
 }
 
-/* Form labels on the contact page should be dark for readability on white backgrounds */
-.principal form label {
-    color: #000000 !important;
+/* Professional Contact Styles */
+
+/* Wrapper */
+.contact-section-wrapper {
+    padding: 2rem 0;
+}
+
+/* Glassmorphism Card for Form */
+.contact-form-card {
+    background: rgba(20, 20, 20, 0.6);
+    /* Semi-transparent dark bg */
+    backdrop-filter: blur(15px);
+    /* Glass effect */
+    -webkit-backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    padding: 2.5rem;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
+    margin-bottom: 2rem;
+}
+
+/* Text Styles */
+.contact-title {
+    color: #ffffff;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    font-size: 1.8rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.contact-subtitle {
+    color: #cccccc !important;
+    margin-bottom: 2rem;
+}
+
+/* Custom Input Fields */
+.custom-input {
+    background-color: rgba(0, 0, 0, 0.3) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    color: #ffffff !important;
+    border-radius: 10px !important;
+    padding: 0.8rem 1rem !important;
+    font-size: 1rem !important;
+    transition: all 0.3s ease !important;
+}
+
+.custom-input:focus {
+    background-color: rgba(0, 0, 0, 0.5) !important;
+    border-color: #004aad !important;
+    box-shadow: 0 0 0 4px rgba(0, 74, 173, 0.2) !important;
+    outline: none !important;
+}
+
+.custom-input::placeholder {
+    color: rgba(255, 255, 255, 0.4) !important;
+}
+
+/* Labels */
+.form-label-custom {
+    color: #bbbbbb !important;
+    font-weight: 500;
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+/* Submit Button */
+.btn-submit-contact {
+    background: linear-gradient(135deg, #004aad 0%, #0066cc 100%) !important;
+    border: none !important;
+    color: white !important;
+    padding: 0.8rem 2rem !important;
+    border-radius: 10px !important;
+    font-weight: 600 !important;
+    font-size: 1.1rem !important;
+    letter-spacing: 0.5px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+    width: 100%;
+    margin-top: 1rem;
+    box-shadow: 0 4px 15px rgba(0, 74, 173, 0.4);
+}
+
+.btn-submit-contact:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 74, 173, 0.6);
+}
+
+.btn-submit-contact:active {
+    transform: translateY(0);
+}
+
+/* Map Image Styling */
+.contact-image {
+    border-radius: 20px !important;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5) !important;
+    object-fit: cover;
+    height: 100%;
+    min-height: 400px;
+}
+
+/* Responsive Overrides */
+@media (max-width: 768px) {
+    .micontenedor.principal {
+        padding-top: 120px !important;
+        /* Ensure header doesn't cover */
+    }
+
+    .contact-form-card {
+        padding: 1.5rem;
+        margin-top: 1rem;
+    }
+
+    .contact-title {
+        font-size: 1.5rem;
+        text-align: center;
+    }
+
+    .btn-submit-contact {
+        width: 100%;
+    }
 }
