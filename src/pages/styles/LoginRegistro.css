@@ -40,9 +40,10 @@ body::before {
   /* Important for split view borders */
 }
 
-/* Branding Section (Left Side) - Hidden on Mobile by default */
+/* Branding Section (Left Side) - Now Visible on Mobile */
 .login-branding {
-  display: none;
+  display: flex;
+  /* Make visible on mobile */
   flex: 1;
   background: linear-gradient(135deg, rgba(0, 74, 173, 0.4) 0%, rgba(0, 30, 80, 0.6) 100%);
   flex-direction: column;
@@ -50,7 +51,12 @@ body::before {
   align-items: center;
   padding: 40px;
   text-align: center;
-  border-right: 1px solid rgba(255, 255, 255, 0.1);
+  /* Border for mobile (bottom part of card) */
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  order: 2;
+  /* Show below content on mobile */
+  min-height: 300px;
+  /* Ensure visibility */
 }
 
 .branding-logo {
@@ -214,7 +220,11 @@ body::before {
 
   .login-branding {
     display: flex;
-    /* Show branding */
+    order: 0;
+    /* Reset order to appear on left */
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
+    border-top: none;
+    min-height: auto;
   }
 
   /* Make sure both sides take equal height if needed, flex handles vertical stretch by default */
