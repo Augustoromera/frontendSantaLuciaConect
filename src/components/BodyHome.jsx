@@ -106,37 +106,64 @@ export const BodyHome = () => {
     <>
 
       {/* ----------------banner---------------- */}
-      <div className={bannerClass} style={{ backgroundImage: `url(${currentBannerImage})` }}>
-        <div className="banner-body">
-          <div className="banner-container-text">
-            <p className='banner-text1'>¿A dónde vas?</p>
-            <p className='banner-text2'>Consultá horarios y tarifas al instante.</p>
-          </div>
-        </div>
-        <div className='button-container-banner d-flex gap-3 justify-content-center flex-wrap d-flex gap-3 justify-content-center flex-wrap'>
-          <button
-            className="btn btn-primary btn-lg rounded-pill shadow fw-bold animate__animated animate__pulse animate__infinite"
-            style={{ fontSize: '1.5rem', backgroundColor: '#004aad', borderColor: '#004aad', padding: '15px 40px' }}
-            onClick={() => navigate('/paneldehorarios')}
-          >
-            <FontAwesomeIcon icon={faTruckFast} className="me-2" />
-            CONSULTAR VIAJE
-          </button>
+      <div className={`banner ${isMobile ? 'mobile' : ''}`}>
 
-          <button
-            className="btn btn-outline-light btn-lg rounded-pill shadow fw-bold"
-            style={{ fontSize: '1.2rem', padding: '15px 30px', borderWidth: '2px' }}
-            onClick={() => navigate('/aboutus')}
-          >
-            CONOCER MÁS
+        {/* Background Images Layer */}
+        {(isMobile ? bannerImagesMini : bannerImages).map((img, index) => (
+          <div
+            key={index}
+            className="banner-bg-layer"
+            style={{
+              backgroundImage: `url(${img})`,
+              opacity: currentImageIndex === index ? 1 : 0,
+              zIndex: 0
+            }}
+          />
+        ))}
+
+        {/* Content Overlay */}
+        <div className="banner-content-wrapper" style={{
+          zIndex: 2,
+          position: 'relative',
+          width: '100%',
+          height: '100%',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'flex-end',
+          alignItems: 'center',
+          paddingBottom: '80px'
+        }}>
+          <div className="banner-body" style={{ height: 'auto', flex: '1', display: 'flex', justifyContent: 'center' }}>
+            <div className="banner-container-text">
+              <p className='banner-text1'>¿A dónde vas?</p>
+              <p className='banner-text2'>Consultá horarios y tarifas al instante.</p>
+            </div>
+          </div>
+          <div className='button-container-banner d-flex gap-3 justify-content-center flex-wrap' style={{ zIndex: 3 }}>
+            <button
+              className="btn btn-primary btn-lg rounded-pill shadow fw-bold animate__animated animate__pulse animate__infinite"
+              style={{ fontSize: '1.5rem', backgroundColor: '#004aad', borderColor: '#004aad', padding: '15px 40px' }}
+              onClick={() => navigate('/paneldehorarios')}
+            >
+              <FontAwesomeIcon icon={faTruckFast} className="me-2" />
+              CONSULTAR VIAJE
+            </button>
+
+            <button
+              className="btn btn-outline-light btn-lg rounded-pill shadow fw-bold"
+              style={{ fontSize: '1.2rem', padding: '15px 30px', borderWidth: '2px' }}
+              onClick={() => navigate('/aboutus')}
+            >
+              CONOCER MÁS
+            </button>
+          </div>
+          <button className="btn btn-link banner-control p-0 border-0" onClick={handlePrevImage} style={{ position: 'absolute', top: '50%', left: '10px', transform: 'translateY(-50%)', zIndex: 10 }}>
+            <i className="fa-solid fa-arrow-left banner-control text-white" style={{ fontSize: '2rem', textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}></i>
+          </button>
+          <button className="btn btn-link banner-control p-0 border-0" onClick={handleNextImage} style={{ position: 'absolute', top: '50%', right: '10px', transform: 'translateY(-50%)', zIndex: 10 }}>
+            <i className="fa-solid fa-arrow-right banner-control text-white" style={{ fontSize: '2rem', textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}></i>
           </button>
         </div>
-        <button className="btn btn-link banner-control" onClick={handlePrevImage}>
-          <i className="fa-solid fa-arrow-left banner-control" style={{ position: 'absolute', top: '50%', left: '20px', transform: 'translateY(-50%)' }}></i>
-        </button>
-        <button className="btn btn-link banner-control" onClick={handleNextImage}>
-          <i className="fa-solid fa-arrow-right banner-control" style={{ position: 'absolute', top: '50%', right: '20px', transform: 'translateY(-50%)' }}></i>
-        </button>
       </div>
       <hr />
 

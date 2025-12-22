@@ -45,6 +45,25 @@ hr {
 	background-repeat: no-repeat;
 	/* background-attachment: fixed; */
 	background-size: cover;
+	position: relative;
+	overflow: hidden;
+	/* Ensure layers don't spill out */
+}
+
+.banner-bg-layer {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-size: cover;
+	background-position: center bottom;
+	background-repeat: no-repeat;
+	transition: opacity 1s ease-in-out;
+}
+
+.banner.mobile .banner-bg-layer {
+	background-position: top center;
 }
 
 .banner-1 {
@@ -460,20 +479,22 @@ body::before {
 @media (min-width: 769px) {
 
 	/* Desktop styles remain mostly same but ensured */
+	/* Desktop styles remain mostly same but ensured */
 	.banner-container-text {
 		display: block;
-		position: absolute;
-		right: 15%;
-		bottom: 15%;
-		text-align: left;
-		/* Desktop aligned right usually */
-		max-width: 600px;
+		position: relative;
+		right: auto;
+		bottom: auto;
+		text-align: center;
+		margin: 0 auto;
+		max-width: 800px;
+		padding-bottom: 20px;
 	}
 
 	.button-container-banner {
-		position: absolute;
-		right: 15%;
-		bottom: 5%;
+		position: relative;
+		right: auto;
+		bottom: auto;
 	}
 }
 
