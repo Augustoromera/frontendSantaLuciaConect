@@ -23,7 +23,7 @@ import AdminNotifications from './components/AdminNotifications';
 
 import { seedDatabase } from '../../utils/seedFirestore';
 import { getRutas } from '../../services/scheduleService';
-import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc, query, where } from 'firebase/firestore';
+import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc, query, where, onSnapshot } from 'firebase/firestore';
 import { db } from '../../firebase/config';
 import AddRouteModal from '../../components/admin-components/AddRouteModal';
 
@@ -44,6 +44,22 @@ export const AdminScreen = () => {
 
     // GUARDA LA PARADA SELECCIONADA Y SE LLAMA EN EL MODAL PARA EDITAR EL NOMBRE Y ORDEN DE UNA PARADA
     const [paradaSeleccionada, setParadaSeleccionada] = useState(null);
+    const [pendingInquiriesCount, setPendingInquiriesCount] = useState(0);
+
+    // Escuchar mensajes pendientes en tiempo real
+    useEffect(() => {
+        const q = query(collection(db, "contacts"), where("status", "!=", "answered"));
+        const unsubscribe = onSnapshot(q, (snapshot) => {
+            // Filtrar adicionalmente si es necesario, o confiar en la query
+            // Nota: "status" podría no existir en documentos viejos, así que treated as pending
+            const pending = snapshot.docs.filter(doc => {
+                const data = doc.data();
+                return data.status !== 'answered';
+            });
+            setPendingInquiriesCount(pending.length);
+        });
+        return () => unsubscribe();
+    }, []);
 
     // MODAL PARA AGREGAR UN USUARIO
     const [isModalOpenUser, setIsModalOpenUser] = useState(false);
@@ -518,8 +534,23 @@ export const AdminScreen = () => {
                             className={`sidebar-item ${activeSection === 'contacto' ? 'active' : ''}`}
                             onClick={() => { setActiveSection('contacto'); setIsMobileMenuOpen(false); }}
                         >
-                            <FaEnvelope className="sidebar-icon" />
-                            <span>Contacto</span>
+                            <div style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                <FaEnvelope className="sidebar-icon" />
+                                <span>Contacto</span>
+                                {pendingInquiriesCount > 0 && (
+                                    <span style={{
+                                        position: 'absolute',
+                                        top: '-5px',
+                                        left: '20px',
+                                        background: 'red',
+                                        color: 'white',
+                                        borderRadius: '50%',
+                                        width: '10px',
+                                        height: '10px',
+                                        boxShadow: '0 0 5px rgba(255,0,0,0.8)'
+                                    }}></span>
+                                )}
+                            </div>
                         </button>
                     </div>
                 </aside>

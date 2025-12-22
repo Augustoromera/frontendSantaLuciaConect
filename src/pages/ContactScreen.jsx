@@ -156,7 +156,8 @@ export const ContactScreen = () => {
       telefono: data.phone,
       asunto: data.subject,
       mensaje: data.message,
-      fecha: new Date().toISOString()
+      fecha: new Date().toISOString(),
+      status: 'pending'
     };
 
     console.log("Datos a enviar:", mappedData);
