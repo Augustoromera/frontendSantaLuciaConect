@@ -11,12 +11,12 @@ import { ContactScreen } from '../pages/ContactScreen'
 import { AboutUs } from '../pages/AboutUs'
 import AppPedidos from "../AppPedidos"
 import { PanelDeHorarios } from "../pages/PanelDeHorarios";
+import SpecialTrips from "../pages/SpecialTrips";
+import TicketPurchase from "../pages/TicketPurchase";
 
 function AppRouter() {
   return (
-    <AuthProvider>
-      <AppLR />
-    </AuthProvider>
+    <AppLR />
   );
 }
 
@@ -33,9 +33,11 @@ function AppLR() {
         <Route path='/aboutus' element={<AboutUs />} />
         <Route path='/paneldehorarios' element={<PanelDeHorarios />} />
         <Route path="/pedidos" element={<AppPedidos />} />
+        <Route path="/viajes-especiales" element={<SpecialTrips />} />
+        <Route path="/compra-abonos" element={<TicketPurchase />} />
 
         <Route element={<ProtectedRoute />}>
-n
+          n
           {/* Ruta ADMIN */}
           <Route path="/admin" element={auth.user?.role === 'admin' ? <AdminScreen /> : <Navigate to="/" />} />
 

@@ -1,118 +1,70 @@
-// AuthContext.jsx
-import { createContext, useState, useContext, useEffect } from "react";
-import { registerRequest, loginRequest, verifyTokenRequest, setAuthToken } from '../api/auth';
-import Cookies from 'js-cookie';
-export const AuthContext = createContext();
+import { createContext, useContext, useEffect, useState } from "react";
+import {
+  onAuthStateChanged,
+  signInWithEmailAndPassword,
+  signOut,
+  createUserWithEmailAndPassword
+} from "firebase/auth";
+import { auth, db } from "../firebase/config";
+import { doc, getDoc, setDoc } from "firebase/firestore";
+
+const AuthContext = createContext();
 
 export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (!context) throw new Error("useAuth debería estar dentro de AuthProvider");
-  return context;
-};
+  return useContext(AuthContext);
+}
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [errors, setErrors] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    if (errors && errors.length > 0) {
-      const timer = setTimeout(() => {
-        setErrors([]);
-      }, 5000);
-      return () => clearTimeout(timer);
-    }
-  }, [errors]);
+  const login = (email, password) => {
+    return signInWithEmailAndPassword(auth, email, password);
+  }
 
-  const signUp = async (user) => {
-    try {
-      const res = await registerRequest(user);
-      if (res.status === 200) {
-        const token = res.data.token;
-        setAuthToken(token);
-        Cookies.set("token", res.data.token);
-        setIsAuthenticated(true);
-        checkLogin();
-      }
-    } catch (error) {
-      console.log(error.response.data);
-      setErrors(error.response.data.message);
-    }
-  };
-
-  const signIn = async (user) => {
-    try {
-      const res = await loginRequest(user);
-      const token = res.data.token;
-      setAuthToken(token);
-      Cookies.set("token", res.data.token);
-      setIsAuthenticated(true);
-      checkLogin();
-    } catch (error) {
-      console.log(error);
-      setErrors(error.response.data.message);
-    }
-  };
-
-
+  const signup = (email, password) => {
+    return createUserWithEmailAndPassword(auth, email, password);
+  }
 
   const logout = () => {
-    Cookies.remove("token");
-    setUser(null);
-    setIsAuthenticated(false);
-    setAuthToken(null);
-  };
-  async function checkLogin() {
-    const token = Cookies.get("token");
-    if (!token) {
-      setIsAuthenticated(false);
-      setUser(null);
-      setLoading(false);
-      setAuthToken(null);
-      return;
-    }
-    try {
-      const res = await verifyTokenRequest(token);
+    return signOut(auth);
+  }
 
-      if (!res.data) {
-        setIsAuthenticated(false);
-        setUser(null);
-        setAuthToken(null);
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+      if (currentUser) {
+        try {
+          const userDoc = await getDoc(doc(db, "users", currentUser.uid));
+          if (userDoc.exists()) {
+            setUser({ ...currentUser, ...userDoc.data() });
+          } else {
+            // If user exists in Auth but not in Firestore (shouldn't happen if registered via app flow but possible)
+            setUser(currentUser);
+          }
+        } catch (error) {
+          console.error("Error fetching user data:", error);
+          setUser(currentUser);
+        }
       } else {
-        setIsAuthenticated(true);
-        setUser(res.data);
+        setUser(null);
       }
       setLoading(false);
-    } catch (error) {
-      setIsAuthenticated(false);
-      setLoading(false);
-    }
-  }
-  useEffect(() => {
-    const storedToken = Cookies.get("token");
-    if (storedToken) {
-      setAuthToken(storedToken);
-    }
+    });
+    return () => unsubscribe();
   }, []);
-  useEffect(() => {
-    checkLogin();
-  }, [])
-  return (
-    <AuthContext.Provider
-      value={{
-        signUp,
-        signIn,
-        loading,
-        user,
-        logout,
-        isAuthenticated,
-        errors,
-      }}
-    >
-      {children}
-    </AuthContext.Provider>
-  );
-};
 
-export default AuthContext;
+  const value = {
+    user,
+    login,
+    signup,
+    logout,
+    loading,
+    isAuthenticated: !!user
+  }
+
+  return (
+    <AuthContext.Provider value={value}>
+      {!loading && children}
+    </AuthContext.Provider>
+  )
+}

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useAuth } from '../../context/AuthContext';
 import { Link, useNavigate } from 'react-router-dom';
@@ -8,14 +8,16 @@ import Header from '../../components/Header';
 import { Footer } from '../../components/Footer';
 import ojoAbierto from '../../img/ojo.jpg';
 import ojoCerrado from '../../img/ojoCerrado.jpg';
-import { useEffect } from 'react';
+import { doc, setDoc } from 'firebase/firestore';
+import { db } from '../../firebase/config';
 
 function RegisterPage() {
   const { register, handleSubmit, setError, formState: { errors } } = useForm();
-  const { signUp, errors: registerErrors, isAuthenticated } = useAuth();
+  const { signup, isAuthenticated } = useAuth();
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false); // Nuevo estado para Confirmar Contraseña
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [authError, setAuthError] = useState(null);
   const regex = /^[^@]+@[^@]+\.[a-zA-Z]{2,}$/;
 
   useEffect(() => {
@@ -23,6 +25,7 @@ function RegisterPage() {
   }, [isAuthenticated, navigate]);
 
   const onSubmit = handleSubmit(async (values) => {
+    setAuthError(null);
     if (values.password !== values.passwordConfirmation) {
       setError('passwordConfirmation', {
         type: 'manual',
@@ -53,10 +56,36 @@ function RegisterPage() {
     const adminEmails = ['paulo101@gmail.com', 'augusto101@gmail.com', 'nico101@gmail.com', 'santiago101@gmail.com'];
     const isAdmin = adminEmails.includes(values.email);
 
-    // Agrego propiedad "isAdmin" al objeto de registro
-    values.isAdmin = isAdmin;
+    try {
+      // 1. Crear usuario en Auth
+      const userCredential = await signup(values.email, values.password);
 
-    signUp(values);
+      // 2. Crear documento de usuario en Firestore
+      await setDoc(doc(db, "users", userCredential.user.uid), {
+        username: values.username,
+        email: values.email,
+        role: isAdmin ? 'admin' : 'user',
+        createdAt: new Date()
+      });
+
+      Swal.fire({
+        icon: 'success',
+        title: 'Registro exitoso',
+        background: 'black',
+        color: 'white'
+      });
+
+    } catch (error) {
+      console.error("Error en registro:", error);
+      setAuthError(error.message);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error al registrarse',
+        text: error.message,
+        background: 'black',
+        color: 'white'
+      });
+    }
   });
 
   return (
@@ -64,14 +93,8 @@ function RegisterPage() {
       <Header />
       <div className='contenedor1'>
         <div className='contenedor2'>
-          {Array.isArray(registerErrors) ? (
-            registerErrors.map((error, i) => (
-              <div className='error-usuario' key={i}>
-                {error}
-              </div>
-            ))
-          ) : (
-            <div className='error-usuario'>{registerErrors}</div>
+          {authError && (
+            <div className='error-usuario'>{authError}</div>
           )}
 
           <h1 className='titulo-lr'>Registro</h1>
@@ -105,7 +128,6 @@ function RegisterPage() {
 
             <label htmlFor="password" className='labels'>Contraseña ↓</label>
             <div className='password-input-container'>
-              {/* Campo de Contraseña */}
               <input
                 type={showPassword ? "text" : "password"}
                 {...register("password", { required: true, minLength: 4 })}
@@ -114,7 +136,6 @@ function RegisterPage() {
                 id='password'
                 maxLength={30}
               />
-              {/* Icono de ojo para Contraseña */}
               <img
                 src={showPassword ? ojoAbierto : ojoCerrado}
                 alt={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
@@ -128,7 +149,6 @@ function RegisterPage() {
 
             <label htmlFor="confirmPassword" className='labels'>Confirmar contraseña ↓</label>
             <div className='password-input-container'>
-              {/* Campo de Confirmar Contraseña */}
               <input
                 type={showConfirmPassword ? "text" : "password"}
                 {...register("passwordConfirmation", { required: true })}
@@ -137,7 +157,6 @@ function RegisterPage() {
                 id='confirmPassword'
                 maxLength={30}
               />
-              {/* Icono de ojo para Confirmar Contraseña */}
               <img
                 src={showConfirmPassword ? ojoAbierto : ojoCerrado}
                 alt={showConfirmPassword ? "Ocultar contraseña" : "Mostrar contraseña"}

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useAuth } from '../../context/AuthContext';
 import { Link, useNavigate } from 'react-router-dom';
@@ -8,11 +8,11 @@ import { Footer } from '../../components/Footer';
 import Header from '../../components/Header';
 import ojoAbierto from '../../img/ojo.jpg';
 import ojoCerrado from '../../img/ojoCerrado.jpg';
-import { useEffect } from 'react';
 
 function LoginPage() {
     const { register, handleSubmit, formState: { errors } } = useForm();
-    const { signIn, errors: signInErrors, isAuthenticated, user } = useAuth();
+    const { login, isAuthenticated, user } = useAuth();
+    const [authError, setAuthError] = useState(null);
     const [email, setEmail] = useState('');
 
     const navigate = useNavigate();
@@ -20,6 +20,7 @@ function LoginPage() {
     const regex = /^[^@]+@[^@]+\.[a-zA-Z]{2,}$/;
 
     const onSubmit = handleSubmit(async (data) => {
+        setAuthError(null);
         const emailValido = regex.test(data.email);
         if (!emailValido) {
             Swal.fire({
@@ -40,18 +41,24 @@ function LoginPage() {
         }
 
         try {
-            await signIn(data);
+            await login(data.email, data.password);
         } catch (error) {
             console.log(error);
+            setAuthError("Error al iniciar sesión: " + error.message);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Credenciales inválidas o error de conexión.',
+                background: 'black',
+                color: 'white'
+            });
         }
     });
 
     useEffect(() => {
-        if (isAuthenticated) {
-            if (user) {
-                if (user.role === 'admin') {
-                    navigate('/admin');
-                }
+        if (isAuthenticated && user) {
+            if (user.role === 'admin') {
+                navigate('/admin');
             } else {
                 navigate('/');
             }
@@ -61,18 +68,12 @@ function LoginPage() {
     return (
         <div className='contenedorTodo'>
             <Header />
-            
+
             <div className='contenedor1'>
                 <div>
-                    {Array.isArray(signInErrors) ? (
-                        signInErrors.map((error, i) => (
-                            <div className='error-usuario' key={i}>
-                                {error}
-                            </div>
-                        ))
-                    ) : (
+                    {authError && (
                         <div className='error-usuario'>
-                            {signInErrors}
+                            {authError}
                         </div>
                     )}
 
@@ -80,7 +81,6 @@ function LoginPage() {
 
                     <form onSubmit={onSubmit}>
                         <label htmlFor="email" className='labels'>Correo electrónico ↓</label>
-                        {/* Campo de Email */}
                         <input
                             type="email"
                             {...register("email", { required: true })}
@@ -96,7 +96,6 @@ function LoginPage() {
 
                         <label htmlFor="password" className='labels'>Contraseña ↓</label>
                         <div className='password-input-container'>
-                            {/* Campo de Contraseña */}
                             <input
                                 type={showPassword ? "text" : "password"}
                                 {...register("password", { required: true, minLength: 4 })}
@@ -105,7 +104,6 @@ function LoginPage() {
                                 id='password'
                                 maxLength={30}
                             />
-                            {/* Icono de ojo */}
                             <img
                                 src={showPassword ? ojoAbierto : ojoCerrado}
                                 alt={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}

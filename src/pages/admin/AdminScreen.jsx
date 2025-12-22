@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Table from 'react-bootstrap/Table';
 import { FaPlus, FaUsers, FaBus, FaClock, FaEnvelope } from 'react-icons/fa';
-import pruebaApi from '../../api/pruebaApi';
 import Header from '../../components/Header';
 import '../styles/adminscreen.css';
 import Swal from 'sweetalert2';
@@ -10,7 +9,6 @@ import AddUserModal from '../../components/admin-components/AddUserModal';
 import { useAuth } from '../../context/AuthContext';
 import { getAuthToken } from '../../api/auth';
 import { Footer } from '../../components/Footer';
-import axios from 'axios';
 import AddParadaModal from '../../components/admin-components/AddParadaModel';
 import AddHorarioModal from '../../components/admin-components/AddHorarioModal';
 import EditHorariosModal from '../../components/admin-components/EditHorariosModal';
@@ -19,9 +17,15 @@ import '../styles/adminHorarios.css';
 import EditParadaModal from '../../components/admin-components/EditParadasModal';
 import AdminContactScreen from './AdminContactScreen';
 import { ScheduleMatrix } from './components/ScheduleMatrix';
+import { seedDatabase } from '../../utils/seedFirestore';
+import { getRutas } from '../../services/scheduleService';
+import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc, query, where } from 'firebase/firestore';
+import { db } from '../../firebase/config';
+import AddRouteModal from '../../components/admin-components/AddRouteModal';
 
 export const AdminScreen = () => {
     const { user } = useAuth();
+    const [isAddRouteModalOpen, setIsAddRouteModalOpen] = useState(false);
     const [activeSection, setActiveSection] = useState('usuarios');
     const [cargarUsuarios, setCargarUsuarios] = useState([]);
 
@@ -48,10 +52,20 @@ export const AdminScreen = () => {
     const [modalEditarParadaAbierto, setModalEditarParadaAbierto] = useState(false)
 
 
-    const rutas = [
-        { id: "6841ae01c11032698b6ade09", nombre: "Santa Lucía → Monteros" },
-        { id: "6841af28447dea60cc03a67d", nombre: "Monteros → Santa Lucía" }
-    ];
+    const [rutas, setRutas] = useState([]);
+
+    // Cargar Rutas Dinámicas
+    useEffect(() => {
+        const loadRutas = async () => {
+            try {
+                const rutasData = await getRutas();
+                setRutas(rutasData);
+            } catch (error) {
+                console.error("Error cargando rutas:", error);
+            }
+        };
+        loadRutas();
+    }, [lastUpdate]); // Recargar si hay updates (aunque rutas raramente cambian por ahora)
 
     // Estados para formularios
     const [formDateUser, setFormDateUser] = useState({
@@ -76,22 +90,19 @@ export const AdminScreen = () => {
         try {
             const nuevaParada = {
                 nombre,
-                orden,
+                orden: parseInt(orden),
                 id_ruta: rutaSeleccionada.id
             };
 
-            const response = await pruebaApi.post('/admin/nuevaParada', nuevaParada);
-            const paradaCreada = response.data;
+            await addDoc(collection(db, "paradas"), nuevaParada);
 
-            setParadasPorRuta(prev => ({
-                ...prev,
-                [rutaSeleccionada.id]: [...(prev[rutaSeleccionada.id] || []), paradaCreada]
-            }));
             await fetchParadasYHorarios(); // Actualiza las paradas después de agregar
             setMostrarModal(false);
             setLastUpdate(Date.now());
+            Swal.fire('Éxito', 'Parada agregada', 'success');
         } catch (error) {
             console.error('Error al agregar parada:', error);
+            Swal.fire('Error', 'No se pudo agregar la parada', 'error');
         }
     };
 
@@ -188,68 +199,54 @@ export const AdminScreen = () => {
     const fetchParadasYHorarios = async () => {
         try {
             const nuevasParadas = {};
-            const nuevosHorarios = {};
 
-            //const resParadas = await pruebaApi.get(`api/paradas`);
-            //setParadasPorRuta(nuevasParadas);
+            // 1. Traer todas las paradas de una vez
+            const paradasSnap = await getDocs(collection(db, "paradas"));
+            const allParadas = paradasSnap.docs.map(d => ({ ...d.data(), _id: d.id }));
 
             for (const ruta of rutas) {
-                // Obtener paradas
-                const resParadas = await pruebaApi.get(`api/paradas?id_ruta=${ruta.id}`);
+                // Filtrar paradas por ruta
+                const paradasDeRuta = allParadas.filter(p => p.id_ruta === ruta.id).sort((a, b) => a.orden - b.orden);
+                nuevasParadas[ruta.id] = paradasDeRuta;
 
-                const paradas = resParadas.data;
-                nuevasParadas[ruta.id] = paradas;
-
-                // Obtener horarios de cada parada
-                // const horarios = await Promise.all(paradas.map(async parada => {
-                //     const resHorario = await axios.get(`/obtenerHorarios?id_ruta=${ruta.id}&id_parada=${parada._id}`);
-                //     return {
-                //         paradaId: parada._id,
-                //         nombre: parada.nombre,
-                //         horarios: resHorario.data
-                //     };
-                // }));
-
-                // nuevosHorarios[ruta.id] = horarios;
                 setParadasPorRuta(prev => ({
                     ...prev,
-                    [ruta.id]: paradas
+                    [ruta.id]: paradasDeRuta
                 }));
             }
-            //setHorariosPorRuta(nuevosHorarios);
         } catch (error) {
             console.error(error);
         }
     };
 
-    // Funciones de API
+    // Firestore Imports
+
+
+    // Funciones de API (Reemplazadas por Firestore)
     const editarUsuarioDb = async (_id, username, email, status, role) => {
         try {
-            await pruebaApi.put('/api/admin-page/editarUsuario', {
-                _id, username, email, status, role
-            }, {
-                withCredentials: true,
-                headers: {
-                    Authorization: `Bearer ${getAuthToken()}`,
-                    User: JSON.stringify(user),
-                },
+            const userRef = doc(db, "users", _id);
+            await updateDoc(userRef, {
+                username, email, status, role
             });
         } catch (error) {
             console.log(error);
+            showErrorAlert('Error', 'No se pudo actualizar el usuario');
         }
     };
 
     const guardarUsuarioDb = async (username, email, status, password, role) => {
         try {
-            await pruebaApi.post('api/admin-page/nuevoUsuario', {
-                username, email, status, password, role
-            }, {
-                withCredentials: true,
-                headers: {
-                    Authorization: `Bearer ${getAuthToken()}`,
-                    User: JSON.stringify(user),
-                },
+            // Nota: Crear usuario en Auth requiere una Cloud Function o hacerlo desde el cliente con carencia de seguridad (createUserWithEmail crea sesión).
+            // Por simplicidad en migración frontend-only: Solo creamos el documento en 'users'.
+            // El usuario real debe registrarse por la página de Registro, o aquí simulamos el registro si estuviéramos logueados como admin creando otro user (complejo en client-side SDK).
+            // Solución temporal: Guardar en Firestore para visualización.
+            await addDoc(collection(db, "users"), {
+                username, email, status, role,
+                createdAt: new Date().toISOString()
+                // Password no se guarda en Firestore por seguridad
             });
+            showSuccessAlert('Usuario registrado en DB', 'El usuario debe registrarse en Login para tener acceso real o usar Cloud Functions.');
         } catch (error) {
             console.log(error);
         }
@@ -257,14 +254,10 @@ export const AdminScreen = () => {
 
     const cargarUserDB = async () => {
         try {
-            const resp = await pruebaApi.get('/api/admin-page/listarUsuarios', {
-                withCredentials: true,
-                headers: {
-                    Authorization: `Bearer ${getAuthToken()}`,
-                    User: JSON.stringify(user),
-                },
-            });
-            setCargarUsuarios(resp.data.usuarios);
+            const usersCol = collection(db, "users");
+            const snapshot = await getDocs(usersCol);
+            const userList = snapshot.docs.map(doc => ({ ...doc.data(), _id: doc.id }));
+            setCargarUsuarios(userList);
         } catch (error) {
             console.log(error);
         }
@@ -296,17 +289,12 @@ export const AdminScreen = () => {
         }).then(async (result) => {
             if (result.isConfirmed) {
                 try {
-                    await pruebaApi.delete(`/api/admin-page/eliminarUsuario/${id}`, {
-                        withCredentials: true,
-                        headers: {
-                            Authorization: `Bearer ${getAuthToken()}`,
-                            User: JSON.stringify(user),
-                        },
-                    });
+                    await deleteDoc(doc(db, "users", id));
                     showSuccessAlert('¡Usuario Eliminado!', 'El usuario ha sido eliminado exitosamente.');
                     recargarPagina();
                 } catch (error) {
                     console.log(error);
+                    showErrorAlert('Error', 'No se pudo eliminar el usuario');
                 }
             }
         });
@@ -325,12 +313,14 @@ export const AdminScreen = () => {
 
         if (result.isConfirmed) {
             try {
-                await pruebaApi.delete(`/admin/eliminarParada/${idParada}`);
+                await deleteDoc(doc(db, "paradas", idParada));
+                // Opcional: Eliminar horarios asociados a esta parada si fuera necesario
                 await fetchParadasYHorarios(); // refrescar la lista
                 setLastUpdate(Date.now());
+                Swal.fire('Eliminado', 'La parada ha sido eliminada.', 'success');
             } catch (error) {
                 console.error('Error al eliminar la parada:', error);
-                alert('No se pudo eliminar la parada. Revisá los logs del servidor.');
+                Swal.fire('Error', 'No se pudo eliminar la parada.', 'error');
             }
         }
 
@@ -551,6 +541,25 @@ export const AdminScreen = () => {
                         <div className="section-container">
                             <div className="header-actions">
                                 <h3>Gestión de Horarios (Vista Matriz)</h3>
+                                <button className="btn btn-warning" onClick={async () => {
+                                    const res = await Swal.fire({
+                                        title: '¿Inicializar Base de Datos?',
+                                        text: "Esto borrará/sobreescribirá datos si existen conflictos. Úsalo solo la primera vez.",
+                                        icon: 'warning',
+                                        showCancelButton: true,
+                                        confirmButtonText: 'Sí, inicializar'
+                                    });
+                                    if (res.isConfirmed) {
+                                        const success = await seedDatabase();
+                                        if (success) Swal.fire('Éxito', 'Base de datos poblada', 'success');
+                                        else Swal.fire('Error', 'Revisa la consola', 'error');
+                                    }
+                                }}>
+                                    Inicializar DB (Seed)
+                                </button>
+                                <button className="btn btn-primary" onClick={() => setIsAddRouteModalOpen(true)}>
+                                    <FaPlus /> Nueva Ruta
+                                </button>
                             </div>
                             <p style={{ color: '#aaa', marginBottom: '2rem' }}>
                                 Edita los horarios como una tabla. Agrega filas para nuevos recorridos.
@@ -589,6 +598,11 @@ export const AdminScreen = () => {
             </div>
 
             {/* Modales - Preservados */}
+            <AddRouteModal
+                isOpen={isAddRouteModalOpen}
+                onClose={() => setIsAddRouteModalOpen(false)}
+                onRouteAdded={() => setLastUpdate(Date.now())} // Trigger refresh
+            />
             <AddUserModal
                 isOpen={isModalOpenUser}
                 setIsOpen={setIsModalOpenUser}

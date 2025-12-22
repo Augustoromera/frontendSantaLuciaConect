@@ -7,9 +7,9 @@ import './styles/contact.css';
 import { faFacebook, faInstagram, faWhatsapp } from '@fortawesome/free-brands-svg-icons';
 import { Footer } from '../components/Footer';
 import Swal from 'sweetalert2';
-import imgMonteros from '../assets/images/nosotros/monterosHD.png'
-import pruebaApi from '../api/pruebaApi';
-import axios from 'axios';
+import imgMonteros from '../assets/images/nosotros/monterosHD.png';
+import { collection, addDoc } from 'firebase/firestore';
+import { db } from '../firebase/config';
 
 export const ContactScreen = () => {
   const [formData, setFormData] = useState({
@@ -33,13 +33,6 @@ export const ContactScreen = () => {
         text: 'Por favor, ingresa un nombre válido.',
         background: 'black',
         color: 'white',
-        customClass: {
-          container: 'custom-swal-container',
-          title: 'custom-swal-title',
-          content: 'custom-swal-content',
-          confirmButton: 'custom-swal-confirm-button',
-          cancelButton: 'custom-swal-cancel-button',
-        },
       });
       return;
     }
@@ -52,13 +45,6 @@ export const ContactScreen = () => {
         text: 'Por favor, ingresa un apellido válido.',
         background: 'black',
         color: 'white',
-        customClass: {
-          container: 'custom-swal-container',
-          title: 'custom-swal-title',
-          content: 'custom-swal-content',
-          confirmButton: 'custom-swal-confirm-button',
-          cancelButton: 'custom-swal-cancel-button',
-        },
       });
       return;
     }
@@ -71,13 +57,6 @@ export const ContactScreen = () => {
         text: 'Por favor, ingresa un correo electrónico válido.',
         background: 'black',
         color: 'white',
-        customClass: {
-          container: 'custom-swal-container',
-          title: 'custom-swal-title',
-          content: 'custom-swal-content',
-          confirmButton: 'custom-swal-confirm-button',
-          cancelButton: 'custom-swal-cancel-button',
-        },
       });
       return;
     }
@@ -90,18 +69,9 @@ export const ContactScreen = () => {
         text: 'Por favor, ingresa un teléfono válido.',
         background: 'black',
         color: 'white',
-        customClass: {
-          container: 'custom-swal-container',
-          title: 'custom-swal-title',
-          content: 'custom-swal-content',
-          confirmButton: 'custom-swal-confirm-button',
-          cancelButton: 'custom-swal-cancel-button',
-        },
       });
       return;
     }
-
-
 
     // Validación para el campo de asunto
     if (formData.subject.trim() === '') {
@@ -111,13 +81,6 @@ export const ContactScreen = () => {
         text: 'Por favor, ingresa un asunto.',
         background: 'black',
         color: 'white',
-        customClass: {
-          container: 'custom-swal-container',
-          title: 'custom-swal-title',
-          content: 'custom-swal-content',
-          confirmButton: 'custom-swal-confirm-button',
-          cancelButton: 'custom-swal-cancel-button',
-        },
       });
       return;
     }
@@ -130,26 +93,13 @@ export const ContactScreen = () => {
         text: 'Por favor, escribe un mensaje.',
         background: 'black',
         color: 'white',
-        customClass: {
-          container: 'custom-swal-container',
-          title: 'custom-swal-title',
-          content: 'custom-swal-content',
-          confirmButton: 'custom-swal-confirm-button',
-          cancelButton: 'custom-swal-cancel-button',
-        },
       });
       return;
     }
 
     try {
       await guardarFormulario(formData);
-      
-    } catch (error) {
-      
-      console.log(error);
-    }
 
-    setTimeout(() => {
       Swal.fire({
         icon: 'success',
         title: 'Formulario enviado correctamente!',
@@ -157,40 +107,44 @@ export const ContactScreen = () => {
         showConfirmButton: false,
         background: 'black',
         color: 'white',
-        customClass: {
-          container: 'custom-swal-container',
-          title: 'custom-swal-title',
-          content: 'custom-swal-content',
-          confirmButton: 'custom-swal-confirm-button',
-          cancelButton: 'custom-swal-cancel-button',
-        },
         timer: 3000,
       }).then(() => {
-        window.location.href = '/contact';
+        setFormData({
+          firstName: '',
+          lastName: '',
+          email: '',
+          phone: '',
+          subject: '',
+          message: ''
+        });
       });
-    }, 200);
+
+    } catch (error) {
+      console.log(error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'No se pudo enviar el mensaje. Intenta nuevamente.',
+        background: 'black',
+        color: 'white',
+      });
+    }
   };
 
   const guardarFormulario = async (data) => {
+    const mappedData = {
+      nombre: data.firstName,
+      apellido: data.lastName,
+      email: data.email,
+      telefono: data.phone,
+      asunto: data.subject,
+      mensaje: data.message,
+      fecha: new Date().toISOString()
+    };
 
-    try {
-      const mappedData = {
-        nombre: data.firstName,
-        apellido: data.lastName,
-        email: data.email,
-        telefono: data.phone,
-        asunto: data.subject,
-        mensaje: data.message,
-      };
-
-      console.log("Datos a enviar:", data);
-      const res = await pruebaApi.post('/admin/mensajeContacto', mappedData);
-      console.log("Formulario enviado correctamente");
-    } catch (error) {
-      console.log(error);
-      console.log("Error al enviar el formulario");
-    }
-
+    console.log("Datos a enviar:", mappedData);
+    await addDoc(collection(db, "contacts"), mappedData);
+    console.log("Formulario enviado correctamente a Firestore");
   }
 
   const handleChange = (e) => {
@@ -202,8 +156,7 @@ export const ContactScreen = () => {
       }
     }
     if (name === "phone") {
-      const numericRegex = /^[0-9+]+$/
-        ;
+      const numericRegex = /^[0-9+]+$/;
       if (!numericRegex.test(value) && value !== "") {
         return;
       }
@@ -213,7 +166,6 @@ export const ContactScreen = () => {
       [name]: value,
     });
   };
-
 
   return (
     <>
@@ -234,7 +186,7 @@ export const ContactScreen = () => {
               <img
                 src="https://www.lanacion.com.ar/resizer/v2/tres-lineas-de-colectivos-suspenden-su-servicio-5EMY37GMKJCLNOOCYNVOVPWEAM.jpg?auth=edf2867420928ebf2f352f4965dcde89f91a2ef02222c66d4ed7cfb931aebe87&width=880&height=586&quality=70&smart=true"
                 className="img-fluid rounded-3 shadow-lg w-lg-75 "
-                alt="hamburguesas"
+                alt="colectivos"
               />
             </div>
           </div>

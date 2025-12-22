@@ -1,11 +1,10 @@
 import { NavDropdown, Nav } from 'react-bootstrap';
 import Container from 'react-bootstrap/Container';
 import Navbar from 'react-bootstrap/Navbar';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import "../pages/styles/header.css";
 import logoTipo from '../assets/images/logo/logo2.png'
-import { useNavigate } from 'react-router-dom';
 import swal from 'sweetalert2';
 import { width } from '@fortawesome/free-brands-svg-icons/fa42Group';
 
@@ -13,6 +12,7 @@ import { width } from '@fortawesome/free-brands-svg-icons/fa42Group';
 function Header({ navBarClass }) {
   const { isAuthenticated, logout, user } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleLogout = () => {
     swal.fire({
