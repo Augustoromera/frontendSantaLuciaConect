@@ -12,9 +12,41 @@
     background-attachment: fixed;
 }
 
+.history-page-container {
+    min-height: 100vh;
+    background-color: #f8f9fa;
+    /* Matches content bg to remove gaps */
+    display: flex;
+    flex-direction: column;
+}
+
 .history-content {
     background-color: #f8f9fa;
     padding-bottom: 3rem;
+    flex: 1;
+}
+
+/* Fleet Gallery Animations */
+.fleet-card {
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    /* Bouncy effect */
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+.fleet-card:hover {
+    transform: translateY(-10px) scale(1.02);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2) !important;
+    z-index: 10;
+}
+
+.fleet-card img {
+    transition: transform 0.5s ease;
+}
+
+.fleet-card:hover img {
+    transform: scale(1.1);
 }
 
 .quote-banner {

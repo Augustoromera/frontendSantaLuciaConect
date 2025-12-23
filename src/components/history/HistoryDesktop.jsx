@@ -122,7 +122,7 @@ const HistoryDesktop = () => {
                     <Row className="g-3">
                         {[img1, img2, img3, img4, img5, img6].map((img, i) => (
                             <Col md={4} sm={6} key={i}>
-                                <div className="rounded-3 overflow-hidden shadow-sm h-100 bg-white">
+                                <div className="rounded-3 overflow-hidden shadow-sm h-100 bg-white fleet-card">
                                     <img src={img} alt={`Unidad ${i + 1}`} className="w-100 h-100 object-fit-cover" style={{ minHeight: '220px' }} />
                                 </div>
                             </Col>
