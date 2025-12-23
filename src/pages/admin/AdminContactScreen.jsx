@@ -3,7 +3,7 @@ import Table from 'react-bootstrap/Table';
 import { collection, onSnapshot, doc, updateDoc, deleteDoc } from 'firebase/firestore';
 import { db } from '../../firebase/config';
 import Swal from 'sweetalert2';
-import { FaReply, FaCheckDouble, FaHourglassHalf, FaTrash } from 'react-icons/fa';
+import { FaReply, FaCheckDouble, FaHourglassHalf, FaTrash, FaEye } from 'react-icons/fa';
 
 export default function AdminContactScreen() {
 
@@ -146,7 +146,36 @@ export default function AdminContactScreen() {
                     <div className="small text-white-50">{mensaje.email}</div>
                   </td>
                   <td>{mensaje.asunto}</td>
-                  <td className="small" style={{ maxWidth: '200px' }}>{mensaje.mensaje}</td>
+                  <td className="small" style={{ maxWidth: '200px', wordBreak: 'break-word', whiteSpace: 'normal' }}>
+                    {mensaje.mensaje.length > 50
+                      ? `${mensaje.mensaje.substring(0, 50)}...`
+                      : mensaje.mensaje}
+                    {mensaje.mensaje.length > 50 && (
+                      <button
+                        className="btn btn-link p-0 ms-1 text-info"
+                        style={{ textDecoration: 'none' }}
+                        onClick={() => {
+                          Swal.fire({
+                            title: `Mensaje de ${mensaje.nombre}`,
+                            html: `
+                               <div style="text-align: left;">
+                                 <p><strong>De:</strong> ${mensaje.nombre} ${mensaje.apellido} (${mensaje.email})</p>
+                                 <p><strong>Asunto:</strong> ${mensaje.asunto}</p>
+                                 <hr/>
+                                 <p>${mensaje.mensaje}</p>
+                               </div>
+                             `,
+                            background: '#19191a',
+                            color: 'white',
+                            confirmButtonColor: '#0d6efd',
+                            width: '600px'
+                          });
+                        }}
+                      >
+                        <FaEye />
+                      </button>
+                    )}
+                  </td>
                   <td className="small text-info">
                     {mensaje.reply ? (
                       <div className="text-truncate" style={{ maxWidth: '150px' }} title={mensaje.reply}>
