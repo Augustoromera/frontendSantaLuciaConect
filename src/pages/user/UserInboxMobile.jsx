@@ -144,6 +144,10 @@ const UserInboxMobile = ({ messages }) => {
             </Modal>
             <style>{`
                 @media (max-width: 768px) {
+                    body {
+                        background-image: none !important;
+                        background-color: #1a1a2e !important;
+                    }
                     body::before {
                         background-color: transparent !important;
                         background-image: linear-gradient(

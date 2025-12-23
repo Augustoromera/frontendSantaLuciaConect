@@ -4,6 +4,7 @@
     box-sizing: border-box;
     font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
+
 .app-custom {
     display: flex;
     flex-direction: column;
@@ -16,14 +17,12 @@
 
 .container-aboutus {
     padding-top: 105px;
-    background-image: linear-gradient(
-        to bottom right,
-        #bfbcbc00 0%,
-        #bfbcbc00 20%,
-        #0434a4b3 40%,
-        #bfbcbc00 60%,
-        #bfbcbc00 80%
-    );
+    background-image: linear-gradient(to bottom right,
+            #bfbcbc00 0%,
+            #bfbcbc00 20%,
+            #0434a4b3 40%,
+            #bfbcbc00 60%,
+            #bfbcbc00 80%);
     background-size: 300% 300%;
     animation: movimiento 5s linear infinite alternate;
 }
@@ -32,6 +31,7 @@
     from {
         background-position: 0 0;
     }
+
     to {
         background-position: 100% 100%;
     }
@@ -208,4 +208,17 @@
 
 .p-espacio5 {
     margin-bottom: 52px;
+}
+
+@media (max-width: 768px) {
+    .container-aboutus {
+        background-image: none !important;
+        background-color: transparent !important;
+    }
+
+    /* Ensure body background from global style shows through */
+    body {
+        background-image: none !important;
+        background-color: #1a1a2e !important;
+    }
 }

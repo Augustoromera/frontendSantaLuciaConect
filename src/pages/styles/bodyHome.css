@@ -396,6 +396,7 @@ body::before {
 
 	body {
 		background-image: none;
+		background-color: #1a1a2e;
 		min-height: 100vh;
 	}
 
