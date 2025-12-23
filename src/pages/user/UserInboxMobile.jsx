@@ -76,6 +76,7 @@ const UserInboxMobile = ({ messages }) => {
                 </div>
             </div>
 
+
             {/* Detail Modal - Fullscreen mobile */}
             <Modal
                 show={showModal}
@@ -83,66 +84,124 @@ const UserInboxMobile = ({ messages }) => {
                 centered
                 fullscreen={true}
                 className="mobile-inbox-modal"
-                contentClassName="bg-dark text-white" // Dark theme for modal to match
+                contentClassName="bg-dark text-white"
+                style={{ zIndex: 1060 }}
             >
-                <Modal.Header className="border-bottom border-secondary border-opacity-25" closeButton closeVariant="white">
-                    <div className="d-flex align-items-center gap-2">
-                        <Badge bg={selectedMsg?.status === 'answered' ? 'success' : 'warning'} text={selectedMsg?.status === 'answered' ? 'light' : 'dark'}>
-                            {selectedMsg?.status === 'answered' ? 'Resuelto' : 'Pendiente'}
-                        </Badge>
-                    </div>
+                {/* Header */}
+                <Modal.Header
+                    className="border-bottom border-secondary border-opacity-25"
+                    closeButton
+                    closeVariant="white"
+                    style={{ backgroundColor: '#1a1a2e' }}
+                >
+                    <Modal.Title className="h5 mb-0 fw-bold">Detalle de Consulta</Modal.Title>
                 </Modal.Header>
-                <Modal.Body className="bg-dark text-white pt-4">
+
+                <Modal.Body className="p-0" style={{ backgroundColor: '#1a1a2e' }}>
                     {selectedMsg && (
-                        <div className="d-flex flex-column gap-4">
-                            {/* Subject */}
-                            <div>
-                                <small className="text-secondary fw-bold d-block mb-1" style={{ fontSize: '0.7rem' }}>ASUNTO</small>
-                                <h4 className="fw-bold text-white text-break">{selectedMsg.asunto}</h4>
-                                <small className="text-white-50">
-                                    {selectedMsg.fecha ? new Date(selectedMsg.fecha).toLocaleString() : ''}
-                                </small>
-                            </div>
+                        <div className="d-flex flex-column h-100">
+                            {/* Scrollable Content Area */}
+                            <div className="flex-grow-1 overflow-auto p-3">
 
-                            {/* User Message */}
-                            <div className="p-3 rounded-3" style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)' }}>
-                                <small className="text-info fw-bold d-block mb-2" style={{ fontSize: '0.7rem' }}>TU MENSAJE</small>
-                                <p className="text-white-50 mb-0 text-break fst-italic">
-                                    "{selectedMsg.mensaje}"
-                                </p>
-                            </div>
-
-                            {/* Admin Reply */}
-                            {selectedMsg.reply ? (
-                                <div className="p-3 rounded-3" style={{ background: 'rgba(16, 185, 129, 0.1)', border: '1px solid rgba(16, 185, 129, 0.3)' }}>
-                                    <div className="d-flex align-items-center mb-2 text-success">
-                                        <FaReply className="me-2" />
-                                        <span className="fw-bold small">RESPUESTA ADMIN</span>
-                                    </div>
-                                    <p className="text-white mb-2 text-break">
-                                        {selectedMsg.reply}
-                                    </p>
-                                    <div className="text-end border-top border-success border-opacity-25 pt-2 mt-2">
-                                        <small className="text-success text-opacity-75" style={{ fontSize: '0.7rem' }}>
-                                            {selectedMsg.replyDate ? new Date(selectedMsg.replyDate).toLocaleString() : 'Reciente'}
+                                {/* Status & Info Card */}
+                                <div className="p-3 mb-4 rounded-3" style={{ backgroundColor: 'rgba(255, 255, 255, 0.03)', border: '1px solid rgba(255, 255, 255, 0.05)' }}>
+                                    <div className="d-flex justify-content-between align-items-start mb-2">
+                                        <Badge
+                                            bg={selectedMsg?.status === 'answered' ? 'success' : 'warning'}
+                                            text={selectedMsg?.status === 'answered' ? 'light' : 'dark'}
+                                            className="px-3 py-2 rounded-pill"
+                                        >
+                                            {selectedMsg?.status === 'answered' ? 'Resuelto' : 'Pendiente'}
+                                        </Badge>
+                                        <small className="text-white-50 d-flex align-items-center gap-1">
+                                            <FaClock size={10} />
+                                            {selectedMsg.fecha ? new Date(selectedMsg.fecha).toLocaleDateString() : ''}
                                         </small>
                                     </div>
+                                    <h5 className="fw-bold text-white mb-1 text-break">{selectedMsg.asunto}</h5>
                                 </div>
-                            ) : (
-                                <div className="text-center py-4 rounded-3 text-white-50 border border-dashed border-secondary">
-                                    <small>Esperando respuesta...</small>
+
+                                {/* Messages Section */}
+                                <div className="d-flex flex-column gap-3">
+
+                                    {/* User Message - Distinct Bubble */}
+                                    <div className="d-flex flex-column mb-2">
+                                        <div className="ps-2 mb-1">
+                                            <small className="text-secondary fw-bold" style={{ fontSize: '0.75rem' }}>TU MENSAJE</small>
+                                        </div>
+                                        <div
+                                            className="p-3 text-white"
+                                            style={{
+                                                backgroundColor: 'rgba(255, 255, 255, 0.08)',
+                                                borderRadius: '4px 20px 20px 20px',
+                                                borderLeft: '4px solid #0d6efd',
+                                                boxShadow: '0 2px 5px rgba(0,0,0,0.2)'
+                                            }}
+                                        >
+                                            <p className="mb-0 text-break" style={{ fontSize: '0.95rem', lineHeight: '1.5' }}>
+                                                {selectedMsg.mensaje}
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    {/* Divider */}
+                                    {selectedMsg.reply && (
+                                        <div className="d-flex align-items-center my-2">
+                                            <div style={{ flex: 1, height: '1px', backgroundColor: 'rgba(255,255,255,0.1)' }}></div>
+                                            <div className="px-2 text-white-50"><FaReply size={12} /></div>
+                                            <div style={{ flex: 1, height: '1px', backgroundColor: 'rgba(255,255,255,0.1)' }}></div>
+                                        </div>
+                                    )}
+
+                                    {/* Admin Reply - Distinct Bubble */}
+                                    {selectedMsg.reply ? (
+                                        <div className="d-flex flex-column">
+                                            <div className="pe-2 mb-1 text-end">
+                                                <small className="text-success fw-bold" style={{ fontSize: '0.75rem' }}>ADMINISTRACIÓN</small>
+                                            </div>
+                                            <div
+                                                className="p-3 text-white"
+                                                style={{
+                                                    backgroundColor: 'rgba(25, 135, 84, 0.15)',
+                                                    borderRadius: '20px 4px 20px 20px',
+                                                    borderRight: '4px solid #198754',
+                                                    boxShadow: '0 2px 5px rgba(0,0,0,0.2)'
+                                                }}
+                                            >
+                                                <p className="mb-2 text-break" style={{ fontSize: '0.95rem', lineHeight: '1.5' }}>
+                                                    {selectedMsg.reply}
+                                                </p>
+                                                <div className="text-end">
+                                                    <small className="text-success text-opacity-75" style={{ fontSize: '0.7rem' }}>
+                                                        {selectedMsg.replyDate ? new Date(selectedMsg.replyDate).toLocaleString() : 'Reciente'}
+                                                    </small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <div className="mt-3 p-4 text-center rounded-3 bg-dark border border-secondary border-opacity-25">
+                                            <small className="text-white-50">Esperando respuesta del administrador...</small>
+                                        </div>
+                                    )}
                                 </div>
-                            )}
+                            </div>
                         </div>
                     )}
                 </Modal.Body>
-                <Modal.Footer className="border-top border-secondary border-opacity-25 justify-content-center">
-                    <Button variant="outline-light" onClick={handleClose} className="rounded-pill px-5">
-                        Cerrar
-                    </Button>
-                </Modal.Footer>
+                {/* No Footer needed - Close button is in header */}
             </Modal>
             <style>{`
+                /* Custom Smooth Transition for Modal */
+                .mobile-inbox-modal .modal-dialog {
+                    transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
+                }
+                .mobile-inbox-modal.fade .modal-dialog {
+                    transform: translate(0, 100%);
+                }
+                .mobile-inbox-modal.show .modal-dialog {
+                    transform: translate(0, 0);
+                }
+                
                 @media (max-width: 768px) {
                     body {
                         background-image: none !important;
