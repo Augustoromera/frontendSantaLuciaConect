@@ -8,13 +8,13 @@ import { faWhatsapp } from '@fortawesome/free-brands-svg-icons';
 import Swal from 'sweetalert2';
 import pruebaApi from '../api/pruebaApi';
 import { useAuth } from '../context/AuthContext';
-import Bannerrapiburguerjpeg from '../assets/banner/Bannerrapiburguerjpeg.jpg';
-import bannerPsh1 from '../assets/banner/bannerPsh1.jpg';
-import bannerPsh2 from '../assets/banner/bannerPsh2.jpg';
-import bannerPsh3 from '../assets/banner/bannerPsh3.jpg';
-import bannerMobile1 from '../assets/banner/bannerMobile1.jpg';
-import bannerMobile2 from '../assets/banner/bannerMobile2.jpg';
-import bannerMobile3 from '../assets/banner/bannerMobile3.jpeg';
+import unidad1 from '../assets/images/unidades/unidad_nueva_1.png';
+import unidad2 from '../assets/images/unidades/unidad_nueva_2.png';
+import unidad3 from '../assets/images/unidades/unidad_nueva_3.jpg';
+import unidad4 from '../assets/images/unidades/unidad_nueva_4.jpg';
+// import unidad5 from '../assets/images/unidades/unidad_nueva_5.jpg'; // Optional
+// import unidad6 from '../assets/images/unidades/unidad_nueva_6.jpg'; // Optional
+
 // import bus1 from '../assets/images/carrusel-home/bus1.jpg';
 // import bus2 from '../assets/images/carrusel-home/bus2.png';
 import transporteRapido from '../assets/images/nosotros/transporteRapido.png';
@@ -29,8 +29,9 @@ export const BodyHome = () => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 720);
 
-  const bannerImages = [Bannerrapiburguerjpeg, bannerPsh1, bannerPsh2, bannerPsh3];
-  const bannerImagesMini = [bannerMobile2, bannerMobile1, bannerMobile3];
+  // Use real bus images for the banner
+  const bannerImages = [unidad4, unidad1, unidad3, unidad2];
+  const bannerImagesMini = [unidad4, unidad1, unidad3];
 
   const currentBannerImage = isMobile
     ? bannerImagesMini[currentImageIndex]
@@ -133,10 +134,43 @@ export const BodyHome = () => {
           alignItems: 'center',
           paddingBottom: '80px'
         }}>
-          <div className="banner-body" style={{ height: 'auto', flex: '1', display: 'flex', justifyContent: 'center' }}>
-            <div className="banner-container-text">
-              <p className='banner-text1'>¿A dónde vas?</p>
-              <p className='banner-text2'>Consultá horarios y tarifas al instante.</p>
+          <style>{`
+            .glass-banner {
+              background-color: rgba(0, 0, 0, 0.25) !important;
+              backdrop-filter: blur(4px) !important;
+              transition: all 0.4s ease;
+              border: 1px solid rgba(255,255,255,0.15) !important;
+            }
+            .glass-banner:hover {
+              background-color: rgba(0, 0, 0, 0.75) !important;
+              backdrop-filter: blur(12px) !important;
+              transform: translateY(-5px);
+              border-color: rgba(255,193,7,0.6) !important;
+              box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            }
+          `}</style>
+          <div className="banner-body" style={{
+            height: 'auto',
+            flex: '1',
+            display: 'flex',
+            justifyContent: isMobile ? 'center' : 'flex-end',
+            alignItems: 'flex-end',
+            width: '100%',
+            paddingLeft: '20px',
+            paddingRight: isMobile ? '20px' : '80px',
+            marginBottom: '30px'
+          }}>
+            <div className="banner-container-text text-center p-4 p-md-5 rounded-4 animate__animated animate__fadeInUp glass-banner"
+              style={{
+                maxWidth: '800px',
+                cursor: 'default'
+              }}>
+              <h1 className='display-3 fw-bold text-white mb-2 text-uppercase' style={{ letterSpacing: '2px', textShadow: '2px 2px 4px rgba(0,0,0,0.5)' }}>
+                ¿A dónde vas?
+              </h1>
+              <p className='fs-3 text-white mb-0 fw-light'>
+                Consultá horarios y tarifas al instante.
+              </p>
             </div>
           </div>
           <div className='button-container-banner d-flex gap-3 justify-content-center flex-wrap' style={{ zIndex: 3 }}>

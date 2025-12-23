@@ -9,7 +9,7 @@ import { Footer } from '../components/Footer';
 import Swal from 'sweetalert2';
 import imgMonteros from '../assets/images/nosotros/monterosHD.png';
 // import contactImage from '../assets/images/contacto/contact_image.jpg';
-import contactImage from '../assets/banner/bannerPsh1.jpg';
+import contactImage from '../assets/images/unidades/unidad_nueva_1.png'; // Updated to real bus image
 import { collection, addDoc } from 'firebase/firestore';
 import { db } from '../firebase/config';
 
@@ -348,7 +348,7 @@ export const ContactScreen = () => {
               </div>
               <div className="col-12 col-md-6 d-flex align-items-center">
                 <div className="mb-3">
-                  <h3>Nos encontramos en Gral Paz 576 - San Miguel de Tucumán - Argentina</h3>
+                  <h3>Nos encontramos en Belgrano 348 Monteros, Tucumán - Argentina</h3>
                   <h5>Encuéntranos también por nuestros canales de comunicación!</h5>
                   <a className="btn btn-primary btn-lg mx-2" href="https://www.facebook.com/share/1Bm2g81i2k/" target="_blank">
                     <FontAwesomeIcon icon={faFacebook} />
