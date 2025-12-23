@@ -142,6 +142,31 @@ const UserInboxMobile = ({ messages }) => {
                     </Button>
                 </Modal.Footer>
             </Modal>
+            <style>{`
+                @media (max-width: 768px) {
+                    body::before {
+                        background-color: transparent !important;
+                        background-image: linear-gradient(
+                            to bottom right,
+                            #bfbcbc00 0%,
+                            #bfbcbc00 20%,
+                            #0434a4b3 40%,
+                            #bfbcbc00 60%,
+                            #bfbcbc00 80%
+                        ) !important;
+                        background-size: 300% 300% !important;
+                        animation: movimiento 5s linear infinite alternate !important;
+                    }
+                    @keyframes movimiento {
+                        from {
+                            background-position: 0 0;
+                        }
+                        to {
+                            background-position: 100% 100%;
+                        }
+                    }
+                }
+            `}</style>
         </div>
     );
 };

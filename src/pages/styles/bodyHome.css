@@ -400,7 +400,15 @@ body::before {
 	}
 
 	body::before {
-		background-color: rgba(0, 0, 0, 0.3);
+		background-color: transparent;
+		background-image: linear-gradient(to bottom right,
+				#bfbcbc00 0%,
+				#bfbcbc00 20%,
+				#0434a4b3 40%,
+				#bfbcbc00 60%,
+				#bfbcbc00 80%);
+		background-size: 300% 300%;
+		animation: movimiento 5s linear infinite alternate;
 	}
 
 	.banner-container-text {
@@ -1044,7 +1052,16 @@ label[name="etiquetahorario"] {
 
 ::-webkit-scrollbar-thumb:hover {
 	background: #003b8a !important;
-	/* Azul más oscuro al hover */
+}
+
+@keyframes movimiento {
+	from {
+		background-position: 0 0;
+	}
+
+	to {
+		background-position: 100% 100%;
+	}
 }
 
 /* Para Firefox */
