@@ -1,11 +1,16 @@
 import React from 'react'
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { FaFacebook, FaInstagram, FaMapMarkerAlt, FaEnvelope } from 'react-icons/fa';
 import "../pages/styles/footer.css"
 import logofooter from "../assets/images/nuevo-logo/logo.png"
 
 export const Footer = () => {
     const currentYear = new Date().getFullYear();
+    const location = useLocation();
+
+    const getLinkStyle = (path) => {
+        return location.pathname === path ? { color: '#ffc107', fontWeight: 'bold' } : {};
+    };
     return (
         <footer className="pie-pagina">
             <div className="grupo-1">
@@ -23,10 +28,11 @@ export const Footer = () => {
                 <div className="box">
                     <h2>NAVEGACIÓN</h2>
                     <nav className="footer-nav">
-                        <Link to="/" className="footer-link">Inicio</Link>
-                        <Link to="/paneldehorarios" className="footer-link">Horarios</Link>
-                        <Link to="/contact" className="footer-link">Contacto</Link>
-                        <Link to="/viajes-especiales" className="footer-link">Viajes Especiales</Link>
+                        <Link to="/" className="footer-link" style={getLinkStyle('/')}>Inicio</Link>
+                        <Link to="/paneldehorarios" className="footer-link" style={getLinkStyle('/paneldehorarios')}>Horarios</Link>
+                        <Link to="/contact" className="footer-link" style={getLinkStyle('/contact')}>Contacto</Link>
+                        <Link to="/historia" className="footer-link" style={getLinkStyle('/historia')}>Historia</Link>
+                        <Link to="/aboutus" className="footer-link" style={getLinkStyle('/aboutus')}>Nuestros Productos</Link>
                     </nav>
                 </div>
                 <div className="box">

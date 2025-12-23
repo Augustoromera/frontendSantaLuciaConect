@@ -6,6 +6,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import "../pages/styles/header.css";
 import logoTipo from '../assets/images/logo/logo.png.png'
+import logoRound from '../assets/images/nuevo-logo/logo.png'
 import swal from 'sweetalert2';
 import NotificationBell from './NotificationBell';
 
@@ -135,7 +136,7 @@ function Header({ navBarClass }) {
         >
           <Offcanvas.Header closeButton closeVariant="white" className="border-bottom border-secondary">
             <Offcanvas.Title id="offcanvasNavbarLabel-expand-lg" className="flex-grow-1 text-center">
-              <img src={logoTipo} alt="Logo" style={{ height: '120px', objectFit: 'contain' }} />
+              <img src={logoRound} alt="Logo" style={{ height: '120px', objectFit: 'contain' }} />
             </Offcanvas.Title>
           </Offcanvas.Header>
           <Offcanvas.Body className="p-0">
