@@ -1,0 +1,202 @@
+/* history.css */
+
+/* HERO SECTION */
+.hero-section {
+    position: relative;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    height: 70vh;
+    margin-top: 0;
+    /* Ensure no weird repetition */
+    background-attachment: fixed;
+}
+
+.history-content {
+    background-color: #f8f9fa;
+    padding-bottom: 3rem;
+}
+
+.quote-banner {
+    background-color: #0d6efd;
+    position: relative;
+}
+
+/* Base typography adjustments */
+.history-page h1 {
+    font-size: 3.5rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
+}
+
+.history-page p.lead {
+    font-size: 1.5rem;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.6);
+}
+
+/* RESPONSIVE STYLES */
+@media (max-width: 991px) {
+    .hero-section {
+        height: auto;
+        min-height: 50vh;
+        padding-top: 140px;
+        /* Clear fixed navbar */
+        padding-bottom: 60px;
+        background-attachment: scroll;
+        /* Fix mobile background issues */
+    }
+
+    .history-page h1 {
+        font-size: 2.2rem;
+    }
+
+    .history-page p.lead {
+        font-size: 1.1rem;
+    }
+
+    .history-page .display-6 {
+        font-size: 1.6rem;
+        margin-top: 1rem;
+    }
+
+    .history-page .fs-5 {
+        font-size: 1rem !important;
+    }
+
+    /* CARD STYLE FOR CONTENT SECTIONS */
+    .history-section {
+        padding-top: 1rem !important;
+        padding-bottom: 1rem !important;
+    }
+
+    .history-card {
+        background: #ffffff;
+        border-radius: 16px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        /* Softer shadow */
+        margin: 0 0 2rem 0 !important;
+        /* Reset margins to 0, add bottom margin */
+        padding: 0;
+        /* Remove padding from row */
+        display: flex;
+        flex-direction: column;
+        /* Force Stack */
+        overflow: hidden;
+        /* Clip overflowing content */
+        width: 100%;
+        /* Ensure it fits container */
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        /* Subtle border */
+    }
+
+    /* Column resets */
+    .history-card>[class*='col-'] {
+        padding: 1.5rem 1.5rem 0 1.5rem !important;
+        /* Add internal padding to cols instead */
+        width: 100% !important;
+    }
+
+    .history-card>[class*='col-']:last-child {
+        padding-bottom: 1.5rem !important;
+        /* Bottom padding for last item */
+    }
+
+    /* Image styling */
+    .history-img {
+        width: 100%;
+        height: 200px;
+        /* Slightly smaller height */
+        object-fit: cover;
+        border-radius: 12px !important;
+        margin-bottom: 0.5rem;
+        display: block;
+    }
+
+    /* Remove horizontal divider on mobile since we have cards */
+    hr {
+        display: none !important;
+    }
+
+    /* Reverse logic fix: Just stack normally (Image then text) */
+    .flex-row-reverse {
+        flex-direction: column !important;
+    }
+
+    /* Reset paddings for columns */
+    .pe-lg-5,
+    .ps-lg-5 {
+        padding: 0 !important;
+    }
+
+    /* Legacy Banner */
+    .legacy-banner {
+        padding-top: 3rem !important;
+        padding-bottom: 3rem !important;
+    }
+
+    .legacy-banner h3 {
+        font-size: 1.5rem;
+    }
+
+    .quote-banner {
+        margin: 2rem 0 !important;
+        padding: 3rem 0 !important;
+    }
+}
+
+/* Extra small devices (phones, less than 576px) */
+@media (max-width: 576px) {
+    .history-card {
+        background: #ffffff !important;
+        /* Re-enforce background */
+        margin: 0 0 1.5rem 0 !important;
+        border-radius: 12px;
+        align-items: stretch !important;
+        /* Override align-items-center to ensure full width */
+        height: auto !important;
+        /* Ensure content expands the card */
+    }
+
+    .history-card>[class*='col-'] {
+        padding: 1rem 1rem 0 1rem !important;
+        /* Tighter padding */
+        width: 100% !important;
+        flex: 0 0 100% !important;
+        /* Reset flex basis */
+        max-width: 100% !important;
+        /* Reset max-width */
+    }
+
+    .history-card>[class*='col-']:last-child {
+        padding-bottom: 2rem !important;
+        /* More bottom padding for text container */
+    }
+
+    .history-img {
+        height: auto;
+        aspect-ratio: 16/9;
+        /* Maintain ratio, don't force fixed height which might look weird */
+        border-radius: 8px !important;
+        margin-bottom: 0.5rem;
+    }
+
+    .history-page h1 {
+        font-size: 1.8rem;
+        /* Smaller title */
+    }
+
+    .display-6 {
+        font-size: 1.4rem !important;
+    }
+
+    .history-page p.lead,
+    .history-page .fs-5 {
+        font-size: 0.95rem !important;
+        /* Readable but compact body text */
+        text-align: left;
+        /* Prevent justified text gaps */
+    }
+
+    .quote-banner blockquote {
+        font-size: 1.2rem !important;
+    }
+}
