@@ -379,6 +379,7 @@ body::before {
 }
 
 /* Mobile Refactor */
+/* Mobile Refactor */
 @media (max-width: 768px) {
 	.banner {
 		display: flex;
@@ -386,10 +387,14 @@ body::before {
 		justify-content: flex-end;
 		/* Push content to bottom */
 		align-items: center;
+		padding-top: 100px;
+		/* Prevent overlap with navbar */
 		padding-bottom: 80px;
 		/* Space for buttons */
 		background-attachment: scroll;
 		/* Fix mobile background scroll issue */
+		height: auto;
+		min-height: 100vh;
 	}
 
 	body {
