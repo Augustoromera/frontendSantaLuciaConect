@@ -77,6 +77,7 @@ function Header({ navBarClass }) {
               <Nav.Link as={Link} to="/"  >Inicio</Nav.Link>
               <Nav.Link as={Link} to="/paneldehorarios"  >Panel de Horarios</Nav.Link>
               <Nav.Link as={Link} to="/aboutus"  >Nuestros Productos</Nav.Link>
+              <Nav.Link as={Link} to="/historia" >Historia</Nav.Link>
               <Nav.Link as={Link} to="/contact" >Contacto</Nav.Link>
               <NavDropdown title="Ingresar" id="basic-nav-dropdown">
                 <NavDropdown.Item as={Link} to="/login"  >Iniciar Sesión</NavDropdown.Item>
@@ -138,6 +139,7 @@ function Header({ navBarClass }) {
 
             <Nav.Link as={Link} to="/paneldehorarios" >Panel de Horarios</Nav.Link>
             <Nav.Link as={Link} to="/aboutus" >Sobre Nosotros</Nav.Link>
+            <Nav.Link as={Link} to="/historia" >Historia</Nav.Link>
             <Nav.Link as={Link} to="/contact" >Contacto</Nav.Link>
             <Nav.Link as={Link} to="/" onClick={handleLogout}>Cerrar sesión</Nav.Link>
 

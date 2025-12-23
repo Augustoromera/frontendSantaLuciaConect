@@ -14,6 +14,7 @@ import { PanelDeHorarios } from "../pages/PanelDeHorarios";
 import SpecialTrips from "../pages/SpecialTrips";
 import TicketPurchase from "../pages/TicketPurchase";
 import UserInbox from "../pages/user/UserInbox";
+import HistoryScreen from "../pages/HistoryScreen";
 
 function AppRouter() {
   return (
@@ -43,6 +44,7 @@ function AppLR() {
           <Route path="/admin" element={auth.user?.role === 'admin' ? <AdminScreen /> : <Navigate to="/" />} />
           <Route path="/mis-consultas" element={<UserInbox />} />
         </Route>
+        <Route path="/historia" element={<HistoryScreen />} />
       </Routes>
     </BrowserRouter>
   );

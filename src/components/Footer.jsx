@@ -32,7 +32,7 @@ export const Footer = () => {
                 <div className="box">
                     <h2>CONTÁCTANOS</h2>
                     <div className="contact-info">
-                        <p><FaMapMarkerAlt className="icon-small" /> Gral Paz 576, San Miguel de Tucumán</p>
+                        <p><FaMapMarkerAlt className="icon-small" /> Belgrano 348 Monteros, Tucumán</p>
                         <p><FaEnvelope className="icon-small" /> contacto@santalucia.com</p>
                     </div>
                     <div className="red-social">
