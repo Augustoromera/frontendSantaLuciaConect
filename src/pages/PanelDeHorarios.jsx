@@ -38,10 +38,59 @@ export const PanelDeHorarios = () => {
             try {
                 // 1. Fetch Routes
                 const rutasData = await getRutas();
-                setRutas(rutasData);
 
-                if (rutasData.length > 0) {
-                    setSelectedRutaId(rutasData[0].id);
+                // Process Routes: Format Name and Sort (Groups inverse routes)
+                const processedRutas = rutasData.map(r => {
+                    // Normalize arrows to " - "
+                    const newName = r.nombre.replace(/\s*(?:-{1,2}>|→)\s*/g, ' - ');
+                    return { ...r, nombre: newName };
+                }).sort((a, b) => {
+                    // Helper to generate a canonical key for sorting/grouping
+                    const getSortKey = (name) => {
+                        const parts = name.split(name.includes(' - ') ? ' - ' : '-');
+                        if (parts.length >= 2) {
+                            // Sort the parts -> "CityA_CityB" to group "A - B" and "B - A"
+                            return parts.map(p => p.trim().toLowerCase()).sort().join('_');
+                        }
+                        return name.toLowerCase();
+                    };
+
+                    // Helper to determine priority based on user request
+                    const getPriority = (name) => {
+                        // Normalize to lower case and remove accents
+                        const n = name.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+
+                        // 1. Santa Lucia <-> Monteros
+                        if (n.includes('santa lucia') && n.includes('monteros')) return 1;
+                        // 2. Monteros <-> Maldonado
+                        if (n.includes('monteros') && n.includes('maldonado')) return 2;
+                        // 3. Capitan Caceres
+                        if (n.includes('capitan caceres')) return 3;
+                        // 4. Las Mesadas
+                        if (n.includes('las mesadas')) return 4;
+
+                        return 99; // Others
+                    };
+
+                    const priorityA = getPriority(a.nombre);
+                    const priorityB = getPriority(b.nombre);
+
+                    if (priorityA !== priorityB) return priorityA - priorityB;
+
+                    const keyA = getSortKey(a.nombre);
+                    const keyB = getSortKey(b.nombre);
+
+                    if (keyA < keyB) return -1;
+                    if (keyA > keyB) return 1;
+
+                    // Secondary sort: If keys are same, sort by name
+                    return a.nombre.localeCompare(b.nombre);
+                });
+
+                setRutas(processedRutas);
+
+                if (processedRutas.length > 0) {
+                    setSelectedRutaId(processedRutas[0].id);
                 }
 
                 // 2. Fetch Schedules for these routes

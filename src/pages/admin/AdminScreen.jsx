@@ -76,11 +76,44 @@ export const AdminScreen = () => {
     const [rutas, setRutas] = useState([]);
 
     // Cargar Rutas Dinámicas
+    // Cargar Rutas Dinámicas
     useEffect(() => {
         const loadRutas = async () => {
             try {
                 const rutasData = await getRutas();
-                setRutas(rutasData);
+
+                // Process Routes: Format Name and Sort
+                const processedRutas = rutasData.map(r => {
+                    // Normalize arrows to " - "
+                    // Handles: "-->", "->", "→" with variable spacing
+                    const newName = r.nombre.replace(/\s*(?:-{1,2}>|→)\s*/g, ' - ');
+                    return { ...r, nombre: newName };
+                }).sort((a, b) => {
+                    // Helper to generate a canonical key for grouping inverse routes
+                    const getSortKey = (name) => {
+                        // Split by " - " assuming the normalization above worked
+                        // If strict " - " isn't found, try splitting by just "-"
+                        const parts = name.split(name.includes(' - ') ? ' - ' : '-');
+
+                        if (parts.length >= 2) {
+                            // Sort the parts alphabetically -> "CityA_CityB"
+                            // This ensures "A - B" and "B - A" get the same key
+                            return parts.map(p => p.trim().toLowerCase()).sort().join('_');
+                        }
+                        return name.toLowerCase(); // Fallback
+                    };
+
+                    const keyA = getSortKey(a.nombre);
+                    const keyB = getSortKey(b.nombre);
+
+                    if (keyA < keyB) return -1;
+                    if (keyA > keyB) return 1;
+
+                    // Secondary sort: If keys are same (inverse routes), sort simply by name
+                    return a.nombre.localeCompare(b.nombre);
+                });
+
+                setRutas(processedRutas);
             } catch (error) {
                 console.error("Error cargando rutas:", error);
             }
