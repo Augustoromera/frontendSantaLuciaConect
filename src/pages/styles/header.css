@@ -111,32 +111,57 @@
     color: #fff !important;
 }
 
+/* HAMBURGER MENU STYLES */
+.navbar-toggler {
+    background-color: rgba(0, 74, 173, 0.8) !important;
+    /* Blue background */
+    border: 2px solid #004aad !important;
+    box-shadow: 0 0 10px rgba(0, 74, 173, 0.5) !important;
+    /* Glowing effect */
+    padding: 0.5rem !important;
+    border-radius: 8px !important;
+    transition: all 0.3s ease !important;
+}
+
+.navbar-toggler:focus {
+    box-shadow: 0 0 15px rgba(0, 74, 173, 0.8) !important;
+    outline: none !important;
+}
+
+.navbar-toggler-icon {
+    /* Ensure the icon lines are clearly white */
+    filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.5));
+}
+
 @media (max-width: 991px) {
     .navbar-collapse {
-        background-color: rgba(18, 18, 28, 0.98) !important;
-        /* Deep dark background */
-        backdrop-filter: blur(20px) !important;
-        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        background-color: #0d1b2a !important;
+        /* Solid dark color, no transparency */
+        border: 1px solid rgba(255, 255, 255, 0.1);
         padding: 1.5rem 1rem;
         margin-top: 10px;
-        border-radius: 0 0 20px 20px;
-        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.9);
+        /* Stronger shadow */
         text-align: center;
+        max-height: 80vh;
+        overflow-y: auto;
     }
 
     .navbar-nav {
-        gap: 10px;
+        gap: 5px;
     }
 
     .navbar-nav .nav-link {
-        color: #e0e0e0 !important;
-        font-size: 1.15rem !important;
-        font-weight: 500 !important;
-        padding: 12px 0 !important;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        color: #ffffff !important;
+        /* Pure white text */
+        font-size: 1.2rem !important;
+        font-weight: 600 !important;
+        padding: 15px 0 !important;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         display: block;
-        transition: all 0.3s ease;
-        letter-spacing: 0.5px;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        /* Text shadow for extra contrast */
     }
 
     .navbar-nav .nav-link:last-child {

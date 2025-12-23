@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { NavDropdown, Nav } from 'react-bootstrap';
+import { NavDropdown, Nav, Offcanvas } from 'react-bootstrap';
 import Container from 'react-bootstrap/Container';
 import Navbar from 'react-bootstrap/Navbar';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
@@ -18,7 +18,7 @@ function Header({ navBarClass }) {
   const handleLogout = () => {
     swal.fire({
       title: "Cerrando sesión...",
-      timer: 2000, // Espera 2 segundos antes de redirigir
+      timer: 2000,
       buttons: false,
       icon: "success",
       position: "center",
@@ -33,10 +33,9 @@ function Header({ navBarClass }) {
       },
     }).then(() => {
       logout();
-      navigate("/"); // Navega al home ("/") después de cerrar sesión
+      navigate("/");
     });
   };
-  const navLinkClass = navBarClass;
 
   const [scrolled, setScrolled] = useState(false);
 
@@ -57,94 +56,93 @@ function Header({ navBarClass }) {
 
   const dinamicNav = location.pathname === '/' ? (scrolled ? 'navbarhome scrolled' : 'navbarhome') : 'navbarmain';
 
-  // LOGOUT HEADER
-  if (user === null) {
-    return (
-      <Navbar expand="lg" data-bs-theme="dark" className={`${dinamicNav}`} >
+  // Helper to render links to avoid duplication
+  const renderNavLinks = (isMobile) => (
+    <Nav className={`ms-auto align-items-center ${isMobile ? 'w-100' : ''}`}>
+      <Nav.Link as={Link} to="/" onClick={isMobile ? () => document.querySelector('.btn-close').click() : null}>Inicio</Nav.Link>
 
-        <Container>
-          <Navbar.Brand >
-            <img src={logoTipo} className="d-inline-block navbar-image logo" onClick={
-              () => {
-                navigate("/");
-              }
-            } alt="Logo" />
-          </Navbar.Brand>
+      {/* NOTIFICATION BELL - DESKTOP ONLY here */}
+      {!isMobile && isAuthenticated && (
+        <div className="d-flex align-items-center mx-2">
+          <NotificationBell />
+        </div>
+      )}
 
-          <Navbar.Toggle aria-controls="basic-navbar-nav" />
-          <Navbar.Collapse id="basic-navbar-nav">
-            <Nav className="ms-auto">
-              <Nav.Link as={Link} to="/"  >Inicio</Nav.Link>
-              <Nav.Link as={Link} to="/paneldehorarios"  >Panel de Horarios</Nav.Link>
-              <Nav.Link as={Link} to="/aboutus"  >Nuestros Productos</Nav.Link>
-              <Nav.Link as={Link} to="/historia" >Historia</Nav.Link>
-              <Nav.Link as={Link} to="/contact" >Contacto</Nav.Link>
-              <NavDropdown title="Ingresar" id="basic-nav-dropdown">
-                <NavDropdown.Item as={Link} to="/login"  >Iniciar Sesión</NavDropdown.Item>
-                <NavDropdown.Item as={Link} to="/register" >Registrarse</NavDropdown.Item>
-              </NavDropdown>
-            </Nav>
-          </Navbar.Collapse>
-        </Container>
-      </Navbar>
-    );
-  }
+      {/* Authenticated Links */}
+      {isAuthenticated && (
+        <>
+          {user.role === 'admin' ? (
+            <Nav.Link as={Link} to="/admin" onClick={isMobile ? () => document.querySelector('.btn-close').click() : null}>Administración</Nav.Link>
+          ) : null}
+          <Nav.Link as={Link} to="/mis-consultas" onClick={isMobile ? () => document.querySelector('.btn-close').click() : null}>Mis Consultas</Nav.Link>
+        </>
+      )}
 
-  // LOGGED IN HEADER
+      <Nav.Link as={Link} to="/paneldehorarios" onClick={isMobile ? () => document.querySelector('.btn-close').click() : null}>Panel de Horarios</Nav.Link>
+      <Nav.Link as={Link} to="/aboutus" onClick={isMobile ? () => document.querySelector('.btn-close').click() : null}>{isAuthenticated ? 'Sobre Nosotros' : 'Nuestros Productos'}</Nav.Link>
+      <Nav.Link as={Link} to="/historia" onClick={isMobile ? () => document.querySelector('.btn-close').click() : null}>Historia</Nav.Link>
+      <Nav.Link as={Link} to="/contact" onClick={isMobile ? () => document.querySelector('.btn-close').click() : null}>Contacto</Nav.Link>
+
+      {!isAuthenticated && (
+        <NavDropdown title="Ingresar" id="basic-nav-dropdown">
+          <NavDropdown.Item as={Link} to="/login" onClick={isMobile ? () => document.querySelector('.btn-close').click() : null}>Iniciar Sesión</NavDropdown.Item>
+          <NavDropdown.Item as={Link} to="/register" onClick={isMobile ? () => document.querySelector('.btn-close').click() : null}>Registrarse</NavDropdown.Item>
+        </NavDropdown>
+      )}
+
+      {isAuthenticated && (
+        <Nav.Link as={Link} to="/" onClick={() => {
+          handleLogout();
+          if (isMobile) document.querySelector('.btn-close').click();
+        }}>Cerrar sesión</Nav.Link>
+      )}
+    </Nav>
+  );
+
   return (
-    <Navbar expand="lg" data-bs-theme="dark" className={`${dinamicNav}`} >
-      <Container>
+    <Navbar expand="lg" data-bs-theme="dark" className={`${dinamicNav}`} sticky="top">
+      <Container fluid> {/* Use fluid container for offcanvas spacing */}
         <Navbar.Brand as={Link} to="/">
           <img
             src={logoTipo}
-            className="d-inline-block navbar-image"
+            className="d-inline-block navbar-image logo"
             alt="Logo"
             onClick={() => window.location.href = "/"}
           />
         </Navbar.Brand>
 
-        {/* MOBILE CONTROLS (Bell + Toggle) */}
-        {/* MOBILE CONTROLS (Bell + Toggle) */}
+        {/* MOBILE BELL (Left of Toggle) */}
         {isAuthenticated && (
-          <div className="d-lg-none ms-auto me-2">
+          <div className="d-lg-none ms-auto me-3">
             <NotificationBell />
           </div>
         )}
-        <Navbar.Toggle aria-controls="basic-navbar-nav" className={isAuthenticated ? "ms-0" : "ms-auto"} />
-        <Navbar.Collapse id="basic-navbar-nav">
-          <Nav className="ms-auto align-items-center">
 
-            {/* Links Common to All Auth Users */}
-            <Nav.Link as={Link} to="/"  >Inicio</Nav.Link>
+        <Navbar.Toggle aria-controls="offcanvasNavbar-expand-lg" className="ms-0" />
 
-            {/* NOTIFICATION BELL - DESKTOP (Visible only on lg and above) */}
-            {isAuthenticated && (
-              <div className="d-none d-lg-flex align-items-center mx-2">
-                <NotificationBell />
-              </div>
-            )}
-
-            {/* Admin Specific Links */}
-            {isAuthenticated && user.role === 'admin' && (
-              <>
-                <Nav.Link as={Link} to="/admin" >Administración</Nav.Link>
-                <Nav.Link as={Link} to="/mis-consultas" >Mis Consultas</Nav.Link>
-              </>
-            )}
-
-            {/* User Specific Links */}
-            {isAuthenticated && user.role !== 'admin' && (
-              <Nav.Link as={Link} to="/mis-consultas" >Mis Consultas</Nav.Link>
-            )}
-
-            <Nav.Link as={Link} to="/paneldehorarios" >Panel de Horarios</Nav.Link>
-            <Nav.Link as={Link} to="/aboutus" >Sobre Nosotros</Nav.Link>
-            <Nav.Link as={Link} to="/historia" >Historia</Nav.Link>
-            <Nav.Link as={Link} to="/contact" >Contacto</Nav.Link>
-            <Nav.Link as={Link} to="/" onClick={handleLogout}>Cerrar sesión</Nav.Link>
-
-          </Nav>
+        {/* DESKTOP NAV (Visible lg+) */}
+        <Navbar.Collapse id="basic-navbar-nav" className="d-none d-lg-block">
+          {renderNavLinks(false)}
         </Navbar.Collapse>
+
+        {/* MOBILE OFFCANVAS (Visible < lg) */}
+        <Navbar.Offcanvas
+          id="offcanvasNavbar-expand-lg"
+          aria-labelledby="offcanvasNavbarLabel-expand-lg"
+          placement="end"
+          className="bg-dark text-white border-start border-secondary d-lg-none"
+          style={{ maxWidth: '350px' }}
+        >
+          <Offcanvas.Header closeButton closeVariant="white" className="border-bottom border-secondary">
+            <Offcanvas.Title id="offcanvasNavbarLabel-expand-lg" className="flex-grow-1 text-center">
+              <img src={logoTipo} alt="Logo" style={{ height: '120px', objectFit: 'contain' }} />
+            </Offcanvas.Title>
+          </Offcanvas.Header>
+          <Offcanvas.Body className="p-0">
+            {renderNavLinks(true)}
+          </Offcanvas.Body>
+        </Navbar.Offcanvas>
+
       </Container>
     </Navbar>
   );
