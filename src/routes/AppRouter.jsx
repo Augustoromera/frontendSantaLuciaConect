@@ -15,6 +15,7 @@ import SpecialTrips from "../pages/SpecialTrips";
 import TicketPurchase from "../pages/TicketPurchase";
 import UserInbox from "../pages/user/UserInbox";
 import HistoryScreen from "../pages/HistoryScreen";
+import DevTeamScreen from "../pages/DevTeamScreen";
 
 function AppRouter() {
   return (
@@ -45,6 +46,7 @@ function AppLR() {
           <Route path="/mis-consultas" element={<UserInbox />} />
         </Route>
         <Route path="/historia" element={<HistoryScreen />} />
+        <Route path="/dev-team" element={<DevTeamScreen />} />
       </Routes>
     </BrowserRouter>
   );
