@@ -13,7 +13,7 @@ import unidad2 from '../assets/images/unidades/unidad_nueva_2.png';
 import unidad3 from '../assets/images/unidades/unidad_nueva_3.jpg';
 import unidad4 from '../assets/images/unidades/unidad_nueva_4.jpg';
 // import unidad5 from '../assets/images/unidades/unidad_nueva_5.jpg'; // Optional
-// import unidad6 from '../assets/images/unidades/unidad_nueva_6.jpg'; // Optional
+import unidad6 from '../assets/images/unidades/unidad_nueva_6.jpg';
 
 // import bus1 from '../assets/images/carrusel-home/bus1.jpg';
 // import bus2 from '../assets/images/carrusel-home/bus2.png';
@@ -236,7 +236,7 @@ export const BodyHome = () => {
       <div className="container-fluid">
         <div className="row">
           <div className="col-12 col-lg-6 espacio-mBlanco">
-            <img src={transporteRapido} className='img-fluid rounded shadow-sm my-img' alt="imagen de colectivo" />
+            <img src={unidad6} className='img-fluid rounded shadow-sm my-img' alt="imagen de colectivo" />
           </div>
           <div className="col-12 col-lg-6 d-flex flex-column justify-content-center align-items-start">
             <div className='d-flex flex-column align-items-start centrarTexto'>
