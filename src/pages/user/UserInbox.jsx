@@ -47,18 +47,22 @@ const UserInbox = () => {
         </>
     );
 
+    // Simple width check to avoid hydration mismatch if using SSR, but here it's SPA
+    // Better to stick to CSS classes but ensure parent has height
     return (
-        <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+        <div className="d-flex flex-column" style={{ minHeight: '100vh' }}>
             <Header />
 
-            {/* Desktop View */}
-            <div className="d-none d-lg-block flex-grow-1">
-                <UserInboxDesktop messages={messages} />
-            </div>
+            <div className="flex-grow-1">
+                {/* Desktop View - Hidden on xs, sm, md */}
+                <div className="d-none d-lg-block h-100">
+                    <UserInboxDesktop messages={messages} />
+                </div>
 
-            {/* Mobile View */}
-            <div className="d-lg-none">
-                <UserInboxMobile messages={messages} />
+                {/* Mobile View - Hidden on lg, xl, xxl */}
+                <div className="d-lg-none h-100">
+                    <UserInboxMobile messages={messages} />
+                </div>
             </div>
 
             <Footer />

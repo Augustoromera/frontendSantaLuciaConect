@@ -1,95 +1,108 @@
 import React from 'react';
-import { Accordion, Badge, Card, Container } from 'react-bootstrap';
+import { Badge } from 'react-bootstrap';
 import { FaEnvelopeOpen, FaEnvelope, FaReply, FaHourglassHalf } from 'react-icons/fa';
+import '../styles/LoginRegistro.css'; // Import standard styles
 
 const UserInboxDesktop = ({ messages }) => {
     return (
-        <Container className="py-5">
-            <h2 className="mb-4 text-center fw-bold text-white display-5">
-                <FaEnvelopeOpen className="me-3 text-warning" />
-                Mis Consultas (Escritorio)
-            </h2>
+        <div className='d-flex justify-content-center align-items-center' style={{ paddingBottom: '3rem', paddingTop: '150px' }}>
+            {/* Reuse Login Form Container Style for Consistency */}
+            <div className='login-form-container' style={{ maxWidth: '800px', width: '90%' }}>
+                <div className="w-100">
+                    <div className="text-center mb-4">
+                        <FaEnvelopeOpen className="text-warning display-4 mb-3" />
+                        <h2 className='titulo-lr text-white mb-0'>Mis Consultas</h2>
+                        <p className="text-white-50">Historial de mensajes</p>
+                    </div>
 
-            {messages.length === 0 ? (
-                <Card className="text-center p-5 bg-dark text-white border-secondary shadow">
-                    <Card.Body>
-                        <FaEnvelope className="display-4 text-secondary mb-3" />
-                        <h4>No has enviado ninguna consulta aún.</h4>
-                        <p className="text-white-50">Cuando nos envíes un mensaje desde Contacto, aparecerá aquí.</p>
-                    </Card.Body>
-                </Card>
-            ) : (
-                <Accordion defaultActiveKey="0" className="shadow-sm">
-                    {messages.map((msg, index) => (
-                        <Accordion.Item eventKey={index.toString()} key={msg.id} className="bg-dark border-secondary mb-3 rounded overflow-hidden">
-                            <Accordion.Header>
-                                <div className="d-flex w-100 justify-content-between align-items-center me-3">
-                                    <div className="d-flex align-items-center">
-                                        {msg.status === 'answered' ? (
-                                            <Badge bg="success" className="me-3">Respondido</Badge>
-                                        ) : (
-                                            <Badge bg="warning" text="dark" className="me-3">Pendiente</Badge>
-                                        )}
-                                        <span className="fw-bold text-white text-truncate" style={{ maxWidth: '400px' }}>
-                                            {msg.asunto}
-                                        </span>
-                                    </div>
-                                    <small className="text-white-50">
-                                        {msg.fecha ? new Date(msg.fecha).toLocaleDateString() : ''}
-                                    </small>
-                                </div>
-                            </Accordion.Header>
-                            <Accordion.Body className="bg-secondary bg-opacity-10 text-white">
-                                <div className="mb-3">
-                                    <label className="text-white-50 small text-uppercase fw-bold">Tu Mensaje:</label>
-                                    <p className="border-start border-3 border-light ps-3 fst-italic text-break" style={{ wordBreak: 'break-word', whiteSpace: 'pre-wrap' }}>
-                                        "{msg.mensaje}"
-                                    </p>
-                                </div>
-
-                                {msg.reply && (
-                                    <div className="mt-4 p-3 bg-dark rounded border border-success position-relative">
-                                        <div className="position-absolute top-0 start-0 translate-middle-y ms-3 badge bg-success shadow-sm">
-                                            <FaReply className="me-1" /> Respuesta de Admin
+                    {!messages || messages.length === 0 ? (
+                        <div className="text-center py-5">
+                            <FaEnvelope className="display-1 text-secondary mb-3 opacity-25" />
+                            <h4 className="text-white">No has enviado ninguna consulta aún.</h4>
+                            <p className="text-white-50">Tus mensajes aparecerán aquí.</p>
+                        </div>
+                    ) : (
+                        <div className="d-flex flex-column gap-3" style={{ maxHeight: '600px', overflowY: 'auto', paddingRight: '10px' }}>
+                            {messages.map((msg) => (
+                                <div key={msg.id} className="p-3 rounded mb-3" style={{ backgroundColor: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)' }}>
+                                    {/* Header */}
+                                    <div className="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom border-secondary border-opacity-25">
+                                        <div className="d-flex align-items-center gap-2">
+                                            {msg.status === 'answered' ? (
+                                                <Badge bg="success" className="rounded-pill">Respondido</Badge>
+                                            ) : (
+                                                <Badge bg="warning" text="dark" className="rounded-pill">Pendiente</Badge>
+                                            )}
+                                            <span className="fw-bold text-white text-truncate" style={{ maxWidth: '300px' }}>
+                                                {msg.asunto || 'Consulta'}
+                                            </span>
                                         </div>
-                                        <p className="mb-0 mt-2 text-white text-break" style={{ wordBreak: 'break-word', whiteSpace: 'pre-wrap' }}>
-                                            {msg.reply}
-                                        </p>
-                                        {msg.replyDate && (
+                                        <small className="text-white-50">
+                                            {msg.fecha ? new Date(msg.fecha).toLocaleDateString() : ''}
+                                        </small>
+                                    </div>
+
+                                    {/* Content */}
+                                    <div className="mb-3">
+                                        <div className="d-flex align-items-start mb-2">
+                                            <span className="badge bg-primary me-2 mt-1">Tú</span>
+                                            <p className="text-white-50 mb-0 fst-italic" style={{ wordBreak: 'break-word' }}>
+                                                "{msg.mensaje}"
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    {/* Reply */}
+                                    {msg.reply ? (
+                                        <div className="p-3 rounded mt-3" style={{ backgroundColor: 'rgba(25, 135, 84, 0.15)', borderLeft: '4px solid #198754' }}>
+                                            <div className="d-flex align-items-center mb-2 text-success">
+                                                <FaReply className="me-2" />
+                                                <strong className="small text-uppercase">Respuesta de Soporte</strong>
+                                            </div>
+                                            <p className="text-white mb-0" style={{ whiteSpace: 'pre-wrap' }}>{msg.reply}</p>
                                             <div className="text-end mt-2">
                                                 <small className="text-white-50" style={{ fontSize: '0.75rem' }}>
-                                                    {new Date(msg.replyDate).toLocaleString()}
+                                                    {msg.replyDate ? new Date(msg.replyDate).toLocaleString() : ''}
                                                 </small>
                                             </div>
-                                        )}
-                                    </div>
-                                )}
+                                        </div>
+                                    ) : (
+                                        <div className="p-2 rounded mt-3 text-center border border-dashed border-secondary text-white-50 small">
+                                            <FaHourglassHalf className="me-1" /> Esperando respuesta...
+                                        </div>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
+            </div>
 
-                                {!msg.reply && (
-                                    <div className="text-center py-3 text-white-50">
-                                        <small><FaHourglassHalf className="me-1" /> Esperando respuesta del administrador...</small>
-                                    </div>
-                                )}
-                            </Accordion.Body>
-                        </Accordion.Item>
-                    ))}
-                </Accordion>
-            )}
+            {/* Custom Scrollbar for this component */}
             <style>{`
-                .accordion-button {
-                    background-color: #212529 !important;
-                    color: white !important;
+                .login-form-container {
+                    background: rgba(30, 30, 30, 0.6);
+                    backdrop-filter: blur(10px);
+                    border-radius: 20px;
+                    padding: 40px;
+                    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+                    border: 1px solid rgba(255, 255, 255, 0.18);
                 }
-                .accordion-button:not(.collapsed) {
-                    background-color: #1a1e21 !important;
-                    color: #ffc107 !important;
-                    box-shadow: none;
+                ::-webkit-scrollbar {
+                    width: 8px;
                 }
-                .accordion-button::after {
-                    filter: invert(1);
+                ::-webkit-scrollbar-track {
+                    background: rgba(0,0,0,0.1); 
+                }
+                ::-webkit-scrollbar-thumb {
+                    background: rgba(255,255,255,0.2); 
+                    border-radius: 4px;
+                }
+                ::-webkit-scrollbar-thumb:hover {
+                    background: rgba(255,255,255,0.3); 
                 }
             `}</style>
-        </Container>
+        </div>
     );
 };
 
