@@ -53,7 +53,7 @@ export const Footer = () => {
             </div>
             <div className="grupo-2">
                 <small>&copy; {currentYear} <b>Transporte Santa Lucia</b>. Todos los Derechos Reservados. <br />
-                    <Link to="/dev-team" className="developer-link text-white-50 text-decoration-none hover-white">Desarrollado por estudiantes de UTN-FRT</Link></small>
+                    <Link to="/dev-team" className="developer-link text-decoration-none">Desarrollado por estudiantes de UTN-FRT</Link></small>
             </div>
         </footer>
     )

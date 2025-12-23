@@ -115,8 +115,22 @@ const DevTeamScreen = () => {
                     left: 0;
                     width: 100%;
                     height: 100%;
-                    background-image: linear-gradient(rgba(0,0,0,0.9), #050505);
+                    background-color: transparent;
+                    background-image: linear-gradient(to bottom right,
+                            #000000 0%,
+                            #1a1a1a 20%,
+                            #0434a4b3 50%,
+                            #1a1a1a 80%,
+                            #000000 100%);
+                    background-size: 300% 300%;
+                    animation: movimiento 10s linear infinite alternate;
                     z-index: 0;
+                    opacity: 0.6;
+                }
+
+                @keyframes movimiento {
+                    from { background-position: 0% 0%; }
+                    to { background-position: 100% 100%; }
                 }
 
                 /* Header Section */
