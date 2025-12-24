@@ -7,6 +7,7 @@ import { Footer } from '../components/Footer';
 import imgRomano from '../assets/images/team/romano_fernando.jpg';
 import imgAugusto from '../assets/images/team/augusto_romera.jpg';
 import imgMarcos from '../assets/images/team/marcos_brandan.jpg';
+import imgEmilse from '../assets/images/team/romano_emilse.jpg';
 
 const DevTeamScreen = () => {
     const team = [
@@ -22,7 +23,7 @@ const DevTeamScreen = () => {
             role: "UX/UI Designer",
             skills: ["UX/UI", "React", "CSS Animations", "Responsive"],
             color: "#bc13fe", // Purple
-            image: null // No image yet
+            image: imgEmilse
         },
         {
             name: "Brandan Marcos",

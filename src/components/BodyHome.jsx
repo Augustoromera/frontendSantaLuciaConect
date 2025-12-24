@@ -14,6 +14,7 @@ import unidad3 from '../assets/images/unidades/unidad_nueva_3.jpg';
 import unidad4 from '../assets/images/unidades/unidad_nueva_4.jpg';
 // import unidad5 from '../assets/images/unidades/unidad_nueva_5.jpg'; // Optional
 import unidad6 from '../assets/images/unidades/unidad_nueva_6.jpg';
+import unidad7 from '../assets/images/unidades/unidad_nueva_7.jpg';
 
 // import bus1 from '../assets/images/carrusel-home/bus1.jpg';
 // import bus2 from '../assets/images/carrusel-home/bus2.png';
@@ -30,8 +31,8 @@ export const BodyHome = () => {
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 720);
 
   // Use real bus images for the banner
-  const bannerImages = [unidad4, unidad1, unidad3, unidad2];
-  const bannerImagesMini = [unidad4, unidad1, unidad3];
+  const bannerImages = [unidad4, unidad1, unidad3, unidad2, unidad7];
+  const bannerImagesMini = [unidad4, unidad1, unidad3, unidad7];
 
   const currentBannerImage = isMobile
     ? bannerImagesMini[currentImageIndex]
