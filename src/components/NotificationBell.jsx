@@ -1,74 +1,20 @@
-import React, { useState, useEffect } from 'react';
-import { collection, query, orderBy, limit, onSnapshot, doc, updateDoc, deleteDoc } from 'firebase/firestore';
-import { db } from '../firebase/config';
-import { useAuth } from '../context/AuthContext';
+import React, { useState } from 'react';
+import { useNotifications } from '../context/NotificationContext';
 import { FaBell, FaTrash, FaCheck, FaExclamationCircle, FaInfoCircle, FaEnvelope } from 'react-icons/fa';
 import { Badge, Button, Offcanvas, ListGroup } from 'react-bootstrap';
 
 const NotificationBell = () => {
-    const { user } = useAuth();
-    const [notifications, setNotifications] = useState([]);
-    const [unreadCount, setUnreadCount] = useState(0);
+    const { notifications, unreadCount, markAsRead, deleteNotification, isNotificationRead } = useNotifications();
     const [showOffcanvas, setShowOffcanvas] = useState(false);
-
-    // Load read/deleted state from LocalStorage to avoid heavy DB writes for "read" status on global notifications
-    // Key format: `read_notifs_${user.uid}`
-    const getLocalState = () => {
-        if (!user) return { read: [], deleted: [] };
-        const read = JSON.parse(localStorage.getItem(`read_notifs_${user.uid}`) || '[]');
-        const deleted = JSON.parse(localStorage.getItem(`deleted_notifs_${user.uid}`) || '[]');
-        return { read, deleted };
-    };
-
-    useEffect(() => {
-        if (!user) return;
-
-        const q = query(collection(db, 'notifications'), orderBy('date', 'desc'), limit(20));
-
-        const unsubscribe = onSnapshot(q, (snapshot) => {
-            const { read, deleted } = getLocalState();
-
-            const fetchedNotifs = snapshot.docs
-                .map(doc => ({
-                    id: doc.id,
-                    ...doc.data(),
-                    date: doc.data().date?.toDate()
-                }))
-                .filter(n => !deleted.includes(n.id)); // Filter out locally deleted
-
-            setNotifications(fetchedNotifs);
-
-            // Calculate unread
-            const unread = fetchedNotifs.filter(n => !read.includes(n.id)).length;
-            setUnreadCount(unread);
-        });
-
-        return () => unsubscribe();
-    }, [user]);
 
     const handleMarkAsRead = (id, e) => {
         e?.stopPropagation();
-        const { read, deleted } = getLocalState();
-        if (!read.includes(id)) {
-            const newRead = [...read, id];
-            localStorage.setItem(`read_notifs_${user.uid}`, JSON.stringify(newRead));
-
-            // Force update local state
-            setUnreadCount(prev => Math.max(0, prev - 1));
-        }
+        markAsRead(id);
     };
 
     const handleDelete = (id, e) => {
         e?.stopPropagation();
-        const { read, deleted } = getLocalState();
-        if (!deleted.includes(id)) {
-            const newDeleted = [...deleted, id];
-            localStorage.setItem(`deleted_notifs_${user.uid}`, JSON.stringify(newDeleted));
-
-            // Remove from UI immediately
-            setNotifications(prev => prev.filter(n => n.id !== id));
-            if (!read.includes(id)) setUnreadCount(prev => Math.max(0, prev - 1));
-        }
+        deleteNotification(id);
     };
 
     const handleOpen = () => setShowOffcanvas(true);
@@ -100,8 +46,7 @@ const NotificationBell = () => {
                     {notifications.length > 0 ? (
                         <ListGroup variant="flush">
                             {notifications.map((notif) => {
-                                const { read } = getLocalState();
-                                const isRead = read.includes(notif.id);
+                                const isRead = isNotificationRead(notif.id);
 
                                 return (
                                     <ListGroup.Item
