@@ -4,31 +4,39 @@ import { FaUserAstronaut, FaInstagram, FaFacebook, FaLinkedin, FaEnvelope } from
 import Header from '../components/Header';
 import { Footer } from '../components/Footer';
 
+import imgRomano from '../assets/images/team/romano_fernando.jpg';
+import imgAugusto from '../assets/images/team/augusto_romera.jpg';
+import imgMarcos from '../assets/images/team/marcos_brandan.jpg';
+
 const DevTeamScreen = () => {
     const team = [
         {
             name: "Romano Luis Fernando",
             role: "Full Stack Developer",
             skills: ["SQL", "Firebase", "React", "Node.js", "HTML", "CSS", "JavaScript"],
-            color: "#00f2ff" // Cyan
+            color: "#00f2ff", // Cyan
+            image: imgRomano
         },
         {
             name: "Romano Emilse Milena",
             role: "UX/UI Designer",
             skills: ["UX/UI", "React", "CSS Animations", "Responsive"],
-            color: "#bc13fe" // Purple
+            color: "#bc13fe", // Purple
+            image: null // No image yet
         },
         {
             name: "Brandan Marcos",
             role: "Backend Engineer",
             skills: ["Server Architecture", "API REST", "Security", "JavaScript"],
-            color: "#00ff9d" // Green
+            color: "#00ff9d", // Green
+            image: imgMarcos
         },
         {
             name: "Romera Rodriguez Augusto Efraín",
             role: "Full Stack Developer",
             skills: ["MySQL", "Database Design", "Data Analysis", "HTML", "CSS", "JavaScript"],
-            color: "#ffc107" // Gold
+            color: "#ffc107", // Gold
+            image: imgAugusto
         }
     ];
 
@@ -56,7 +64,23 @@ const DevTeamScreen = () => {
                                     <div className="card-content">
                                         <div className="avatar-container">
                                             <div className="avatar-ring"></div>
-                                            <FaUserAstronaut className="avatar-icon" />
+                                            {member.image ? (
+                                                <img
+                                                    src={member.image}
+                                                    alt={member.name}
+                                                    className="avatar-image"
+                                                    style={{
+                                                        width: '100%',
+                                                        height: '100%',
+                                                        objectFit: 'cover',
+                                                        borderRadius: '50%',
+                                                        position: 'relative',
+                                                        zIndex: 2
+                                                    }}
+                                                />
+                                            ) : (
+                                                <FaUserAstronaut className="avatar-icon" />
+                                            )}
                                         </div>
 
                                         <h3 className="member-name text-white">{member.name}</h3>
