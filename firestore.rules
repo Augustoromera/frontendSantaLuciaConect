@@ -60,6 +60,11 @@ service cloud.firestore {
       allow write: if isAdmin();
     }
     
+    match /metadata/{document=**} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    
     // 3. Contact Messages / Inquiries
     // - Any Authenticated user can CREATE a message.
     // - Admins can READ/UPDATE (to answer).
