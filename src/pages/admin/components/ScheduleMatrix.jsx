@@ -4,7 +4,7 @@ import { FaPlus, FaTrash, FaSave, FaClock } from 'react-icons/fa';
 import Swal from 'sweetalert2';
 import pruebaApi from '../../../api/pruebaApi';
 import '../../styles/adminscreen.css';
-import { getParadasByRuta, getHorariosByRuta } from '../../../services/scheduleService';
+import { getParadasByRuta, getHorariosByRuta, updateScheduleVersion } from '../../../services/scheduleService';
 import { collection, addDoc, updateDoc, deleteDoc, doc, writeBatch } from 'firebase/firestore';
 import { db } from '../../../firebase/config';
 export const ScheduleMatrix = ({ initialRutaId, rutas, onAddStop, onEditStop, onDeleteStop, onDeleteRoute, lastUpdate }) => {
@@ -171,6 +171,7 @@ export const ScheduleMatrix = ({ initialRutaId, rutas, onAddStop, onEditStop, on
                 });
                 if (changesCount > 0) {
                     await batch.commit();
+                    await updateScheduleVersion(); // Trigger cache update
                 }
 
                 // Remove from UI immediately
@@ -244,6 +245,7 @@ export const ScheduleMatrix = ({ initialRutaId, rutas, onAddStop, onEditStop, on
 
             if (changesCount > 0) {
                 await batch.commit();
+                await updateScheduleVersion(); // Trigger cache update
                 Swal.fire('Guardado', 'Cambios guardados correctamente', 'success');
                 await fetchData(); // Refresh to get new IDs and SORT
                 setSaving(false); // Fix: Turn off saving spinner

@@ -367,7 +367,7 @@ const UnitsAndDrivers = () => {
                 </div>
             )}
 
-            <style jsx>{`
+            <style>{`
                 .hover-shadow:hover {
                     box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.4) !important;
                     transform: translateY(-2px);

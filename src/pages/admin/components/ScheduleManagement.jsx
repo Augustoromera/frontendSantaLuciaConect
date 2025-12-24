@@ -7,6 +7,7 @@ import '../../styles/adminscreen.css';
 import AddParadaModal from '../../../components/admin-components/AddParadaModel';
 import EditParadaModal from '../../../components/admin-components/EditParadasModal';
 import EditHorariosModal from '../../../components/admin-components/EditHorariosModal';
+import { updateScheduleVersion } from '../../../services/scheduleService';
 
 export const ScheduleManagement = () => {
     console.log("Rendering ScheduleManagement Component");
@@ -60,6 +61,7 @@ export const ScheduleManagement = () => {
                 ...prev,
                 [rutaSeleccionada.id]: [...(prev[rutaSeleccionada.id] || []), paradaCreada]
             }));
+            await updateScheduleVersion();
             await fetchParadasYHorarios();
             setMostrarModal(false);
         } catch (error) {
@@ -93,6 +95,7 @@ export const ScheduleManagement = () => {
         if (result.isConfirmed) {
             try {
                 await pruebaApi.delete(`/admin/eliminarParada/${idParada}`);
+                await updateScheduleVersion();
                 await fetchParadasYHorarios();
             } catch (error) {
                 console.error('Error al eliminar la parada:', error);
@@ -171,7 +174,10 @@ export const ScheduleManagement = () => {
                 isOpen={modalEditarParadaAbierto}
                 onRequestClose={cerrarModalEditarParada}
                 parada={paradaSeleccionada}
-                onRecargarParadas={fetchParadasYHorarios}
+                onRecargarParadas={async () => {
+                    await updateScheduleVersion();
+                    await fetchParadasYHorarios();
+                }}
             />
             {horarioEditando && (
                 <EditHorariosModal
