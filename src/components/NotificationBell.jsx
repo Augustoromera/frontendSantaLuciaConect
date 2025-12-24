@@ -52,6 +52,9 @@ const NotificationBell = () => {
                 <Offcanvas.Body className="p-0">
                     {notifications.length > 0 ? (
                         <div className="notification-list-container">
+                            <div className="d-block d-md-none text-center text-white-50 py-2 small border-bottom border-secondary mb-0">
+                                <small>Desliza hacia la izquierda para eliminar</small>
+                            </div>
                             <SwipeableList>
                                 {notifications.map((notif) => {
                                     const isRead = isNotificationRead(notif.id);
@@ -75,8 +78,12 @@ const NotificationBell = () => {
                                             trailingActions={trailingActions()}
                                         >
                                             <div
-                                                className="w-100 bg-dark text-white border-bottom border-secondary p-3 notification-item"
-                                                style={{ backgroundColor: isRead ? 'transparent' : 'rgba(255, 193, 7, 0.05)', cursor: 'pointer' }}
+                                                className="w-100 text-white border-bottom border-secondary p-3 notification-item"
+                                                style={{
+                                                    backgroundColor: isRead ? 'transparent' : 'rgba(255, 193, 7, 0.15)', // More visible yellow tint
+                                                    cursor: 'pointer',
+                                                    transition: 'background-color 0.5s ease' // Smooth fading animation
+                                                }}
                                                 onClick={() => markAsRead(notif.id)}
                                             >
                                                 <div className="d-flex w-100 justify-content-between align-items-start mb-1">
@@ -92,11 +99,7 @@ const NotificationBell = () => {
                                                     {notif.message}
                                                 </p>
                                                 <div className="d-flex justify-content-end gap-2">
-                                                    {!isRead && (
-                                                        <Button size="sm" variant="outline-success" className="py-0 px-2" style={{ fontSize: '0.75rem' }} onClick={(e) => { e.stopPropagation(); markAsRead(notif.id); }}>
-                                                            <FaCheck className="me-1" /> Marcar leído
-                                                        </Button>
-                                                    )}
+
                                                     {/* Mobile usage implies swipe, but desktop might still need button. Keeping button for desktop/accessiblity, or we can hide it on mobile via CSS d-none d-md-block if desired. 
                                                         User asked for swipe on mobile. Keeping the button doesn't hurt. 
                                                     */}
