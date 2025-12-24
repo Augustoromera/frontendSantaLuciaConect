@@ -59,6 +59,7 @@ function RegisterPage() {
         username: values.username,
         email: values.email,
         role: isAdmin ? 'admin' : 'user',
+        status: 'inactive', // Default status
         createdAt: new Date()
       });
 

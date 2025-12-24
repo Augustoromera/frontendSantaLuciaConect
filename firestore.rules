@@ -65,7 +65,8 @@ service cloud.firestore {
     // - Admins can READ/UPDATE (to answer).
     // - Users can READ their own messages (checked by email as per app logic).
     match /contacts/{contactId} {
-      allow create: if isAuthenticated(); // Or true if you want public contact form
+      allow create: if isAuthenticated() && 
+                    get(/databases/$(database)/documents/users/$(request.auth.uid)).data.status == 'active';
       allow read: if isAdmin() || (isAuthenticated() && resource.data.email == request.auth.token.email);
        // Allow update only for Admins (e.g. marking as answered)
       allow update, delete: if isAdmin();

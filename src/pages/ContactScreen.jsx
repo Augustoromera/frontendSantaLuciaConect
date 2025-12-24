@@ -227,6 +227,21 @@ export const ContactScreen = () => {
                     Iniciar Sesión
                   </Link>
                 </div>
+              ) : user.status === 'inactive' ? (
+                <div className="text-center py-5">
+                  <div className="mb-4">
+                    <span className="badge bg-danger fs-5">Cuenta Inactiva</span>
+                  </div>
+                  <h4 className="mb-3 text-white">Tu cuenta aún no ha sido habilitada</h4>
+                  <p className="text-white-50 mb-4 px-md-5">
+                    Un administrador debe activar tu cuenta para que puedas enviar consultas.
+                    <br />
+                    Mientras tanto, puedes consultar los <strong>Horarios</strong> y <strong>Rutas</strong> libremente.
+                  </p>
+                  <Button variant="dark" disabled className="border-secondary text-muted">
+                    Envío de mensajes deshabilitado
+                  </Button>
+                </div>
               ) : (
                 <Form onSubmit={handleSubmit}>
                   <div className="row">
