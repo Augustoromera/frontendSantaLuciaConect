@@ -2,6 +2,13 @@ import React, { useState } from 'react';
 import { useNotifications } from '../context/NotificationContext';
 import { FaBell, FaTrash, FaCheck, FaExclamationCircle, FaInfoCircle, FaEnvelope } from 'react-icons/fa';
 import { Badge, Button, Offcanvas, ListGroup } from 'react-bootstrap';
+import {
+    SwipeableList,
+    SwipeableListItem,
+    SwipeAction,
+    TrailingActions,
+} from 'react-swipeable-list';
+import 'react-swipeable-list/dist/styles.css';
 
 const NotificationBell = () => {
     const { notifications, unreadCount, markAsRead, deleteNotification, isNotificationRead } = useNotifications();
@@ -44,43 +51,65 @@ const NotificationBell = () => {
                 </Offcanvas.Header>
                 <Offcanvas.Body className="p-0">
                     {notifications.length > 0 ? (
-                        <ListGroup variant="flush">
-                            {notifications.map((notif) => {
-                                const isRead = isNotificationRead(notif.id);
+                        <div className="notification-list-container">
+                            <SwipeableList>
+                                {notifications.map((notif) => {
+                                    const isRead = isNotificationRead(notif.id);
 
-                                return (
-                                    <ListGroup.Item
-                                        key={notif.id}
-                                        className="bg-dark text-white border-bottom border-secondary p-3 notification-item"
-                                        style={{ backgroundColor: isRead ? 'transparent' : 'rgba(255, 193, 7, 0.05)' }}
-                                        onClick={() => handleMarkAsRead(notif.id)}
-                                    >
-                                        <div className="d-flex w-100 justify-content-between align-items-start mb-1">
-                                            <h6 className={`mb-0 ${!isRead ? 'fw-bold text-warning' : 'text-white'}`}>
-                                                {!isRead && <FaExclamationCircle className="me-1" />}
-                                                {notif.title}
-                                            </h6>
-                                            <small className="text-white-50 ms-2" style={{ fontSize: '0.75rem' }}>
-                                                {notif.date ? notif.date.toLocaleDateString() : ''}
-                                            </small>
-                                        </div>
-                                        <p className="mb-2 text-white-50 small" style={{ lineHeight: '1.4' }}>
-                                            {notif.message}
-                                        </p>
-                                        <div className="d-flex justify-content-end gap-2">
-                                            {!isRead && (
-                                                <Button size="sm" variant="outline-success" className="py-0 px-2" style={{ fontSize: '0.75rem' }} onClick={(e) => handleMarkAsRead(notif.id, e)}>
-                                                    <FaCheck className="me-1" /> Marcar leído
-                                                </Button>
-                                            )}
-                                            <Button size="sm" variant="outline-danger" className="py-0 px-2" style={{ fontSize: '0.75rem' }} onClick={(e) => handleDelete(notif.id, e)}>
-                                                <FaTrash />
-                                            </Button>
-                                        </div>
-                                    </ListGroup.Item>
-                                );
-                            })}
-                        </ListGroup>
+                                    const trailingActions = () => (
+                                        <TrailingActions>
+                                            <SwipeAction
+                                                destructive={true}
+                                                onClick={() => deleteNotification(notif.id)}
+                                            >
+                                                <div className="d-flex align-items-center justify-content-center bg-danger text-white h-100 w-100" style={{ minWidth: '80px' }}>
+                                                    <FaTrash className="fs-4" />
+                                                </div>
+                                            </SwipeAction>
+                                        </TrailingActions>
+                                    );
+
+                                    return (
+                                        <SwipeableListItem
+                                            key={notif.id}
+                                            trailingActions={trailingActions()}
+                                        >
+                                            <div
+                                                className="w-100 bg-dark text-white border-bottom border-secondary p-3 notification-item"
+                                                style={{ backgroundColor: isRead ? 'transparent' : 'rgba(255, 193, 7, 0.05)', cursor: 'pointer' }}
+                                                onClick={() => markAsRead(notif.id)}
+                                            >
+                                                <div className="d-flex w-100 justify-content-between align-items-start mb-1">
+                                                    <h6 className={`mb-0 ${!isRead ? 'fw-bold text-warning' : 'text-white'}`}>
+                                                        {!isRead && <FaExclamationCircle className="me-1" />}
+                                                        {notif.title}
+                                                    </h6>
+                                                    <small className="text-white-50 ms-2" style={{ fontSize: '0.75rem' }}>
+                                                        {notif.date ? notif.date.toLocaleDateString() : ''}
+                                                    </small>
+                                                </div>
+                                                <p className="mb-2 text-white-50 small" style={{ lineHeight: '1.4' }}>
+                                                    {notif.message}
+                                                </p>
+                                                <div className="d-flex justify-content-end gap-2">
+                                                    {!isRead && (
+                                                        <Button size="sm" variant="outline-success" className="py-0 px-2" style={{ fontSize: '0.75rem' }} onClick={(e) => { e.stopPropagation(); markAsRead(notif.id); }}>
+                                                            <FaCheck className="me-1" /> Marcar leído
+                                                        </Button>
+                                                    )}
+                                                    {/* Mobile usage implies swipe, but desktop might still need button. Keeping button for desktop/accessiblity, or we can hide it on mobile via CSS d-none d-md-block if desired. 
+                                                        User asked for swipe on mobile. Keeping the button doesn't hurt. 
+                                                    */}
+                                                    <Button size="sm" variant="outline-danger" className="py-0 px-2 d-none d-md-block" style={{ fontSize: '0.75rem' }} onClick={(e) => { e.stopPropagation(); deleteNotification(notif.id); }}>
+                                                        <FaTrash />
+                                                    </Button>
+                                                </div>
+                                            </div>
+                                        </SwipeableListItem>
+                                    );
+                                })}
+                            </SwipeableList>
+                        </div>
                     ) : (
                         <div className="text-center py-5 text-white-50">
                             <FaInfoCircle className="mb-3 fs-1" />
