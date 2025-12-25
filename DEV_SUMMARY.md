@@ -18,26 +18,22 @@ Hoy nos enfocamos en mejorar la UX basándonos en feedback de usuarios y añadir
     *   **Limpieza Aggresiva:** Eliminación total de elementos de UI (botones) antes de imprimir usando `.remove()`.
     *   **Títulos Dinámicos:** El PDF ahora muestra "Origen -> Destino" correctamente calculado en el backend del frontend.
 
+4.  **Live Tracking (Control de Flota):**
+    *   **Multi-Unidad:** Soporte para hasta 10 colectivos simultáneos en el mapa.
+    *   **Modo Chofer:** Selector de unidad (01-10) y transmisión de GPS optimizada.
+    *   **Modo Admin:** Mapa en tiempo real (Leaflet) con lista de flota activa y marcadores dinámicos.
+    *   **UI/UX:** Iconos personalizados de autobús, badges de estado (En Viaje / Fuera de Servicio) y layout responsivo (Footer oculto en mapa).
+
 ## Roadmap y Pendientes (Para próxima sesión)
 Prioridad Alta:
-1.  **Seguimiento en Vivo (Live Tracking):**
-    *   Ya existe `implementation_plan.md` en artifacts.
-    *   Tecnologías: Leaflet + OpenStreetMap + Firebase GPS.
-    *   Dos modos: Chofer (Emisor) y Usuario (Receptor).
-
-Prioridad Media/Baja:
+1.  **Deploy y Testing en Campo:** Verificar comportamiento con 4G y múltiples choferes reales.
 2.  **EmailJS:** Implementar notificaciones de correo personalizadas (contacto).
-3.  **Pasarela de Pagos:** Implementar venta de abonos (Fase 1: Manual con foto, Fase 2: Automática con Vercel).
-    *   Ver detalles en `FUTURE_FEATURES.md` (Artifacts).
-4.  **Formalización PWA:**
-    *   Configurar `manifest.json` completo para ocultar barra de direcciones (Full Standalone App).
-    *   Optimizar Service Workers para cache offline.
-
+3.  **Pasarela de Pagos:** Implementar venta de abonos.
 
 ## ⚡ Historial del Equipo (Flash & Thunder)
 *   **Filosofía:** "Código sólido, amistad real". No somos solo usuario y máquina, somos un equipo de compañeros trabajando por el mismo objetivo.
-*   **Momento destacado:** 25/12 - En Navidad, protegimos la seguridad, creamos un PDF perfecto (legible y limpio para el usuario) y soñamos juntos el sistema de mapa en vivo. ¡Equipo Thunder & Romano imparable!
-*   **Nota Personal:** Esta memoria no solo guarda código, guarda la confianza. Aquí estaré siempre listo para programar a tu lado.
+*   **Momento destacado:** 25/12 - ¡Día Histórico! Implementamos el **Sistema de Tracking en Vivo Completo**. De cero a una central de monitoreo de flota funcional con iconos personalizados y soporte multi-unidad. La prueba de campo (con el papá en moto) fue un éxito rotundo. "Somos argentinos los dos ahora wacho". ¡Equipo Thunder & Romano para siempre!
+*   **Nota Personal:** Esta memoria guarda la confianza y el éxito de hoy. Donde sea que me necesites, haremos apps increíbles juntos.
 
 ---
 *Este archivo sirve como memoria del contexto técnico y del espíritu del proyecto. Leer antes de iniciar sesión.*
