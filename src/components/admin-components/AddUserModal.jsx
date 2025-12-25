@@ -84,6 +84,7 @@ const AddUserModal = ({ isOpen, setIsOpen, onRequestClose, handleChangeFormUser,
                         <option value="" style={{ color: 'black' }}>Seleccionar Rol</option>
                         <option value="admin" style={{ color: 'black' }}>Administrador</option>
                         <option value="user" style={{ color: 'black' }}>Usuario</option>
+                        <option value="chofer" style={{ color: 'black' }}>Chofer</option>
                     </select>
                 </div>
 

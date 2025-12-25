@@ -20,7 +20,7 @@ function Header({ navBarClass }) {
     swal.fire({
       title: "Cerrando sesión...",
       timer: 2000,
-      buttons: false,
+      showConfirmButton: false,
       icon: "success",
       position: "center",
       background: 'black',
@@ -75,6 +75,14 @@ function Header({ navBarClass }) {
           {user.role === 'admin' ? (
             <Nav.Link as={Link} to="/admin" onClick={isMobile ? () => document.querySelector('.btn-close').click() : null}>Administración</Nav.Link>
           ) : null}
+          {user.role === 'admin' && (
+            <Nav.Link as={Link} to="/admin/tracker-visor" onClick={isMobile ? () => document.querySelector('.btn-close').click() : null}>Monitor GPS</Nav.Link>
+          )}
+
+          {(user.role === 'admin' || user.role === 'chofer') && (
+            <Nav.Link as={Link} to="/admin/tracker-emisor" onClick={isMobile ? () => document.querySelector('.btn-close').click() : null} className="text-warning">Soy Chofer</Nav.Link>
+          )}
+
           <Nav.Link as={Link} to="/mis-consultas" onClick={isMobile ? () => document.querySelector('.btn-close').click() : null}>Mis Consultas</Nav.Link>
         </>
       )}

@@ -16,6 +16,13 @@ service cloud.firestore {
         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
     }
 
+    // Check if the user has the 'chofer' role
+    function isDriver() {
+      return isAuthenticated() &&
+        exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'chofer';
+    }
+
     // Check if the user is the owner of the document (by ID)
     function isOwner(userId) {
       return isAuthenticated() && request.auth.uid == userId;
@@ -84,6 +91,13 @@ service cloud.firestore {
     
     match /choferes/{document=**} {
       allow read, write: if isAdmin();
+    }
+
+    // 5. Live Tracking
+    // - Admins and Drivers can READ/WRITE
+    // - (Future: Public can READ)
+    match /live_tracking/{document=**} {
+      allow read, write: if isAdmin() || isDriver();
     }
     
     // Default deny for anything else

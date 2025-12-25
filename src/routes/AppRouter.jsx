@@ -17,6 +17,8 @@ import TicketPurchase from "../pages/TicketPurchase";
 import UserInbox from "../pages/user/UserInbox";
 import HistoryScreen from "../pages/HistoryScreen";
 import DevTeamScreen from "../pages/DevTeamScreen";
+import DriverTracker from "../pages/admin/tracking/DriverTracker";
+import LiveMapAdmin from "../pages/admin/tracking/LiveMapAdmin";
 import ScrollToTop from "../components/ScrollToTop";
 
 function AppRouter() {
@@ -44,9 +46,14 @@ function AppLR() {
         <Route path="/compra-abonos" element={<TicketPurchase />} />
 
         <Route element={<ProtectedRoute />}>
-          n
+
           {/* Ruta ADMIN */}
           <Route path="/admin" element={auth.user?.role === 'admin' ? <AdminScreen /> : <Navigate to="/" />} />
+
+          {/* MODULE: Live Tracking (Stealth Mode) */}
+          <Route path="/admin/tracker-emisor" element={(auth.user?.role === 'admin' || auth.user?.role === 'chofer') ? <DriverTracker /> : <Navigate to="/" />} />
+          <Route path="/admin/tracker-visor" element={auth.user?.role === 'admin' ? <LiveMapAdmin /> : <Navigate to="/" />} />
+
           <Route path="/mis-consultas" element={<UserInbox />} />
         </Route>
         <Route path="/historia" element={<HistoryScreen />} />

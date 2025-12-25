@@ -4,6 +4,7 @@ import App from './App.jsx'
 import Modal from 'react-modal';
 import { AuthProvider } from './context/AuthContext';
 import { NotificationProvider } from './context/NotificationContext';
+import 'leaflet/dist/leaflet.css';
 
 Modal.setAppElement('#root')
 
