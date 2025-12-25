@@ -3,7 +3,8 @@ import {
   onAuthStateChanged,
   signInWithEmailAndPassword,
   signOut,
-  createUserWithEmailAndPassword
+  createUserWithEmailAndPassword,
+  sendPasswordResetEmail
 } from "firebase/auth";
 import { auth, db } from "../firebase/config";
 import { doc, getDoc, setDoc } from "firebase/firestore";
@@ -28,6 +29,10 @@ export const AuthProvider = ({ children }) => {
 
   const logout = () => {
     return signOut(auth);
+  }
+
+  const resetPassword = (email) => {
+    return sendPasswordResetEmail(auth, email);
   }
 
   useEffect(() => {
@@ -58,6 +63,7 @@ export const AuthProvider = ({ children }) => {
     login,
     signup,
     logout,
+    resetPassword,
     loading,
     isAuthenticated: !!user
   }

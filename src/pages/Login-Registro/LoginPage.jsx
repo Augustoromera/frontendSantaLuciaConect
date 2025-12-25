@@ -117,6 +117,12 @@ function LoginPage() {
                                 <p className='texto-validacion'>La contraseña debe ser mayor a 4 caracteres</p>
                             )}
 
+                            <div className="text-end mb-3">
+                                <Link to="/forgot-password" style={{ color: '#0d6efd', fontSize: '0.9rem', textDecoration: 'none' }}>
+                                    ¿Olvidaste tu contraseña?
+                                </Link>
+                            </div>
+
                             <button type="submit" className='boton-login'>
                                 Ingresar
                             </button>

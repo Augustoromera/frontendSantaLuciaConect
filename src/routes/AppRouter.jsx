@@ -3,6 +3,7 @@ import React from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import LoginPage from '../pages/Login-Registro/LoginPage';
 import RegisterPage from '../pages/Login-Registro/RegisterPage';
+import ForgotPasswordPage from '../pages/Login-Registro/ForgotPasswordPage';
 import { AuthProvider, useAuth } from "../context/AuthContext";
 import ProtectedRoute from "../../ProtectedRoute";
 import { HomeScreen } from '../pages/HomeScreen'
@@ -33,6 +34,7 @@ function AppLR() {
       <Routes>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
+        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
         <Route path="/" element={<HomeScreen />} />
         <Route path="/contact" element={<ContactScreen />} />
         <Route path='/aboutus' element={<AboutUs />} />
