@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { fetchScheduleData, getRutas } from '../services/scheduleService';
 import { getTarifasByRuta } from '../services/tariffService';
 import './styles/panel-horarios.css';
@@ -31,6 +31,7 @@ export const PanelDeHorarios = () => {
     // Data stores
     const [paradasPorRuta, setParadasPorRuta] = useState({});
     const [tripsPorRuta, setTripsPorRuta] = useState({}); // Stores grouped trips
+    const resultsRef = useRef(null); // Ref for scrolling to results
 
     // Load Data
     useEffect(() => {
@@ -181,6 +182,15 @@ export const PanelDeHorarios = () => {
 
         setHorariosFiltrados(resultados);
         setMostrarFiltrado(true);
+
+        // Scroll to results after state update
+        setTimeout(() => {
+            if (resultsRef.current) {
+                const yOffset = -100; // Offset for header/navbar
+                const y = resultsRef.current.getBoundingClientRect().top + window.scrollY + yOffset;
+                window.scrollTo({ top: y, behavior: 'smooth' });
+            }
+        }, 100);
     };
 
     const getTablaCompleta = () => {
@@ -353,12 +363,12 @@ export const PanelDeHorarios = () => {
 
                 {/* Resultados filtrados */}
                 {mostrarFiltrado ? (
-                    <div className="resultado-filtrado">
+                    <div className="resultado-filtrado" ref={resultsRef}>
                         <div className="d-flex justify-content-between align-items-center mb-3">
                             <h3 className="subtitle">
                                 Horarios {paradasPorRuta[selectedRutaId]?.find(p => p._id === origen)?.nombre} → {paradasPorRuta[selectedRutaId]?.find(p => p._id === destino)?.nombre} ({tipo_dia} - {horario})
                             </h3>
-                            <Button variant="outline-secondary" onClick={() => setMostrarFiltrado(false)}>Ver todos</Button>
+                            <Button className="btn-glow" onClick={() => setMostrarFiltrado(false)}>Ver todos</Button>
                         </div>
                         <div className="table-responsive">
                             <table className="schedule-table">
