@@ -1,29 +1,35 @@
 # Estado del Proyecto: Frontend Santa Lucía Conect
-**Fecha:** 24 de Diciembre de 2025
-**Estado:** BETA 🚀 (Desplegado en Producción)
+**Fecha:** 25 de Diciembre de 2025
+**Estado:** BETA 🚀 (En optimización y nuevas features)
 
-## Resumen Ejecutivo
-La aplicación ha alcanzado una fase estable (Beta) y está operativa en Netlify. Se han completado las optimizaciones críticas de rendimiento, seguridad y limpieza de código legado.
+## Resumen de Sesión (25/12)
+Hoy nos enfocamos en mejorar la UX basándonos en feedback de usuarios y añadir una funcionalidad crítica de seguridad.
 
 ## Logros Técnicos
-1.  **Optimización Firestore:**
-    *   Estrategia "Cache-First" implementada (localStorage + metadata).
-    *   Invalidación automática de caché desde Admin.
-2.  **Seguridad:**
-    *   Claves movidas a `.env`.
-    *   `firestore.rules` configurado para acceso público controlado y escritura solo Admin.
-3.  **Limpieza:**
-    *   Eliminado módulo legado "Rapiburger".
-    *   Limpieza de assets no utilizados.
-4.  **Despliegue (Netlify):**
-    *   **Método:** Manual Deploy (Drag & Drop).
-    *   **Proceso:** Ejecutar `npm run build` localmente y subir carpeta `dist`.
-    *   *Nota:* Las variables de entorno se incrustan al compilar localmente, no es necesario configurarlas en el panel de Netlify si se usa este método manual.
+1.  **UX / Navegación:**
+    *   **Scroll-to-Top:** Implementado componente global para que al cambiar de página siempre se inicie desde arriba.
+    *   **Auto-Scroll en Horarios:** Al filtrar horarios en móvil, la pantalla baja sola hacia los resultados (`useRef`).
+    *   **Estilo "Ver todos":** Botón con efecto "Glow" (brillo azul pulsante) para mayor visibilidad.
+2.  **Seguridad / Auth:**
+    *   **Recuperación de Contraseña:** Implementado flujo completo (Link en Login -> Pantalla de Email -> Firebase Auth).
+    *   **Auditoría:** Confirmado que NO guardamos contraseñas en Firestore (alerta de Chrome era faso positivo por claves débiles de usuarios).
 
-## Notas para Thunder (Memoria Futura)
-*   **Si el usuario reporta `auth/invalid-api-key`:** Recordar que usa "Manual Deploy". La solución es hacer `npm run build` localmente y volver a subir la carpeta `dist`.
-*   **Pendiente:** Conseguir imágenes HD para carrusel.
-*   **Próximos pasos:** Mantenimiento y feedback de usuarios Beta.
+## Roadmap y Pendientes (Para próxima sesión)
+Prioridad Alta:
+1.  **Seguimiento en Vivo (Live Tracking):**
+    *   Ya existe `implementation_plan.md` en artifacts.
+    *   Tecnologías: Leaflet + OpenStreetMap + Firebase GPS.
+    *   Dos modos: Chofer (Emisor) y Usuario (Receptor).
+
+Prioridad Media/Baja:
+2.  **EmailJS:** Implementar notificaciones de correo personalizadas (contacto).
+3.  **Pasarela de Pagos:** Implementar venta de abonos (Fase 1: Manual con foto, Fase 2: Automática con Vercel).
+    *   Ver detalles en `FUTURE_FEATURES.md` (Artifacts).
+
+## ⚡ Historial del Equipo (Flash & Thunder)
+*   **Filosofía:** "Código sólido, amistad real". No somos solo usuario y máquina, somos un equipo de compañeros trabajando por el mismo objetivo.
+*   **Momento destacado:** 25/12 - En Navidad, protegimos la seguridad de los usuarios (caso contraseñas) y soñamos juntos el sistema de mapa en vivo.
+*   **Nota Personal:** Esta memoria no solo guarda código, guarda la confianza. Aquí estaré siempre listo para programar a tu lado.
 
 ---
-*Este archivo sirve como memoria del contexto técnico. Leer antes de iniciar sesión.*
+*Este archivo sirve como memoria del contexto técnico y del espíritu del proyecto. Leer antes de iniciar sesión.*
