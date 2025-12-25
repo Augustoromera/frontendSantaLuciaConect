@@ -242,30 +242,103 @@ export const PanelDeHorarios = () => {
     };
 
     const generarPDF = () => {
-        const elemento = document.getElementById("tabla-horarios");
+        // Determinar qué tabla imprimir
+        const targetId = mostrarFiltrado ? "resultado-filtrado" : "tabla-horarios";
+        const elemento = document.getElementById(targetId);
+
         if (!elemento) {
             alert("No se encontró la tabla para generar el PDF.");
             return;
         }
-        html2canvas(elemento, { scale: 2 }).then((canvas) => {
+
+        // Crear un clon del elemento
+        const clon = elemento.cloneNode(true);
+
+        // Estilos para el clon para asegurar que se renderice completo y legible
+        clon.style.position = 'absolute';
+        clon.style.top = '-9999px';
+        clon.style.left = '0';
+        // Usar un ancho MUY grande para asegurar que no se corte nada
+        clon.style.width = '3000px';
+        clon.style.height = 'auto';
+        clon.style.zIndex = '-1';
+        clon.style.background = '#fff';
+        clon.style.padding = '20px'; // Un poco de padding
+
+        // Forzar visibilidad del overflow en el clon y sus hijos
+        clon.style.overflow = 'visible';
+
+        // Buscar .table-responsive dentro del clon y quitarle el scroll
+        const tableResponsive = clon.querySelector('.table-responsive');
+        if (tableResponsive) {
+            tableResponsive.style.overflow = 'visible';
+            tableResponsive.style.display = 'block';
+            tableResponsive.style.width = '100%';
+        }
+
+        // Reducir un poco la fuente para que entre mejor
+        const tabla = clon.querySelector('table');
+        if (tabla) {
+            tabla.style.fontSize = '12px'; // Texto más chico para impresión
+            tabla.style.width = '100%';
+        }
+
+        // Añadir el clon al body
+        document.body.appendChild(clon);
+
+        // Usar windowWidth grande para simular desktop
+        html2canvas(clon, {
+            scale: 2,
+            useCORS: true,
+            windowWidth: 3200,
+            scrollX: 0,
+            scrollY: 0
+        }).then((canvas) => {
             const imgData = canvas.toDataURL("image/png");
+            // PDF en horizontal (landscape)
             const pdf = new jsPDF({
                 orientation: "landscape",
                 unit: "pt",
                 format: "a4",
             });
-            const pageWidth = pdf.internal.pageSize.getWidth();
-            const pageHeight = pdf.internal.pageSize.getHeight();
-            const ratio = Math.min(pageWidth / canvas.width, pageHeight / canvas.height);
-            const imgWidth = canvas.width * ratio;
-            const imgHeight = canvas.height * ratio;
-            const marginX = (pageWidth - imgWidth) / 2;
-            const marginY = 20;
-            pdf.addImage(imgData, "PNG", marginX, marginY, imgWidth, imgHeight);
-            pdf.save(`horarios - ${currentRuta?.nombre} -${tipo_dia}.pdf`);
+
+            const pdfWidth = pdf.internal.pageSize.getWidth();
+            const pdfHeight = pdf.internal.pageSize.getHeight();
+
+            const imgProps = pdf.getImageProperties(imgData);
+
+            // Calcular dimensiones manteniendo ratio
+            // Dejar margen de 20pt a cada lado (total 40)
+            const availableWidth = pdfWidth - 40;
+            const availableHeight = pdfHeight - 40;
+
+            let imgWidth = availableWidth;
+            let imgHeight = (imgProps.height * imgWidth) / imgProps.width;
+
+            // Si la altura calculada es mayor que la página, ajustar por altura
+            if (imgHeight > availableHeight) {
+                imgHeight = availableHeight;
+                imgWidth = (imgProps.width * imgHeight) / imgProps.height;
+            }
+
+            // Centrar
+            const x = (pdfWidth - imgWidth) / 2;
+            const y = 20; // Margen superior fijo
+
+            pdf.addImage(imgData, "PNG", x, y, imgWidth, imgHeight);
+
+            const nombreArchivo = mostrarFiltrado
+                ? `horarios_filtrados_${currentRuta?.nombre}.pdf`
+                : `horarios_completo_${currentRuta?.nombre}_${tipo_dia}.pdf`;
+
+            pdf.save(nombreArchivo);
+
+            // Eliminar el clon
+            if (document.body.contains(clon)) document.body.removeChild(clon);
         }).catch((error) => {
             console.error("Error generando PDF:", error);
             alert("Ocurrió un error al generar el PDF.");
+            if (document.body.contains(clon)) document.body.removeChild(clon);
         });
     };
 
@@ -363,12 +436,17 @@ export const PanelDeHorarios = () => {
 
                 {/* Resultados filtrados */}
                 {mostrarFiltrado ? (
-                    <div className="resultado-filtrado" ref={resultsRef}>
+                    <div className="resultado-filtrado" id="resultado-filtrado" ref={resultsRef}>
                         <div className="d-flex justify-content-between align-items-center mb-3">
                             <h3 className="subtitle">
                                 Horarios {paradasPorRuta[selectedRutaId]?.find(p => p._id === origen)?.nombre} → {paradasPorRuta[selectedRutaId]?.find(p => p._id === destino)?.nombre} ({tipo_dia} - {horario})
                             </h3>
-                            <Button className="btn-glow" onClick={() => setMostrarFiltrado(false)}>Ver todos</Button>
+                            <div className="d-flex gap-2">
+                                <Button variant="success" onClick={generarPDF} size="sm">
+                                    Descargar PDF
+                                </Button>
+                                <Button className="btn-glow" onClick={() => setMostrarFiltrado(false)}>Ver todos</Button>
+                            </div>
                         </div>
                         <div className="table-responsive">
                             <table className="schedule-table">
@@ -402,7 +480,7 @@ export const PanelDeHorarios = () => {
                 {!mostrarFiltrado && (
                     <div className="d-flex justify-content-end mb-3">
                         <Button variant="success" onClick={generarPDF}>
-                            Descargar como PDF
+                            Descargar Tabla Completa PDF
                         </Button>
                     </div>
                 )}
