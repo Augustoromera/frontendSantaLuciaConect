@@ -16,6 +16,7 @@ import TicketPurchase from "../pages/TicketPurchase";
 import UserInbox from "../pages/user/UserInbox";
 import HistoryScreen from "../pages/HistoryScreen";
 import DevTeamScreen from "../pages/DevTeamScreen";
+import ScrollToTop from "../components/ScrollToTop";
 
 function AppRouter() {
   return (
@@ -28,6 +29,7 @@ function AppLR() {
 
   return (
     <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+      <ScrollToTop />
       <Routes>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />

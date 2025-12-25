@@ -108,7 +108,6 @@ function Header({ navBarClass }) {
             src={logoTipo}
             className="d-inline-block navbar-image logo"
             alt="Logo"
-            onClick={() => window.location.href = "/"}
           />
         </Navbar.Brand>
 
