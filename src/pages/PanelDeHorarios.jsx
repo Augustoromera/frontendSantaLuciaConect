@@ -461,11 +461,11 @@ export const PanelDeHorarios = () => {
                 {/* Resultados filtrados */}
                 {mostrarFiltrado ? (
                     <div className="resultado-filtrado" id="resultado-filtrado" ref={resultsRef}>
-                        <div className="d-flex justify-content-between align-items-center mb-3">
-                            <h3 className="subtitle">
-                                Horarios {nombreOrigen} → {nombreDestino} ({tipo_dia} - {horario})
+                        <div className="d-flex flex-column flex-md-row justify-content-between align-items-center mb-3 gap-3">
+                            <h3 className="subtitle text-center text-md-start m-0">
+                                Horarios {nombreOrigen} → {nombreDestino} <span className="d-block d-md-inline text-muted fs-6">({tipo_dia} - {horario})</span>
                             </h3>
-                            <div className="d-flex gap-2 no-print">
+                            <div className="d-flex gap-2 no-print justify-content-center">
                                 <Button variant="success" onClick={generarPDF} size="sm">
                                     Descargar PDF
                                 </Button>
