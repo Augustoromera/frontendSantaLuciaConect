@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { db } from '../../../firebase/config';
 import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
-import { Button, Container, Card, Alert } from 'react-bootstrap';
+import { Button, Container, Card, Alert, Form } from 'react-bootstrap';
 import { useAuth } from '../../../context/AuthContext';
 import Header from '../../../components/Header';
 import { Footer } from '../../../components/Footer';
@@ -12,6 +12,7 @@ const DriverTracker = () => {
     const [location, setLocation] = useState(null);
     const [error, setError] = useState('');
     const [statusMessage, setStatusMessage] = useState('Esperando iniciar...');
+    const [selectedUnit, setSelectedUnit] = useState('1');
 
     // Referencia para el ID del watchPosition para poder limpiarlo
     const watchIdRef = useRef(null);
@@ -31,7 +32,7 @@ const DriverTracker = () => {
         }
 
         setIsTracking(true);
-        setStatusMessage('Iniciando GPS...');
+        setStatusMessage(`Iniciando Unidad ${selectedUnit}...`);
         setError('');
 
         // Opciones de geolocalización para alta precisión (GPS)
@@ -86,10 +87,8 @@ const DriverTracker = () => {
     const updateLocationInDB = async (loc, status) => {
         if (!user) return;
 
-        // Usamos un ID fijo para fines de prueba (o el ID del usuario)
-        // En producción idealmente cada colectivo tendría su ID único. 
-        // Por ahora "unidad_admin" para que tú lo pruebes.
-        const unitId = 'unidad_admin_1';
+        // Usamos el ID de la unidad seleccionada
+        const unitId = `unidad_admin_${selectedUnit}`;
 
         try {
             const data = {
@@ -97,7 +96,8 @@ const DriverTracker = () => {
                 status: status,
                 driverId: user.uid,
                 driverEmail: user.email,
-                ...loc // lat, lng, speed, heading
+                unitNumber: selectedUnit, // Guardamos también el número legible
+                ...(loc || { lat: null, lng: null, speed: null, heading: null })
             };
 
             await setDoc(doc(db, 'live_tracking', unitId), data, { merge: true });
@@ -114,11 +114,28 @@ const DriverTracker = () => {
                 <Card style={{ width: '100%', maxWidth: '400px', height: 'fit-content' }} className="shadow-lg">
                     <Card.Header className="bg-primary text-white text-center">
                         <h4>📡 Emisor GPS Chofer</h4>
-                        <p className="mb-0 small">Modo: Stealth Admin</p>
+                        <p className="mb-0 small">Sistema de Tracking</p>
                     </Card.Header>
                     <Card.Body className="text-center">
 
                         {error && <Alert variant="danger">{error}</Alert>}
+
+                        <Form.Group className="mb-4 text-start">
+                            <Form.Label className="fw-bold">Seleccionar Unidad:</Form.Label>
+                            <Form.Select
+                                value={selectedUnit}
+                                onChange={(e) => setSelectedUnit(e.target.value)}
+                                disabled={isTracking}
+                                size="lg"
+                                className="text-center fw-bold"
+                            >
+                                {[...Array(10)].map((_, i) => (
+                                    <option key={i + 1} value={String(i + 1)}>
+                                        Unidad {i + 1}
+                                    </option>
+                                ))}
+                            </Form.Select>
+                        </Form.Group>
 
                         <div className="mb-4">
                             <div
