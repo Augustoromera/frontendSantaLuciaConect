@@ -5,7 +5,7 @@ import { doc, onSnapshot } from 'firebase/firestore';
 import { Container, Card, Badge } from 'react-bootstrap';
 import L from 'leaflet';
 import Header from '../../../components/Header';
-import { Footer } from '../../../components/Footer';
+
 
 
 // Fix default icon issue in Leaflet with Webpack/Vite
@@ -60,7 +60,7 @@ const LiveMapAdmin = () => {
     };
 
     return (
-        <div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', paddingTop: '70px' }}>
             <Header />
             <div style={{ flex: 1, position: 'relative' }}>
                 <MapContainer
@@ -115,7 +115,6 @@ const LiveMapAdmin = () => {
                     </Card.Body>
                 </Card>
             </div>
-            <Footer />
         </div>
     );
 };
