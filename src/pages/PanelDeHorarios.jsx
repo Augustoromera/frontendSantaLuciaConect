@@ -241,6 +241,10 @@ export const PanelDeHorarios = () => {
         );
     };
 
+    // Helper variables for Display
+    const nombreOrigen = paradasPorRuta[selectedRutaId]?.find(p => p._id === origen)?.nombre || '';
+    const nombreDestino = paradasPorRuta[selectedRutaId]?.find(p => p._id === destino)?.nombre || '';
+
     const generarPDF = () => {
         // Determinar qué tabla imprimir
         const targetId = mostrarFiltrado ? "resultado-filtrado" : "tabla-horarios";
@@ -254,21 +258,35 @@ export const PanelDeHorarios = () => {
         // Crear un clon del elemento
         const clon = elemento.cloneNode(true);
 
-        // Estilos para el clon para asegurar que se renderice completo y legible
+        // Ocultar elementos marcados como no-print
+        // Usamos remove() porque classes como d-flex pueden tener !important que anulen display:none
+        const noPrintElements = clon.querySelectorAll('.no-print');
+        noPrintElements.forEach(el => el.remove());
+
+        // Fallback: Borrar cualquier botón que haya quedado
+        const buttons = clon.querySelectorAll('button');
+        buttons.forEach(btn => btn.remove());
+
+        // Configurar ancho para simular "vista móvil" o "vista completa"
+        // Tabla filtrada: 600px (ancho tipo tablet/móvil) para que al imprimir en A4 se vea GRANDE.
+        // Tabla completa: 3000px (ancho extendido) para que entren todas las columnas sin cortes.
+        const pdfWidthSettings = mostrarFiltrado ? 600 : 3000;
+        const pdfWindowWidth = mostrarFiltrado ? 600 : 3200;
+
+        // Estilos para el clon
         clon.style.position = 'absolute';
         clon.style.top = '-9999px';
         clon.style.left = '0';
-        // Usar un ancho MUY grande para asegurar que no se corte nada
-        clon.style.width = '3000px';
+        clon.style.width = `${pdfWidthSettings}px`;
         clon.style.height = 'auto';
         clon.style.zIndex = '-1';
         clon.style.background = '#fff';
-        clon.style.padding = '20px'; // Un poco de padding
+        clon.style.padding = '20px';
 
-        // Forzar visibilidad del overflow en el clon y sus hijos
+        // Forzar visibilidad del overflow
         clon.style.overflow = 'visible';
 
-        // Buscar .table-responsive dentro del clon y quitarle el scroll
+        // Ajustar .table-responsive
         const tableResponsive = clon.querySelector('.table-responsive');
         if (tableResponsive) {
             tableResponsive.style.overflow = 'visible';
@@ -276,26 +294,33 @@ export const PanelDeHorarios = () => {
             tableResponsive.style.width = '100%';
         }
 
-        // Reducir un poco la fuente para que entre mejor
+        // Ajustar fuente y anchos de tabla
         const tabla = clon.querySelector('table');
         if (tabla) {
-            tabla.style.fontSize = '12px'; // Texto más chico para impresión
             tabla.style.width = '100%';
+            // Si es filtrado, forzar un tamaño de fuente legible pero no exagerado, 
+            // el zoom lo dará el ancho del contenedor (600px estirado a A4).
+            if (mostrarFiltrado) {
+                tabla.style.fontSize = '14px';
+            } else {
+                tabla.style.fontSize = '12px';
+            }
         }
 
         // Añadir el clon al body
         document.body.appendChild(clon);
 
-        // Usar windowWidth grande para simular desktop
+        // Generar canvas
         html2canvas(clon, {
             scale: 2,
             useCORS: true,
-            windowWidth: 3200,
+            windowWidth: pdfWindowWidth,
             scrollX: 0,
             scrollY: 0
         }).then((canvas) => {
             const imgData = canvas.toDataURL("image/png");
-            // PDF en horizontal (landscape)
+
+            // PDF en landscape (horizontal) para aprovechar el ancho
             const pdf = new jsPDF({
                 orientation: "landscape",
                 unit: "pt",
@@ -307,23 +332,23 @@ export const PanelDeHorarios = () => {
 
             const imgProps = pdf.getImageProperties(imgData);
 
-            // Calcular dimensiones manteniendo ratio
-            // Dejar margen de 20pt a cada lado (total 40)
-            const availableWidth = pdfWidth - 40;
-            const availableHeight = pdfHeight - 40;
+            // Calcular dimensiones para ajustar a la página (con margen)
+            const margin = 20;
+            const availableWidth = pdfWidth - (margin * 2);
+            const availableHeight = pdfHeight - (margin * 2);
 
             let imgWidth = availableWidth;
             let imgHeight = (imgProps.height * imgWidth) / imgProps.width;
 
-            // Si la altura calculada es mayor que la página, ajustar por altura
+            // Si se pasa de alto, ajustar por alto
             if (imgHeight > availableHeight) {
                 imgHeight = availableHeight;
                 imgWidth = (imgProps.width * imgHeight) / imgProps.height;
             }
 
-            // Centrar
+            // Centrar horizontalmente
             const x = (pdfWidth - imgWidth) / 2;
-            const y = 20; // Margen superior fijo
+            const y = margin; // Margen superior
 
             pdf.addImage(imgData, "PNG", x, y, imgWidth, imgHeight);
 
@@ -333,7 +358,6 @@ export const PanelDeHorarios = () => {
 
             pdf.save(nombreArchivo);
 
-            // Eliminar el clon
             if (document.body.contains(clon)) document.body.removeChild(clon);
         }).catch((error) => {
             console.error("Error generando PDF:", error);
@@ -439,9 +463,9 @@ export const PanelDeHorarios = () => {
                     <div className="resultado-filtrado" id="resultado-filtrado" ref={resultsRef}>
                         <div className="d-flex justify-content-between align-items-center mb-3">
                             <h3 className="subtitle">
-                                Horarios {paradasPorRuta[selectedRutaId]?.find(p => p._id === origen)?.nombre} → {paradasPorRuta[selectedRutaId]?.find(p => p._id === destino)?.nombre} ({tipo_dia} - {horario})
+                                Horarios {nombreOrigen} → {nombreDestino} ({tipo_dia} - {horario})
                             </h3>
-                            <div className="d-flex gap-2">
+                            <div className="d-flex gap-2 no-print">
                                 <Button variant="success" onClick={generarPDF} size="sm">
                                     Descargar PDF
                                 </Button>
