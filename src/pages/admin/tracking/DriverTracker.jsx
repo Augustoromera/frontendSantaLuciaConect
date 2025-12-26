@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { db } from '../../../firebase/config';
 import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
-import { Button, Container, Card, Alert, Form } from 'react-bootstrap';
+import { Button, Container, Card, Alert, Form, Badge } from 'react-bootstrap';
 import { useAuth } from '../../../context/AuthContext';
 import Header from '../../../components/Header';
 import { Footer } from '../../../components/Footer';
@@ -13,19 +13,63 @@ const DriverTracker = () => {
     const [error, setError] = useState('');
     const [statusMessage, setStatusMessage] = useState('Esperando iniciar...');
     const [selectedUnit, setSelectedUnit] = useState('1');
+    const [wakeLock, setWakeLock] = useState(null);
+    const [wakeLockSupported, setWakeLockSupported] = useState(false);
 
     // Referencia para el ID del watchPosition para poder limpiarlo
     const watchIdRef = useRef(null);
 
     // Efecto para manejar el tracking
     useEffect(() => {
+        // Chequear soporte de Wake Lock
+        if ('wakeLock' in navigator) {
+            setWakeLockSupported(true);
+        }
+
         // Limpieza al desmontar
         return () => {
             stopTracking();
         };
     }, []);
 
-    const startTracking = () => {
+    // Re-adquirir Wake Lock si se pierde (ej: minimizar y volver)
+    useEffect(() => {
+        const handleVisibilityChange = async () => {
+            if (wakeLock !== null && document.visibilityState === 'visible') {
+                await requestWakeLock();
+            }
+        };
+
+        document.addEventListener('visibilitychange', handleVisibilityChange);
+        return () => {
+            document.removeEventListener('visibilitychange', handleVisibilityChange);
+        };
+    }, [wakeLock]);
+
+    const requestWakeLock = async () => {
+        if (!('wakeLock' in navigator)) return;
+        try {
+            const lock = await navigator.wakeLock.request('screen');
+            setWakeLock(lock);
+            lock.addEventListener('release', () => {
+                console.log('Wake Lock released');
+                setWakeLock(null);
+            });
+            console.log('Wake Lock active');
+        } catch (err) {
+            console.error(`${err.name}, ${err.message}`);
+            // No mostrar error al usuario si es solo wake lock, no es crítico crítico pero si importante
+        }
+    };
+
+    const releaseWakeLock = async () => {
+        if (wakeLock !== null) {
+            await wakeLock.release();
+            setWakeLock(null);
+        }
+    };
+
+    const startTracking = async () => {
         if (!navigator.geolocation) {
             setError('Tu navegador no soporta geolocalización.');
             return;
@@ -34,6 +78,9 @@ const DriverTracker = () => {
         setIsTracking(true);
         setStatusMessage(`Iniciando Unidad ${selectedUnit}...`);
         setError('');
+
+        // Activar Wake Lock
+        await requestWakeLock();
 
         // Opciones de geolocalización para alta precisión (GPS)
         const options = {
@@ -56,6 +103,9 @@ const DriverTracker = () => {
         }
         setIsTracking(false);
         setStatusMessage('Tracking detenido.');
+
+        // Soltar Wake Lock
+        releaseWakeLock();
 
         // Opcional: Marcar como fuera de servicio en BD
         updateLocationInDB(null, 'fuera_servicio');
@@ -156,6 +206,21 @@ const DriverTracker = () => {
                             </div>
                             <h5 className="mt-3 text-muted">{statusMessage}</h5>
                         </div>
+
+                        {/* Wake Lock Status Indicator */}
+                        {isTracking && (
+                            <div className="mb-3">
+                                {wakeLock ? (
+                                    <Badge bg="info" className="p-2">
+                                        <i className="fas fa-lightbulb me-1"></i> Pantalla Siempre Encendida
+                                    </Badge>
+                                ) : (
+                                    wakeLockSupported && <Badge bg="warning" text="dark" className="p-2">
+                                        <i className="fas fa-exclamation-triangle me-1"></i> Ahorro de energía activo (Pantalla se apagará)
+                                    </Badge>
+                                )}
+                            </div>
+                        )}
 
                         {location && isTracking && (
                             <div className="mb-3 text-start bg-light p-2 rounded small">
